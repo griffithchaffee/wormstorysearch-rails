@@ -1,0 +1,130 @@
+class PostgresDatabase
+  attr_reader :config, :database, :namespace
+
+  def initialize(config, options = {})
+    options = options.with_indifferent_access
+    @config = config
+    @database = config["database"]
+    @namespace = options[:namespace] || @database
+  end
+
+  def exists?
+    postgres { PGDatabase.where(datname: database).exists? }
+  end
+
+  def create!
+    postgres { PGDatabase.connection.create_database database }
+  end
+
+  def drop!
+    postgres { PGDatabase.connection.drop_database database }
+  end
+
+  def migrate!
+    connect { migrations.exec_migration connection, :up }
+  end
+
+  def rollback!
+    connect { migrations.exec_migration connection, :down }
+  end
+
+  def migrate_to_latest_schema!
+    connect { build_migrations(latest_schema).exec_migration connection, :up }
+  end
+
+  def current_schema
+    connect { ActiveRecord::SchemaDumper.dump(connection, StringIO.new).string }
+  end
+
+  def create
+    if !exists?
+      Rails.logger.info(database) { "creating database" }
+      create!
+      ActiveRecord::Migration.suppress_messages { migrate_to_latest_schema! }
+    end
+  end
+
+  def drop
+    if exists?
+      Rails.logger.info(database) { "dropping database" }
+      drop!
+    end
+  end
+
+  def migrate(force = false)
+    if force.to_s.in?(%w( true force )) || current_schema != latest_schema
+      Rails.logger.info(database) { "migrating" }
+      migrate!
+      Rails.logger.warn(database) { "current schema != latest schema" } if current_schema != latest_schema
+    else
+      Rails.logger.info(database) { "current schema == latest schema" }
+    end
+  end
+
+  def rollback
+    Rails.logger.info(database) { "reverting" }
+    rollback!
+  end
+
+  def migrations
+    raise "migration file #{migration_file} does not exist" unless File.file? migration_file
+    build_migrations File.read(migration_file)
+  end
+
+  def latest_schema
+    raise "schema file #{schema_file} does not exist" unless File.file? schema_file
+    File.read schema_file
+  end
+
+  def update_schema
+    Rails.logger.info(database) { "updating schema #{schema_file}" }
+    File.open(schema_file, "w") { |file| file.write current_schema }
+  end
+
+  def migration_file
+    "#{Rails.root}/db/migrations/#{namespace}.rb"
+  end
+
+  def schema_file
+    "#{Rails.root}/db/schemas/#{namespace}.rb"
+  end
+
+  def postgres
+    ActiveRecord::Base.establish_connection config.postgres
+    result = yield self
+    ActiveRecord::Base.connection.disconnect!
+    result
+  end
+
+  def connect
+    ActiveRecord::Base.establish_connection config
+    result = yield
+    ActiveRecord::Base.connection.disconnect!
+    result
+  end
+
+private
+
+  def build_migrations(methods)
+    Class.new(ActiveRecord::Migration) { class_eval methods }.new
+  end
+
+  def connection
+    ActiveRecord::Base.connection
+  end
+
+  class PGDatabase < ActiveRecord::Base
+    self.table_name = :pg_database
+    self.primary_key = :datname
+  end
+
+  class PGStatDatabase < ActiveRecord::Base
+    self.table_name = :pg_stat_database
+    self.primary_key = :datname
+  end
+
+  class PGStatActivity < ActiveRecord::Base
+    self.table_name = :pg_stat_activity
+    self.primary_key = :datname
+  end
+end

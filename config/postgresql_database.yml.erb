@@ -1,0 +1,31 @@
+---
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  connect_timeout: 3
+  pool: 5 # max number of possible simultaneous database connections per process
+  timeout: 3000
+
+production:
+  <<: *defaults
+  username: TEMP
+  password: TEMP
+  host: TEMP
+  database: wormfictionsearch
+  namespace: wormfictionsearch
+
+development:
+  <<: *defaults
+  username: finalforms
+  password: finalforms
+  host: localhost
+  database: wormfictionsearch_development
+  namespace: wormfictionsearch
+
+test:
+  <<: *defaults
+  username: finalforms
+  password: finalforms
+  host: localhost
+  database: wormfictionsearch_test
+  namespace: wormfictionsearch

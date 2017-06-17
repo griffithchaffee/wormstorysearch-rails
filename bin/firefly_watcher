@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+require "listen"
+require "colored"
+
+root = File.expand_path("../..",  __FILE__)
+paths = %w[ app lib config vendor db/schemas bin ].map { |directory| "#{root}/#{directory}" }
+
+# set listen logger
+Listen.logger = Logger.new(STDOUT)
+Listen.logger.level = Logger::WARN
+# build paths
+paths.each { |path| puts "Watching: #{path.green}" }
+# start listening
+listener = Listen.to(*paths) do |modified, added, removed|
+  puts "Modified: #{modified.map(&:yellow).join(", ")}" if !modified.empty?
+  puts "Added: #{added.map(&:yellow).join(", ")}"       if !added.empty?
+  puts "Removed: #{removed.map(&:yellow).join(", ")}"   if !removed.empty?
+  `pkill -INT -f 'rails server'`
+end
+listener.start
+sleep

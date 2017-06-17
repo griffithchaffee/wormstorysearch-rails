@@ -1,0 +1,15 @@
+#!/bin/bash
+
+START_SERVER="rails server -p 8080 -b 0.0.0.0 $@"
+pushd `dirname $0` > /dev/null
+RAILS_ROOT="`pwd -P`/.."
+popd > /dev/null
+while :; do
+  rm -f "$RAILS_ROOT/tmp/pids/server.pid"
+  printf "Starting Server: \e[32m$START_SERVER\e[0m\n"
+  $START_SERVER
+  # sleep between restart attempts
+  if [[ $? != 0 ]]; then
+    sleep 5
+  fi
+done
