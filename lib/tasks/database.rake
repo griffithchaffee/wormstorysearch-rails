@@ -1,4 +1,4 @@
-namespace :dddatabase do
+namespace :database do
   desc "Update database schema"
   task :schema do
     ApplicationRecord.database_configuration.manage.update_schema

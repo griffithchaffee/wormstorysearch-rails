@@ -2,8 +2,7 @@ console do
   Rails::ConsoleMethods.send(:define_method, :reload) do
     save_history
     Rails.logger.level = Logger::INFO
-    subdomain = Organization.connected_to.subdomain
-    puts "reloading into #{subdomain}"
+    puts "reloading"
     exec "cd #{Rails.root} && rails console"
   end
 

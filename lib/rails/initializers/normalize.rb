@@ -1,8 +1,6 @@
 Rails.application.configure do
   # Session store
-  #config.session_store :cookie_store, key: '_finalforms_session'
-  #config.session_store :session #, key: 'testing_cookie', expire_after: 2.hours
-  Rails.application.config.session_store(:active_record_store)
+  config.session_store(:session, key: 'testing_cookie', expire_after: 1.hour)
 end
 
 # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
@@ -19,8 +17,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   #inflect.uncountable %w( fish sheep )
   #inflect.plural 'coed', 'coed'
   #inflect.singular 'coed', 'coed'
-  #inflect.singular 'data', 'data'
-  #inflect.plural 'equipment', 'equipments'
 end
 
 # CSP-Report when we decide to implement it

@@ -1,8 +1,7 @@
 if Rails.env.development?
-  Rails.configuration.server = ActiveSupport::OrderedOptions.new
-  Rails.configuration.server.request_count = 0
-  UniversalController.before_action { Rails.configuration.server.request_count += 1 }
-  require "byebug"
+  Rails.configuration.firefly = ActiveSupport::OrderedOptions.new
+  Rails.configuration.firefly.request_count = 0
+  ApplicationController.before_action { Rails.configuration.firefly.request_count += 1 }
 end
 
 # skip logging of unpermitted parameter notifications due to verbosity

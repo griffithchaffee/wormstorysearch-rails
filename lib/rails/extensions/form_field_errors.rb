@@ -1,5 +1,5 @@
 ActionView::Base.field_error_proc = Proc.new do |original_html, instance|
-  fragment = Loofah.fragment original_html
+  fragment = Loofah.fragment(original_html)
   fragment.children.each do |tag|
     if tag.is_a?(Nokogiri::XML::Element) && tag.name =~ /\A(select|input|textarea)\z/i
       error_messages = Array(instance.object.errors.full_messages_for(instance.instance_variable_get('@method_name').to_sym))

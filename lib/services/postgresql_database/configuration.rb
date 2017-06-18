@@ -3,24 +3,20 @@ class PostgresqlDatabase
     class_attribute :host_to_ip
     self.host_to_ip = { localhost: "127.0.0.1" }.with_indifferent_access
 
+    %w[ database host username password abstract_table namespace ].each do |key|
+      define_method(key) { fetch(key) }
+    end
+
     def postgres
       merge(database: "postgres")
     end
 
-    def database
-      fetch(:database)
+    def by_host
+      self
     end
 
-    def host
-      fetch(:host)
-    end
-
-    def username
-      fetch(:username)
-    end
-
-    def password
-      fetch(:password)
+    def by_ip
+      merge(host: ip)
     end
 
     def ip
@@ -34,18 +30,6 @@ class PostgresqlDatabase
 
     def set_ip!
       host_to_ip[host] = IPSocket.getaddress(host)
-    end
-
-    def by_ip
-      merge host: ip
-    end
-
-    def by_host
-      self
-    end
-
-    def abstract_table
-      fetch(:abstract_table)
     end
 
     def manage

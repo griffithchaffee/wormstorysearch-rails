@@ -11,6 +11,7 @@ end
 gem "rails", "~> 5.1.1"
 gem "pg",    "~> 0.21", platforms: :ruby
 gem "puma",  "~> 3.7"
+gem "colored"
 
 # assets
 gem "sass-rails",   "~> 5.0"
@@ -21,6 +22,11 @@ gem "therubyracer", platforms: :ruby
 
 # scheduler
 gem "whenever"
+
+# crawler
+gem "loofah"
+gem "faraday"
+gem "http-cookie"
 
 group :development, :test do
   # firefly

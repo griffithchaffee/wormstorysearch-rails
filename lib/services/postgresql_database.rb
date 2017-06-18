@@ -45,7 +45,7 @@ class PostgresqlDatabase
     if !exists?
       Rails.logger.info(database) { "creating database" }
       create!
-      ActiveRecord::Migration.suppress_messages { migrate_to_latest_schema! }
+      ActiveRecord::Migration[migration_version].suppress_messages { migrate_to_latest_schema! }
     end
   end
 
@@ -130,7 +130,11 @@ class PostgresqlDatabase
   end
 
   def build_migrations(methods)
-    Class.new(ActiveRecord::Migration) { class_eval(methods) }.new
+    Class.new(ActiveRecord::Migration[migration_version]) { class_eval(methods) }.new
+  end
+
+  def migration_version
+    5.1
   end
 
   class << self

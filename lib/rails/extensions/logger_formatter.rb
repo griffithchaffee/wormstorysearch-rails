@@ -1,4 +1,4 @@
-class PrettyFormatter < ActiveSupport::Logger::SimpleFormatter
+class Logger::ApplicationFormatter < ActiveSupport::Logger::SimpleFormatter
   include ActiveSupport::TaggedLogging::Formatter
   SQL_WORDS = []
   # multi word

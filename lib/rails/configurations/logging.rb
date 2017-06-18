@@ -1,4 +1,4 @@
-Rails.logger.formatter = PrettyFormatter.new
+Rails.logger.formatter = Logger::ApplicationFormatter.new
 Rails.logger = ActiveSupport::TaggedLogging.new(Rails.logger)
 
 # reset logger level
@@ -10,7 +10,7 @@ end
 
 # console logging
 console do
-  Rails.logger.formatter = PrettyFormatter.new
+  Rails.logger.formatter = Logger::ApplicationFormatter.new
   Rails.logger = ActiveSupport::TaggedLogging.new(Rails.logger)
   if Rails.env.production?
     Rails.logger.level = Logger::INFO

@@ -13,7 +13,14 @@ class File::Configuration
     end
 
     def load_config_file(file)
-      parse_yaml_content(parse_erb_content(read_file(file)))
+      content = read_file(file)
+      file.split(".").reverse.each do |extension|
+        case extension
+        when "erb" then content = parse_erb_content(content)
+        when "yml" then content = parse_yaml_content(content)
+        end
+      end
+      content
     end
 
     def load_rails_config_file(filename)

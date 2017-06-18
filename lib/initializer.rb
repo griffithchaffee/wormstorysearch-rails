@@ -4,6 +4,10 @@ Dir["#{Rails.root}/lib/ruby/*.rb"].each { |file| require file }
 Dir["#{Rails.root}/lib/services/*.rb"].each { |file| require file }
 # load rails extensions
 Dir["#{Rails.root}/lib/rails/extensions/*.rb"].each { |file| require file }
+
+Rails.application.define_singleton_method(:version) { File::Configuration.load_rails_config_file("version.yml") }
+Rails.application.define_singleton_method(:domain) { File::Configuration.load_rails_config_file("domain.yml") }
+
 # rails initializers
 Class.new(Rails::Railtie) do
   { before_initialize: "configurations", after_initialize: "initializers" }.each do |callback, directory|
