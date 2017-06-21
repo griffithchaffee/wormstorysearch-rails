@@ -1,6 +1,5 @@
 class Story < ApplicationRecord
   # modules/constants
-  include UniversalModelConcern
 
   # associations/scopes/validations/callbacks/macros
   has_many :chapters, class_name: "StoryChapter"

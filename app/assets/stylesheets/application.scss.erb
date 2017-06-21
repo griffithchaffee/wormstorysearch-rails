@@ -1,0 +1,23 @@
+<% Rails.application.settings.bootstrap_version = "3.3.7" %>
+<% Rails.application.settings.font_awesome_version = "4.7.0" %>
+
+// vendor
+@import "bootstrap-v<%= Rails.application.settings.bootstrap_version %>/bootstrap";
+
+// application
+@import "typography";
+@import "iconography";
+
+body {
+/*
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #333333;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+*/
+}
+
+.page-title {
+  color: red;
+}

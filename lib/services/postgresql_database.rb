@@ -3,8 +3,12 @@ require_relative "postgresql_database/abstract_table"
 require_relative "postgresql_database/model_connect_concern"
 
 class PostgresqlDatabase
+
+  # store active connections
   cattr_accessor :connections
-  self.connections = []
+  self.connections = {}
+
+  # macros
   attr_accessor :database_configuration
   delegate *%w[ database abstract_table namespace ], to: :database_configuration
   delegate *%w[ connection ], to: :abstract_table
@@ -102,8 +106,8 @@ class PostgresqlDatabase
   end
 
   def connect(method = :by_host)
-    abstract_table.connect(database_configuration.send(method))
-    connections << abstract_table
+    new_connection = abstract_table.establish_connection(database_configuration.send(method))
+    connections[abstract_table] = new_connection
     if block_given?
       result = yield
       disconnect
@@ -113,20 +117,21 @@ class PostgresqlDatabase
 
   def connect!(*params)
     result = connect(*params)
-    raise ActiveRecord::ConnectionNotEstablished if !connection.active?
+    raise ConnectionNotEstablished if !connection.active?
     result
   end
 
   def disconnect
-    connection.disconnect! if connected?
+    active_connection = connections[abstract_table]
+    if active_connection
+      abstract_table.remove_connection(active_connection)
+    end
   ensure
     connections.delete(abstract_table)
   end
 
   def connected?
-    connection.active?
-  rescue ActiveRecord::NoDatabaseError
-    false
+    connections.key?(abstract_table)
   end
 
   def build_migrations(methods)
@@ -142,4 +147,6 @@ class PostgresqlDatabase
       connections.each(&:disconnect)
     end
   end
+
+  class ConnectionNotEstablished < StandardError; end
 end

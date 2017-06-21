@@ -1,3 +1,8 @@
+PATH
+  remote: /root/griffithchaffee/action_presenter-base
+  specs:
+    action_presenter-base (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -173,6 +178,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action_presenter-base!
   byebug
   coffee-rails (~> 4.2)
   colored

@@ -1,0 +1,2 @@
+class StoriesPresenter < ApplicationPresenter
+end

@@ -10,26 +10,18 @@ Rails.application.configure do
   config.time_zone = "Eastern Time (US & Canada)" # rake -D time
 
   # used bust cached assets
-  config.assets.version = Rails.application.version
+  config.assets.version = Rails.application.settings.version
+  config.assets.cache = ActiveSupport::Cache.lookup_store(:null_store)
+  # always concat assets
+  config.assets.debug = false
 
-  # include css/js manifest files
+  # precompile css/js assets
   config.assets.precompile = %w[
-    universal.css
-    iepatch.css
-
-    vendor.js
-    finalforms.js
-    iepatch.js
+    application.scss
+    application.coffee
   ]
 
-  # ignore css/js assets since manifest files include handle them
-  config.assets.precompile << Proc.new { |path, fullpath| path !~ /(js|css|less|coffee)\z/ }
-  config.assets.cache = ActiveSupport::Cache.lookup_store(:null_store)
-
-  # Your secret key is used for verifying the integrity of signed cookies.
-  # If you change this key, all old signed cookies will become invalid!
-  # Make sure the secret is at least 30 characters and all random.
-  # You can use `rake secret` to generate a secure secret key.
-  # Make sure your secret_key_base is kept private
-  config.secret_key_base = "025586dba719b2b942cae579240b4774926eaccce030a52f4d8eb94b47b861457545da55582bf3e16097b93ac1de2a73463b5b17e3fe4975d36e0063b47276fd"
+  # precompile non css/js assets
+  precompile_proc = -> (path, fullpath) { path !~ /\.(js|coffee|css|scss|less)\z/ }
+  config.assets.precompile << precompile_proc
 end

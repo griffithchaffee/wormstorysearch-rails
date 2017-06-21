@@ -1,6 +1,5 @@
 class StoryChapter < ApplicationRecord
   # modules/constants
-  include UniversalModelConcern
 
   # associations/scopes/validations/callbacks/macros
   belongs_to :story

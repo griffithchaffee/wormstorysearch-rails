@@ -5,8 +5,17 @@ Dir["#{Rails.root}/lib/services/*.rb"].each { |file| require file }
 # load rails extensions
 Dir["#{Rails.root}/lib/rails/extensions/*.rb"].each { |file| require file }
 
-Rails.application.define_singleton_method(:version) { File::Configuration.load_rails_config_file("version.yml") }
-Rails.application.define_singleton_method(:domain) { File::Configuration.load_rails_config_file("domain.yml") }
+# settings
+Rails.application.define_singleton_method(:settings) do
+  @settings ||= ActiveSupport::OrderedOptions.new.tap do |settings|
+    File::Configuration.load_rails_config_file("settings.yml").each do |key, value|
+      settings[key] = value
+      settings.namespace ||= Rails.application.class.name.remove("::Application").underscore
+      settings.version = File::Configuration.load_rails_config_file("version.yml")
+      settings.title = settings.namespace.titleize
+    end
+  end
+end
 
 # rails initializers
 Class.new(Rails::Railtie) do
@@ -16,13 +25,15 @@ Class.new(Rails::Railtie) do
 end
 
 # application abstract table
-class ApplicationRecord < PostgresqlDatabase::AbstractTable
+class ApplicationDatabase < PostgresqlDatabase::AbstractTable
   self.abstract_class = true
   setup_single_database_configuration!("postgresql_database.yml.erb")
 end
 
 begin
-  ApplicationRecord.connect
+  ApplicationDatabase.connect
+  # reset connections after initial application load to prevent checkout_timeout
+  Class.new(Rails::Railtie) { config.after_initialize { ApplicationDatabase.clear_active_connections! } }
 rescue ActiveRecord::NoDatabaseError => e
   puts "#{e.class}: #{e.message}"
 end
@@ -33,7 +44,7 @@ ActiveRecord::ConnectionAdapters::ConnectionSpecification::Resolver.send(:define
     case hash_or_env
     when PostgresqlDatabase::Configuration then hash_or_env
     when Hash then PostgresqlDatabase::Configuration.new(hash_or_env)
-    when Rails.env, Rails.env.to_sym then ApplicationRecord.database_configuration
+    when Rails.env, Rails.env.to_sym then ApplicationDatabase.database_configuration
     else raise ArgumentError, "unable to resolve database configuration: #{hash_or_env.inspect}"
     end
   # save host ip incase of DNS failure

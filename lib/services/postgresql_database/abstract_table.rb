@@ -11,15 +11,9 @@ class PostgresqlDatabase
           database_configuration[:abstract_table] = self
           database_configuration
         end
-        # connect
-        define_singleton_method(:connect) do |local_database_configuration = database_configuration|
-          establish_connection(local_database_configuration)
-          PostgresqlDatabase.connections << self
-        end
-        # disconnect
-        define_singleton_method(:disconnect) do
-          connection.disconnect!
-          PostgresqlDatabase.connections.delete(self)
+        # manage
+        %w[ connect connect! disconnect ].each do |database_method|
+          define_singleton_method(database_method) { |*params| database_configuration.manage.send(database_method, *params) }
         end
         # add default postgresql tables
         setup_postgresql_tables!

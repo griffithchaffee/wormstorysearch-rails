@@ -4,6 +4,10 @@ require "colored"
 
 root = File.expand_path("../..",  __FILE__)
 paths = %w[ app lib config vendor db/schemas bin ].map { |directory| "#{root}/#{directory}" }
+pid_file = "#{root}/tmp/pids/puma.pid"
+restart_command = "pkill -INT -F #{pid_file}"
+
+puts "server restart command: #{restart_command.green}"
 
 # set listen logger
 Listen.logger = Logger.new(STDOUT)
@@ -15,7 +19,23 @@ listener = Listen.to(*paths) do |modified, added, removed|
   puts "Modified: #{modified.map(&:yellow).join(", ")}" if !modified.empty?
   puts "Added: #{added.map(&:yellow).join(", ")}"       if !added.empty?
   puts "Removed: #{removed.map(&:yellow).join(", ")}"   if !removed.empty?
-  `pkill -INT -f 'rails server'`
+  begin
+    # server running
+    if File.file?(pid_file)
+      `#{restart_command}`
+    # server not running or restarting
+    else
+      puts "server not running - checking if it is restarting".yellow
+      sleep 2
+      if File.file?(pid_file)
+        `#{restart_command}`
+      else
+        puts "server still not running".red
+      end
+    end
+  rescue StandardError => error
+    puts "#{error.class}: #{error.message}"
+  end
 end
 listener.start
 sleep

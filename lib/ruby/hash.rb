@@ -82,6 +82,14 @@ class Hash
 end
 
 class ActionController::Parameters
+  def to_h
+    with_indifferent_access
+  end
+
+  def with_indifferent_access
+    to_unsafe_h
+  end
+
   def reverse_merge(hash)
     hash.with_strong_access.permit!.merge self
   end

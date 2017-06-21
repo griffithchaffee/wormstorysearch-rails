@@ -1,14 +1,85 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Wormfictionsearch</title>
+<%= cp.html_tag(:html, lang: "en") do %>
+  <%= cp.html_tag(:head) do %>
+    <%= cp.html_tag(:title, content: Rails.application.settings.title) %>
+    <!-- meta -->
     <%= csrf_meta_tags %>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="<%= Rails.application.settings.version %>">
+    <!-- opengraph -->
+    <meta property="og:title" content="<%= Rails.application.settings.title %>"/>
+    <meta property="og:url" content="http://<%= Rails.application.settings.domain %>"/>
+    <meta property="og:site_name" content="<%= Rails.application.settings.title %>"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="http://<%= Rails.application.settings.domain %>/favicon.png"/>
+    <meta property="og:description" content="Worm fanfiction story search."/>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+    <!-- touch icons by realfavicongenerator.net -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
 
-  <body>
-    <%= yield %>
-  </body>
-</html>
+    <!-- stylesheet -->
+    <%= stylesheet_link_tag("application", media: "all") %>
+    <!-- javascript -->
+    <%= javascript_include_tag("application") %>
+  <% end %>
+
+  <%= cp.html_tag(:body, class: "#{controller_name} #{controller_name}-#{action_name}") do %>
+    <%= cp.div_tag(class: "wrapper") do %>
+      <%= cp.html_tag(:header) do %>
+        <!-- navigation -->
+        <%= cp.html_tag(:nav, class: "navbar-inverse navbar-static-top", style: "padding-left: 0px; padding-right: 0px") do %>
+          <%= cp.container_div do %>
+            <!-- brand logo -->
+            <%= cp.link_to(root_url, class: "navbar-brand") do %>
+              Worm Fiction Search
+            <% end %>
+            <!-- development request -->
+            <% if Rails.env.development? %>
+              <% Rails.application.settings.request_count ||= 0 %>
+              <% request_count = Rails.application.settings.request_count += 1 %>
+              <%= cp.p_tag(class: "navbar-text", style: "margin-left: 5px; margin-right: 5px;") do %>
+                <%= cp.label_span(request_count == 1 ? "success" : "info", content: "Request: #{request_count}") %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- main content -->
+      <%= cp.container_div do %>
+        <!-- flash -->
+        <%= cp.row_div(id: "flash") do %>
+          <%= cp.col_sm_div(12) do %>
+            <%= render partial: "layouts/flash" %>
+          <% end %>
+        <% end %>
+
+        <!-- content -->
+        <%= cp.row_div(id: "content") do %>
+          <%= cp.col_sm_div(12) do %>
+            <%= yield %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- footer -->
+      <%= cp.container_div do %>
+        <%= cp.html_tag(:footer) do %>
+          <%= cp.row_div(id: "footer") do %>
+            <%= cp.col_sm_div(12) do %>
+              <%= cp.hr_tag %>
+              Thank you, authors for your great stories!
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
