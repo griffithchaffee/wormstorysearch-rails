@@ -24,3 +24,6 @@
 
 # custom
 /.gem
+/script.rb
+*.swp
+*.swo

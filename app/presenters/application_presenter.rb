@@ -26,7 +26,7 @@ class ApplicationPresenter < ActionPresenter::Base
     sub_title_content = extract(:sub_title, *hashes)
     sub_text_content = extract(:sub_text, *hashes)
     insert_divider = extract(:divider, *hashes)
-    page_title = h1_tag(*hashes, add_class: "page-title", data: { blah: "blah" }) do
+    page_title = h1_tag(*hashes, add_class: "page-title") do
       content = "".html_safe + title_content
       content += small_tag(content: sub_title_content) if sub_title_content.present?
       content
