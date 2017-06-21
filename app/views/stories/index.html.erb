@@ -1,3 +1,6 @@
 <%= cp.page_title(content: "#{@stories.count} Stories") %>
 
 <%= cp.icon("filter") %>
+
+<% story = @stories.first %>
+<%= cp.link_to(story_path(story), content: story.title) %>

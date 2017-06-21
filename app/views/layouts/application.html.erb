@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%= cp.html_tag(:html, lang: "en") do %>
   <%= cp.html_tag(:head) do %>
+    <!-- title -->
     <%= cp.html_tag(:title, content: Rails.application.settings.title) %>
     <!-- meta -->
     <%= csrf_meta_tags %>
@@ -15,7 +16,6 @@
     <meta property="og:type" content="website"/>
     <meta property="og:image" content="http://<%= Rails.application.settings.domain %>/favicon.png"/>
     <meta property="og:description" content="Worm fanfiction story search."/>
-
     <!-- touch icons by realfavicongenerator.net -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -23,7 +23,6 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
-
     <!-- stylesheet -->
     <%= stylesheet_link_tag("application", media: "all") %>
     <!-- javascript -->

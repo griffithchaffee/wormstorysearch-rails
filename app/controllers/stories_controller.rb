@@ -1,5 +1,9 @@
 class StoriesController < ApplicationController
 
+  def show
+    @story = Story.find(params[:id])
+  end
+
   def index
     @stories = Story.search(permitted_index_search_params)
   end
