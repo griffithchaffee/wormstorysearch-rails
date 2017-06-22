@@ -1,4 +1,5 @@
 class Numeric
+
   def min(min)
     self < min ? min : self
   end
@@ -27,6 +28,14 @@ class Numeric
       "GB" => 1024 * 1024 * 1024 * 1024,
       "TB" => 1024 * 1024 * 1024 * 1024 * 1024
     }.each_pair { |e, s| return "#{(self.to_f / (s / 1024)).round(2)}#{e}" if self < s }
+  end
+
+  def to_human_size
+    return self if self < 1_000
+    { "K" => 1_000, "M" => 1_000_000 }.each do |abbr, size|
+      return "#{(to_f / size).round(2)}#{abbr}" if self < size * 1_000
+    end
+    "#{(to_f / 1_000_000_000).round(2)}B"
   end
 
   def to_timer_result

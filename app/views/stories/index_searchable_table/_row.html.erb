@@ -1,7 +1,7 @@
 <% story = record %>
 <%= cp.tr_tag(id: cp.record_to_namespace(story)) do %>
   <%= cp.td_tag(class: "word_count") do %>
-    <%= story.word_count %>
+    <%= story.word_count.to_human_size %>
   <% end %>
 
   <%= cp.td_tag(class: "story_updated_at") do %>

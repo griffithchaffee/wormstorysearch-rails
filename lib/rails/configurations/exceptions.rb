@@ -63,7 +63,7 @@ Rails.application.configure do
         else
           Rails.logger.error { "#{subject}\n#{body}" }
           begin
-            DynamicMailer.email(subject: subject, body: body, to: :developers).deliver_now
+            DynamicMailer.email(subject: subject, body: body).deliver_now
           rescue StandardError => mailer_error
             Rails.logger.fatal { "MAILER: #{mailer_error.class}: #{mailer_error.message}\n#{mailer_error.backtrace.join("\n")}" }
           end
@@ -95,7 +95,7 @@ Rails.application.configure do
       else
         Rails.logger.fatal { "#{subject}\n#{body}" }
         begin
-          DynamicMailer.email(subject: subject, body: body, to: :developers).deliver_now
+          DynamicMailer.email(subject: subject, body: body).deliver_now
         rescue StandardError => mailer_error
           Rails.logger.fatal { "MAILER: #{mailer_error.class}: #{mailer_error.message}\n#{mailer_error.backtrace.join("\n")}" }
         end

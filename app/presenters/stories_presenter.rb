@@ -19,11 +19,11 @@ class StoriesPresenter < ApplicationPresenter
 
   # sorters
   def word_count_sorter
-    sorter_link("stories.word_count", content: "Words")
+    sorter_link("stories.word_count", content: "Words", default_direction: "desc")
   end
 
   def story_updated_at_sorter
-    sorter_link("stories.story_updated_at", content: "Updated")
+    sorter_link("stories.story_updated_at", content: "Updated", default_direction: "desc")
   end
 
   def title_sorter

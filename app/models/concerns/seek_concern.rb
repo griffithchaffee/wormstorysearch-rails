@@ -338,7 +338,7 @@ module SeekConcern
             #{error.backtrace.join("\n")}
           ".to_multiline_s
           if Rails.env.production?
-            StaticMailer.email(to: :developers, subject: subject, body: body).deliver_now
+            DynamicMailer.email(subject: subject, body: body).deliver_now
           else
             raise error
           end
@@ -412,7 +412,7 @@ module SeekConcern
               Backtrace:
               #{error.backtrace.join("\n")}
             ".to_multiline_s
-            StaticMailer.email(to: :developers, subject: subject, body: body).deliver_now
+            DynamicMailer.email(subject: subject, body: body).deliver_now
             raise error if !Rails.env.production?
           end
         end

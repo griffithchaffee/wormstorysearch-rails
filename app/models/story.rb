@@ -1,7 +1,7 @@
 class Story < ApplicationRecord
   # modules/constants
 
-  LOCATIONS = %w[ spacebattles ]
+  LOCATIONS = %w[ spacebattles sufficientvelocity ]
 
   # associations/scopes/validations/callbacks/macros
   has_many :chapters, class_name: "StoryChapter"
@@ -21,8 +21,9 @@ class Story < ApplicationRecord
   end
 
   def location_host
-    case location.verify_in!(%w[ spacebattles ])
-    when "spacebattles" then "https://forums.spacebattles.com"
+    case location.verify_in!(LOCATIONS)
+    when "spacebattles"       then "https://forums.#{location}.com"
+    when "sufficientvelocity" then "https://forums.#{location}.com"
     end
   end
 
@@ -31,7 +32,7 @@ class Story < ApplicationRecord
   end
 
   def threadmarks_url
-    "#{location_url}/threadmarks"
+    chapters.size == 0 ? location_url : "#{location_url}/threadmarks"
   end
 
 end

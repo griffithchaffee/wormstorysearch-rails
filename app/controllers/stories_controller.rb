@@ -5,8 +5,9 @@ class StoriesController < ApplicationController
   end
 
   def index
-    @stories = Story
+    @stories = Story.preload(:chapters)
       .search(permitted_action_search_params(save: true))
+      .order_story_updated_at(:desc)
       .paginate(permitted_action_pagination_params(save: true))
   end
 
