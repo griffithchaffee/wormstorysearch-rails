@@ -2,11 +2,12 @@ module SeekConcern
   extend ActiveSupport::Concern
 
   class_methods do
-    def generate_column_scopes(columns = column_names)
-      columns = Array(columns).map(&:to_s)
-      columns.each { |column| generate_where_scope column }
-      columns.each { |column| generate_select_scope column }
-      columns.each { |column| generate_order_scope column }
+    def generate_column_scopes(local_column_names = column_names)
+      local_column_names = Array(local_column_names).map(&:to_s)
+      local_column_names.each { |column_name| generate_where_scope_for_column(column_name) }
+      local_column_names.each { |column_name| generate_select_scope_for_column(column_name) }
+      local_column_names.each { |column_name| generate_order_scope_for_column(column_name) }
+      local_column_names.each { |column_name| generate_seek_scopes_for_column(column_name) }
       generate_universal_scopes
     end
 
@@ -19,7 +20,24 @@ module SeekConcern
       end
     end
 
-    def generate_where_scope(column)
+    def generate_seek_scopes_for_column(column_name)
+      # auto protect
+      column = columns.find { |column| column.name == column_name.to_s }
+      if column.type.in?(%i[ date datetime ])
+        %w[ gteq lteq eq not_eq ].each do |operator|
+          scope "seek_#{column.name}_#{operator}", -> (value) do
+            begin
+              value = column.type == :date ? Date.parse(value.to_param) : DateTime.parse(value.to_param)
+              send("where_#{column.name}", operator => value)
+            rescue StandardError
+              all
+            end
+          end
+        end
+      end
+    end
+
+    def generate_where_scope_for_column(column)
       column = columns.find { |c| c if c.name == column.to_s }
       scope "where_#{column.name}", -> (params = {}) do
         break if params.blank?
@@ -78,11 +96,11 @@ module SeekConcern
       end
     end
 
-    def generate_select_scope(column)
+    def generate_select_scope_for_column(column)
       scope "select_#{column}", -> { select(column) }
     end
 
-    def generate_order_scope(column)
+    def generate_order_scope_for_column(column)
       # add order
       scope "order_#{column}", -> (direction = "asc", null_order = nil) do
         direction = direction.to_s =~ /desc/i ? :desc : :asc
@@ -485,7 +503,7 @@ module SeekConcern
       max = params[:max].to_i > 0 ? params[:max].to_i : 30
       min = params[:min].to_i > 0 && params[:min].to_i < max ? params[:min].to_i : 1
       @raw_count = @query.count(:id)
-      @limit = params[:limit].to_i.between?(min,max) ? params[:limit].to_i : 15
+      @limit = params[:limit].to_i.between?(min,max) ? params[:limit].to_i : 20
       @limit = 1 if @limit < 1
       @pages = (@raw_count.to_f / @limit).ceil.to_i
       @pages = 1 if @pages < 1

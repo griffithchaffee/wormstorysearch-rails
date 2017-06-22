@@ -12,7 +12,7 @@ Rails.application.configure do
   # used bust cached assets
   config.assets.version = Rails.application.settings.version
   config.assets.cache = ActiveSupport::Cache.lookup_store(:null_store)
-  # always concat assets
+  # debug does not concat assets
   config.assets.debug = false
 
   # precompile css/js assets
@@ -24,4 +24,7 @@ Rails.application.configure do
   # precompile non css/js assets
   precompile_proc = -> (path, fullpath) { path !~ /\.(js|coffee|css|scss|less)\z/ }
   config.assets.precompile << precompile_proc
+
+  # session
+  config.session_store :identity_session_store, key: "_identity_session_id"
 end

@@ -8,7 +8,7 @@ module Rails.application.class::Middleware
 
     def call(env)
       if Rails.logger && env["REQUEST_PATH"] =~ @silence_request_paths
-        Rails.logger.debug { "Started GET #{env["REQUEST_PATH"].inspect}" }
+        Rails.logger.info { "Started GET #{env["REQUEST_PATH"].inspect}" }
         response = nil
         Rails.logger.silence(Logger::WARN) { response = @app.call(env) }
         response

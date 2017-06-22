@@ -1,0 +1,14 @@
+<% story = record %>
+<%= cp.tr_tag(id: cp.record_to_namespace(story)) do %>
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= story.word_count %>
+  <% end %>
+
+  <%= cp.td_tag(class: "story_updated_at") do %>
+    <%= story.story_updated_at.friendly_b_d_l_M_p.capitalize %>
+  <% end %>
+
+  <%= cp.td_tag(class: "title") do %>
+    <%= cp.tab_to(story.threadmarks_url, content: story.title) %>
+  <% end %>
+<% end %>

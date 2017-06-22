@@ -90,16 +90,10 @@ class ActionController::Parameters
     to_unsafe_h
   end
 
-  def reverse_merge(hash)
-    hash.with_strong_access.permit!.merge self
-  end
+  delegate(:dig_html, :merge, :reverse_merge, to: :to_h)
 
   def optional(key)
     value = self[key]
-    if value.present? || value == false
-      value
-    else
-      self.class.new
-    end
+    value.present? || value == false ? value : self.class.new
   end
 end

@@ -33,10 +33,10 @@
     <%= cp.div_tag(class: "wrapper") do %>
       <%= cp.html_tag(:header) do %>
         <!-- navigation -->
-        <%= cp.html_tag(:nav, class: "navbar-inverse navbar-static-top", style: "padding-left: 0px; padding-right: 0px") do %>
+        <%= cp.html_tag(:nav, class: "navbar-inverse navbar-static-top", style: "padding-left: 0px; padding-right: 0px;") do %>
           <%= cp.container_div do %>
             <!-- brand logo -->
-            <%= cp.link_to(root_url, class: "navbar-brand") do %>
+            <%= cp.link_to(root_url, class: "navbar-brand", style: "padding-left: 0px;") do %>
               Worm Fiction Search
             <% end %>
             <!-- development request -->

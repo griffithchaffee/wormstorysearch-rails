@@ -1,6 +1,7 @@
-<%= cp.page_title(content: "#{@stories.count} Stories") %>
+<%= cp.page_title(
+  content: "Stories",
+  sub_title: " (#{@stories.raw_count} Stories)",
+  sub_text: "Use filters and sorters to find updates to your favorite stories.",
+) %>
 
-<%= cp.icon("filter") %>
-
-<% story = @stories.first %>
-<%= cp.link_to(story_path(story), content: story.title) %>
+<%= render_partial("searchable_table", collection: @stories) %>

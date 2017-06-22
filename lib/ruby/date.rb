@@ -17,11 +17,8 @@
   klass.send(:define_method, "friendly_m_d_Y") { today? ? "today" : m_d_Y }
   klass.send(:define_method, "friendly_b_d")   { today? ? "today" : b_d }
   klass.send(:define_method, "friendly_b_d_Y") { today? ? "today" : b_d_Y }
-  klass.send(:define_method, "friendly_b_d_Y_l_M_p") do
-    date = today? ? "today" : b_d_Y
-    time = l_M_p
-    "#{date} at #{time}"
-  end
+  klass.send(:define_method, "friendly_b_d_l_M_p") { "#{today? ? "today" : b_d} at #{l_M_p}" }
+  klass.send(:define_method, "friendly_b_d_Y_l_M_p") { "#{today? ? "today" : b_d_Y} at #{l_M_p}" }
 end
 
 class Date

@@ -5,13 +5,18 @@ class StoriesController < ApplicationController
   end
 
   def index
-    @stories = Story.search(permitted_index_search_params)
+    @stories = Story
+      .search(permitted_action_search_params(save: true))
+      .paginate(permitted_action_pagination_params(save: true))
   end
 
 private
 
-  def permitted_index_search_params
-    params.permit(*%w[ title_matches ]).to_h
+  def permit_index_search_params
+    %w[
+      title_matches story_updated_at_gteq
+      sort direction
+    ]
   end
 
 end

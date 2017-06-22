@@ -7,17 +7,11 @@
 // application
 @import "typography";
 @import "iconography";
+@import "searchable";
 
-body {
-/*
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  color: #333333;
-  font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-*/
-}
-
-.page-title {
-  color: red;
-}
+// controllers
+<% %w[ stories ].each do |controller_name| %>
+  body.<%= controller_name %> {
+    @import "controllers/<%= controller_name %>";
+  }
+<% end %>

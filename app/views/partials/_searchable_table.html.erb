@@ -1,0 +1,110 @@
+<% id_namespace    ||= cp.namespace_dasherized(controller_name) %>
+<% class_namespace ||= cp.namespace_dasherized([controller_name, action_name]) %>
+<% form_id         ||= cp.namespace_dasherized([id_namespace, "searchable-form"]) %>
+<% table_id          = cp.namespace_dasherized([id_namespace, "searchable-table"]) %>
+<% table_classes     = "#{locals[:table_class]} #{cp.namespace_dasherized([class_namespace, "searchable-table"])}".strip %>
+<% directory         = "#{locals[:directory] || action_name}_searchable_table" %>
+<% container_id      = cp.namespace_dasherized([table_id, "container"]) %>
+<% form_path       ||= cp.current_path(locals[:query_params].to_h) %>
+<% empty_search      = collection.size == 0 %>
+<% empty_message   ||= "No results..." %>
+
+<%= form_tag(form_path, class: "searchable #{locals[:form_class]}", id: form_id, method: :get) do %>
+  <%= cp.div_tag(add_class: "table-responsive", id: container_id) do %>
+    <%= cp.table_tag(id: table_id, class: "table table-bordered table-hover searchable #{table_classes}".strip) do %>
+      <% {
+        headers: locals[:headers] == true,
+        filters: locals[:filters] != false,
+        sorters: locals[:sorters] != false,
+      }.each do |partial, default_enabled| %>
+        <% enabled = default_enabled ? locals[partial] != false : locals[partial] == true %>
+        <% if enabled %>
+          <%= cp.tbody_tag(class: partial.to_s) do %>
+            <%= render_partial("#{directory}/#{partial}", locals) %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if locals[:tbodies] == true %>
+        <%= render_partial("#{directory}/tbodies", locals) %>
+      <% else %>
+        <%= cp.tbody_tag(class: "rows") do %>
+          <% if locals[:rows] == true %>
+            <%= render_partial("#{directory}/rows", locals) %>
+          <% else %>
+            <% collection.each do |record| %>
+              <% cp.record = record %>
+              <%= render_partial("#{directory}/row", locals.merge(record: record)) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if empty_search && empty_message.present? %>
+        <%= cp.tr_tag do %>
+          <%= cp.td_tag(colspan: "1000") do %>
+            <%= cp.em_tag(class: "text-muted", content: empty_message) %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if locals[:footer] == true && !empty_search %>
+        <%= cp.tbody_tag(class: "footer") do %>
+          <%= render_partial("#{directory}/footer", locals) %>
+        <% end %>
+      <% end %>
+
+      <% if locals[:pagination] != false && !empty_search %>
+        <%= cp.tbody_tag(class: "footer") do %>
+          <%= cp.td_tag(colspan: "1000", style: "line-height: 0px") do %>
+
+            <% page = params[:page].presence || collection.page %>
+            <% limit = params[:limit].presence || collection.limit %>
+            <% border, spacing = 2, 3 %>
+
+            <%= cp.hidden_field_tag(:page, class: "filter", value: page, data: { search_default: 1 }) %>
+            <%= cp.hidden_field_tag(:limit, class: "filter", value: limit, data: { search_default: collection.limit }) %>
+
+            <%= cp.ul_tag(class: "pagination", style: "margin: 5px 0;") do %>
+              <%= cp.li_tag(class: ("disabled" if !collection.has_previous_page?)) do %>
+                <%= cp.link_to(cp.current_query_path(page: collection.previous_page), content: "Prev") %>
+              <% end %>
+
+              <% collection.each_page do |page| %>
+                <% page_link = capture do %>
+                  <%= cp.li_tag(class: ("active" if page == collection.page)) do %>
+                    <%= cp.link_to(cp.current_query_path(page: page), content: page) %>
+                  <% end %>
+                <% end %>
+                <% gap_link = capture do %>
+                  <%= cp.li_tag(class: "disabled") do %>
+                    <%= cp.void_link(content: "...") %>
+                  <% end %>
+                <% end %>
+
+                <% if collection.pages <= (1 + border + spacing) * 2 %>
+                  <%= page_link %>
+                <% elsif page <= border || page > collection.pages - border %>
+                  <%= page_link %>
+                <% elsif page.between?(collection.page - spacing, collection.page + spacing) %>
+                  <%= page_link %>
+                <% elsif page == collection.page - spacing - 1 || page == collection.page + spacing + 1 %>
+                  <%= gap_link %>
+                <% end %>
+              <% end %>
+
+              <%= cp.li_tag(class: ("disabled" if !collection.has_next_page?)) do %>
+                <%= cp.link_to(cp.current_query_path(page: collection.next_page), content: "Next") %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if locals[:sorters] != false %>
+    <%= hidden_field_tag(:sort, params[:sort]) %>
+    <%= hidden_field_tag(:direction, params[:direction]) %>
+  <% end %>
+<% end %>

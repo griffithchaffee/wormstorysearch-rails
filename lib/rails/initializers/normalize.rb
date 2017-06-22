@@ -1,7 +1,3 @@
-Rails.application.configure do
-  # Session store
-  config.session_store(:session, key: "testing_cookie", expire_after: 1.hour)
-end
 
 # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
 # config.i18n.load_path += Dir[Rails.root.join("my", "locales", "*.{rb,yml}").to_s]
