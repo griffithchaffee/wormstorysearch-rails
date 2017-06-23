@@ -10,6 +10,15 @@ class String
     end
   end
 
+  def verify_is!(value, options = {})
+    options = options.with_indifferent_access
+    if self == value.to_s
+      self
+    else
+      raise ArgumentError, "#{inspect} expected to be #{value} #{options[:message]}".strip
+    end
+  end
+
   def to_dollars
     remove(/[^\d.]/).to_f
   end

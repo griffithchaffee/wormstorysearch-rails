@@ -1,0 +1,12 @@
+<%= content_for(:title) do %>
+  <%= @story.title %>
+<% end %>
+
+<%= cp.form_for do |form_builder| %>
+  <%= render_partial("form_fields") %>
+<% end %>
+
+<%= content_for(:footer) do %>
+  <%= cp.modal_submit_btn %>
+  <%= cp.modal_close_btn %>
+<% end %>

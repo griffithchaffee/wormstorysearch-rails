@@ -33,8 +33,9 @@ class Scheduler
   end
 
   scheduled_task :update_stories do
-    StorySearcher::SpacebattlesSearcher.search!(6.hours)
-    StorySearcher::SufficientvelocitySearcher.search!(6.hours)
+    duration = task_options.fetch(:duration) { 6.hours }
+    StorySearcher::SpacebattlesSearcher.search!(duration, task_options)
+    StorySearcher::SufficientvelocitySearcher.search!(duration, task_options)
   end
 
 private

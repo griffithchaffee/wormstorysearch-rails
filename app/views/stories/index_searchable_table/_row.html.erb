@@ -1,7 +1,12 @@
 <% story = record %>
-<%= cp.tr_tag(id: cp.record_to_namespace(story)) do %>
-  <%= cp.td_tag(class: "word_count") do %>
-    <%= story.word_count.to_human_size %>
+<%= cp.tr_tag(id: cp.record_to_namespace(story), class: cp.status_class) do %>
+  <%= cp.td_tag(class: "details") do %>
+    <%= cp.recently_created_icon %>
+    <% link_options = { content: "", add_class: "text-default", merge_data: { toggle: "tooltip" } } %>
+    <%= cp.modal_show_link(link_options.dup, icon: "list", title: "View details") %>
+    <% if story.is_unlocked? %>
+      <%= cp.modal_edit_link(link_options.dup, title: "Edit details") %>
+    <% end %>
   <% end %>
 
   <%= cp.td_tag(class: "story_updated_at") do %>
@@ -10,5 +15,13 @@
 
   <%= cp.td_tag(class: "title") do %>
     <%= cp.tab_to(story.threadmarks_url, content: story.title) %>
+  <% end %>
+
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= story.word_count.to_human_size %>
+  <% end %>
+
+  <%= cp.td_tag(class: "author") do %>
+    <%= story.author %>
   <% end %>
 <% end %>

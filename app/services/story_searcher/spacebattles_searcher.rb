@@ -1,6 +1,6 @@
 module StorySearcher
   class SpacebattlesSearcher < UniversalSearcher
-    attr_reader :configuration, :crawler, :updated_after, :location
+    attr_reader :configuration, :crawler, :updated_after, :location, :search_options
 
     def initialize
       @location = "spacebattles"
@@ -9,7 +9,8 @@ module StorySearcher
       crawler.logger = Rails.logger
     end
 
-    def search!(time)
+    def search!(time, search_options = {})
+      @search_options = search_options.with_indifferent_access
       time = time.ago if time.is_a?(ActiveSupport::Duration)
       Rails.logger.silence(Logger::INFO) do
         #login!
@@ -68,11 +69,15 @@ module StorySearcher
         location_path: "/#{title_html[:href].remove(/\/(unread)?\z/)}",
         title: title_html.text,
         author: author_html.text,
-        word_count: convert_word_count_to_i(word_count_html.text.remove("Word Count: ")),
-        story_created_on: created_at,
-        story_updated_at: created_at,
+        word_count: word_count_html.text.remove("Word Count: "),
         story_active_at: active_at,
       )
+      if story.unsaved? || search_options[:reset]
+        story.assign_attributes(
+          story_created_on: created_at,
+          story_updated_at: created_at,
+        )
+      end
       story.save! if story.has_changes_to_save?
       story
     end
@@ -82,25 +87,27 @@ module StorySearcher
       crawler.get("#{story.location_path}/threadmarks", {}, { log_level: Logger::WARN })
       # parse threadmarks
       position = 0
+      new_chapters = []
       crawler.html.find_all("li.primaryContent").each do |html_li|
         position += 1
         # parts
-        created_html = html_li.css(".DateTime").first
+        updated_html = html_li.css(".DateTime").first
         preview_html = html_li.css("a.PreviewTooltip").first
         # build chapter
         location_path = preview_html[:href]
+        updated_at = abbr_html_to_time(updated_html)
         chapter = story.chapters.get(position: position) || story.chapters.build(position: position)
-        keep_created_at = chapter.saved? && chapter.location_path == preview_html[:href]
         chapter.assign_attributes(
-          location_path: preview_html[:href],
+          location_path: location_path,
           title: preview_html.text,
-          word_count: convert_word_count_to_i(html_li.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")")),
-          chapter_updated_at: created_html["data-time"] ? Time.at(created_html["data-time"].to_i) : Time.parse(created_html["title"]),
+          word_count: html_li.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")"),
+          chapter_created_at: updated_at,
+          chapter_updated_at: updated_at,
         )
-        chapter.chapter_created_at = chapter.chapter_updated_at if !keep_created_at
         chapter.save! if chapter.has_changes_to_save?
-        chapter
+        new_chapters << chapter
       end
+      story.chapters = new_chapters
     end
 
     def abbr_html_to_time(abbr_html)

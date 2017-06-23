@@ -26,12 +26,15 @@ def change
 
 
   create_table "stories", force: :cascade do |t|
+    t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "word_count", null: false
+    t.integer "word_count", default: 0, null: false
     t.string "author", null: false
+    t.string "crossover"
+    t.string "description"
     t.string "location", null: false
     t.string "location_id", null: false
     t.string "location_path", null: false
@@ -47,7 +50,8 @@ def change
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_story_chapters_on_story_id"
     t.integer "position", null: false
-    t.integer "word_count", null: false
+    t.integer "word_count", default: 0, null: false
+    t.string "category", default: "chapter", null: false
     t.string "location_path", null: false
     t.string "title", null: false
   end

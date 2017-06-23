@@ -1,3 +1,47 @@
-<%= cp.page_title(content: @story.title) %>
+<%= content_for(:title) do %>
+  <%= @story.title %>
+<% end %>
 
-<%= cp.link_to(stories_path, content: "Stories") %>
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Source:") %>
+  <%= @story.location_label %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Author:") %>
+  <%= @story.author %>
+<% end %>
+
+<% if @story.crossover? %>
+  <%= cp.div_tag do %>
+    <%= cp.b_tag(content: "Crossover:") %>
+    <%= @story.crossover %>
+  <% end %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Words:") %>
+  <%= @story.word_count.to_human_size %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Created:") %>
+  <%= @story.story_created_on.b_d_Y %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Updated:") %>
+  <%= @story.story_updated_at.b_d_Y_l_M_p.capitalize %>
+<% end %>
+
+<%= cp.pre_tag(add_class: "break pretty", style: "margin-top: 10px") do %>
+  <% if @story.description? %>
+    <%= @story.description %>
+  <% else %>
+    No description... you can add one by editing this story.
+  <% end %>
+<% end %>
+
+<%= content_for(:footer) do %>
+  <%= cp.modal_close_btn %>
+<% end %>

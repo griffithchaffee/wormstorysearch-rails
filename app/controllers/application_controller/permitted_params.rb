@@ -1,8 +1,57 @@
 class ApplicationController < ActionController::Base
 
+  helper_method :permitted_action_model_params
   helper_method :permitted_action_data_params
   helper_method :permitted_action_search_params
   helper_method :permitted_action_pagination_params
+
+  class << self
+    def generate_permitted_record_params(namespace = controller_name.singularize)
+      define_method("permitted_action_#{namespace}_params") do |override_record_params = {}|
+        # optional complete override: permitted_<action>_record_params
+        override_method = "permitted_#{action_name}_#{namespace}_params"
+        if respond_to?(override_method, true)
+          record_params = send(override_method)
+        else
+          permit_controller_record_method = "permit_#{namespace}_params"
+          permit_action_record_method     = "permit_#{action_name}_#{namespace}_params"
+          permit_params =
+            if respond_to?(permit_action_record_method, true)
+              send(permit_action_record_method)
+            elsif respond_to?(permit_controller_record_method, true)
+              send(permit_controller_record_method)
+            else
+              raise ArgumentError, "#{permit_action_record_method} or #{permit_controller_record_method} must be defined"
+            end
+          # permit current record
+          record_params = params.optional(namespace).permit(*permit_params)
+        end
+        record_params.merge(override_record_params)
+      end
+    end
+  end
+
+  def permitted_action_record_params(override_record_params = {})
+    # optional complete override: permitted_<action>_record_params
+    override_method = "permitted_#{action_name}_record_params"
+    if respond_to?(override_method, true)
+      record_params = send(override_method)
+    else
+      permit_controller_record_method = "permit_record_params"
+      permit_action_record_method     = "permit_#{action_name}_record_params"
+      permit_params =
+        if respond_to?(permit_action_record_method, true)
+          send(permit_action_record_method)
+        elsif respond_to?(permit_controller_record_method, true)
+          send(permit_controller_record_method)
+        else
+          raise ArgumentError, "#{permit_action_record_method} or #{permit_controller_record_method} must be defined"
+        end
+      # permit current record
+      record_params = params.permit(*permit_params)
+    end
+    record_params.merge(override_record_params)
+  end
 
   def permitted_action_data_params(options = {}, override_data_params = {})
     options = options.with_indifferent_access.assert_valid_keys(*%w[ namespace save pull ])
@@ -11,23 +60,24 @@ class ApplicationController < ActionController::Base
     # optional complete override: permitted_<action>_data_params
     override_method = "permitted_#{action_name}_data_params"
     if respond_to?(override_method, true)
-      data_params = send(override_method)
+      data_params = send(override_method).merge(override_data_params)
     else
       permit_controller_data_method = "permit_data_params"
       permit_action_data_method     = "permit_#{action_name}_data_params"
-      permit_data =
+      permit_params =
         if respond_to?(permit_action_data_method, true)
           send(permit_action_data_method)
-        else
+        elsif respond_to?(permit_controller_data_method, true)
           send(permit_controller_data_method)
+        else
+          raise ArgumentError, "#{permit_action_data_method} or #{permit_controller_data_method} must be defined"
         end
       # permit current data
-      data_params = params.permit(*permit_data)
-    end
-    data_params.merge!(override_data_params)
-    # merge previous data if no current data
-    if (options[:save] || options[:pull]) && data_params.blank?
-      data_params.merge!(session_action_data.data_params.with_strong_access.permit(*permit_data))
+      data_params = params.permit(*permit_params).merge(override_data_params)
+      # merge previous data if no current data
+      if (options[:save] || options[:pull]) && data_params.blank?
+        data_params.merge!(session_action_data.data_params.with_strong_access.permit(*permit_params))
+      end
     end
     # save new data if changed
     data_params = mutate_session_action_params(data_params)
@@ -46,23 +96,24 @@ class ApplicationController < ActionController::Base
     # optional complete override: permitted_<action>_data_params
     override_method = "permitted_#{action_name}_search_params"
     if respond_to?(override_method, true)
-      search_params = send(override_method)
+      search_params = send(override_method).merge(override_search_params)
     else
       permit_controller_search_method = "permit_search_params"
       permit_action_search_method     = "permit_#{action_name}_search_params"
-      permit_search =
+      permit_params =
         if respond_to?(permit_action_search_method, true)
           send(permit_action_search_method)
-        else
+        elsif respond_to?(permit_controller_search_method, true)
           send(permit_controller_search_method)
+        else
+          raise ArgumentError, "#{permit_action_search_method} or #{permit_controller_search_method} must be defined"
         end
       # permit current search
-      search_params = params.permit(*permit_search)
-    end
-    search_params.merge!(override_search_params)
-    # merge previous search if no current search
-    if (options[:save] || options[:pull]) && search_params.blank?
-      search_params.merge!(session_action_data.search_params.with_strong_access.permit(*permit_search))
+      search_params = params.permit(*permit_params).merge(override_search_params)
+      # merge previous search if no current search
+      if (options[:save] || options[:pull]) && search_params.blank?
+        search_params.merge!(session_action_data.search_params.with_strong_access.permit(*permit_params))
+      end
     end
     # save new search if changed
     search_params = mutate_session_action_params(search_params)
@@ -78,11 +129,11 @@ class ApplicationController < ActionController::Base
     options = options.with_indifferent_access.assert_valid_keys(*%w[ namespace save pull ])
     session_action_data = session_action_data(options[:namespace])
     # permit current pagination
-    permit_pagination = %w[ limit page ]
-    pagination_params = params.permit(*permit_pagination).merge(override_pagination_params).select { |k,v| v.present? }
+    permit_params = %w[ limit page ]
+    pagination_params = params.permit(*permit_params).merge(override_pagination_params).select { |k,v| v.present? }
     # merge previous pagination if no current pagination
     if (options[:save] || options[:pull]) && pagination_params.blank?
-      pagination_params.merge!(session_action_data.pagination_params.with_strong_access.permit(*permit_pagination))
+      pagination_params.merge!(session_action_data.pagination_params.with_strong_access.permit(*permit_params))
     end
     # save new pagination if changed
     pagination_params = mutate_session_action_params(pagination_params)

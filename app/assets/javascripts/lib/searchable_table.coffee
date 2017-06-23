@@ -1,4 +1,4 @@
-searchBind = ->
+searchableTableBind = ->
   # build namespaced accessors
   $form        = $("form.searchable")
   $check_boxes = $form.find(".filters input[type=checkbox], input[type=checkbox].filter").not(".filter-ignore")
@@ -41,4 +41,4 @@ searchBind = ->
   $check_boxes.not(".filter-reset-ignore").each (i, check_box) ->
     if $(check_box).prop("checked") isnt $(check_box).data("search").default then $resets.show()
 
-$ -> searchBind()
+$(document).on "page:change", searchableTableBind

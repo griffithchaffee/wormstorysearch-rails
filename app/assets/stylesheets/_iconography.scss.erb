@@ -40,8 +40,19 @@
 }
 
 // http://fontawesome.io/icons
-.icon-filter  { &:before { content: "\f0b0"; } font-family: "FontAwesome Icons"; top: 0 !important; }
-.icon-refresh { &:before { content: "\f021"; } font-family: "FontAwesome Icons"; top: 0 !important; }
-.icon-ban     { &:before { content: "\f05e"; } font-family: "FontAwesome Icons"; top: 0 !important; }
-.icon-chevron-up   { &:before { content: "\f077"; } font-family: "FontAwesome Icons"; top: 0 !important; }
-.icon-chevron-down { &:before { content: "\f078"; } font-family: "FontAwesome Icons"; top: 0 !important; }
+<% {
+  filter:   "f0b0",
+  refresh:  "f021",
+  ban:      "f05e",
+  eye:      "f06e",
+  list:     "f03a",
+  edit:     "f044",
+  calendar: "f073",
+  "chevron-up" => "f077", "chevron-down" => "f078",
+  "angle-up"   => "f106", "angle-down" => "f107",
+}.each do |name, unicode| %>
+  .icon-<%= name %> {
+    &:before { content: "\<%= unicode %>"; }
+    font-family: "FontAwesome Icons"; top: 0 !important;
+  }
+<% end %>

@@ -1,0 +1,10 @@
+.page-title { margin-top: 10px; }
+
+a span { display: inline; }
+
+.text-default { color: #333; }
+
+pre {
+  &.break { white-space: pre-wrap; }
+  &.pretty { font-family: inherit; }
+}

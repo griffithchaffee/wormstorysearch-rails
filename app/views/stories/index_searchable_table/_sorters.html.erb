@@ -1,5 +1,21 @@
 <%= cp.tr_tag(class: "sorters") do %>
-  <%= cp.td_tag(class: "word_count", content: cp.word_count_sorter) %>
-  <%= cp.td_tag(class: "story_updated_at", content: cp.story_updated_at_sorter) %>
-  <%= cp.td_tag(class: "title", content: cp.title_sorter) %>
+  <%= cp.td_tag(class: "details") do %>
+    <%= cp.story_created_on_sorter %>
+  <% end %>
+
+  <%= cp.td_tag(class: "story_updated_at") do %>
+    <%= cp.story_updated_at_sorter %>
+  <% end %>
+
+  <%= cp.td_tag(class: "title") do %>
+    <%= cp.title_sorter %>
+  <% end %>
+
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= cp.word_count_sorter %>
+  <% end %>
+
+  <%= cp.td_tag(class: "author") do %>
+    <%= cp.author_sorter %>
+  <% end %>
 <% end %>

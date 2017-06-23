@@ -1,22 +1,29 @@
 def up
+  change_table(:stories) do |t|
+    t.boolean  :is_locked, null: false, default: false
+  end
   create_table(:stories) do |t|
     t.string   :location,      null: false
     t.string   :location_id,   null: false
-    t.string   :location_path,  null: false
+    t.string   :location_path, null: false
     t.string   :title,         null: false
     t.string   :author,        null: false
-    t.integer  :word_count,    null: false
+    t.string   :crossover
+    t.string   :description
+    t.integer  :word_count,       null: false, default: 0
     t.date     :story_created_on, null: false
     t.datetime :story_updated_at, null: false
+    t.boolean  :is_locked, null: false, default: true
     t.timestamps null: false
   end
 
   create_table(:story_chapters) do |t|
-    t.belongs_to :story,     null: false
-    t.integer :position,     null: false
+    t.belongs_to :story,      null: false, index: true
+    t.integer :position,      null: false
     t.string  :location_path, null: false
-    t.string  :title,        null: false
-    t.integer :word_count,   null: false
+    t.string  :title,         null: false
+    t.string  :category,      null: false, default: "chapter"
+    t.integer :word_count,    null: false, default: 0
     t.datetime :chapter_created_at, null: false
     t.datetime :chapter_updated_at, null: false
     t.timestamps null: false
