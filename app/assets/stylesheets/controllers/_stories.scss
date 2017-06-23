@@ -1,7 +1,9 @@
 // searchable-table
 table.searchable {
   tr.filters {
-    td.word_count { width: 80px; }
+    td.details { width: 70px; }
     td.story_updated_at { width: 150px; }
+    td.word_count { width: 100px; }
+    td.author { width: 110px; }
   }
 }

@@ -10,6 +10,7 @@ class Story < ApplicationRecord
   has_many :chapters, class_name: "StoryChapter"
 
   generate_column_scopes
+  scope :seek_word_count_gteq, -> (word_count) { where_word_count(gteq: word_count.to_s.human_size_to_i) }
 
   validates_presence_of_required_columns
   validates_in_list :location, LOCATIONS.keys
@@ -30,18 +31,8 @@ class Story < ApplicationRecord
     self[:title] = new_title.to_s.strip.presence
   end
 
-  def word_count=(unformatted_word_count)
-    unformatted_word_count = unformatted_word_count.to_s
-    self[:word_count] =
-      case unformatted_word_count
-      # 123, 123.5
-      when /\A\d+(\.\d+)?\z/   then unformatted_word_count
-      # 1.1K, 1.25k
-      when /\A\d+(\.\d+)?k\z/i then unformatted_word_count.remove(/[^\d.]/).to_f * 1_000
-      # 1.1M, 1.25m
-      when /\A\d+(\.\d+)?m\z/i then unformatted_word_count.remove(/[^\d.]/).to_f * 1_000_000
-      else 0
-      end.to_i
+  def word_count=(new_word_count)
+    self[:word_count] = new_word_count.to_s.human_size_to_i
   end
 
   def recently_created?

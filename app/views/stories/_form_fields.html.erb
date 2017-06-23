@@ -8,10 +8,12 @@
   <%= cp.description_field %>
 <% end %>
 
-<%= cp.form_group_div do %>
-  <%= cp.is_locked_label %>
-  <%= cp.check_box_div_label(style: "margin: 0px;") do %>
-    <%= cp.is_locked_check_box %>
-    <%= cp.is_locked_check_box_text %>
+<% if is_admin? %>
+  <%= cp.form_group_div do %>
+    <%= cp.is_locked_label %>
+    <%= cp.check_box_div_label(style: "margin: 0px;") do %>
+      <%= cp.is_locked_check_box %>
+      <%= cp.is_locked_check_box_text %>
+    <% end %>
   <% end %>
 <% end %>

@@ -1,6 +1,6 @@
 <%= cp.tr_tag(class: "filters") do %>
   <%= cp.td_tag(class: "reset details") do %>
-    <%= cp.details_filter %>
+    <%= cp.reset_filter %>
   <% end %>
 
   <%= cp.td_tag(class: "story_updated_at") do %>
@@ -11,7 +11,11 @@
     <%= cp.title_filter %>
   <% end %>
 
-  <%= cp.td_tag(class: "word_count") %>
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= cp.word_count_filter %>
+  <% end %>
 
-  <%= cp.td_tag(class: "author") %>
+  <%= cp.td_tag(class: "author") do %>
+    <%= cp.author_filter %>
+  <% end %>
 <% end %>
