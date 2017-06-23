@@ -11,17 +11,20 @@
 # end
 
 require_relative "application"
+require "#{Rails.root}/app/services/scheduler"
 
 set :path, Rails.root.to_s
 set :environment, Rails.env
 set :environment_variable, "RAILS_ENV"
 
 if Rails.env.production?
-  set :output, "/var/log/schedule.log"
+  set :output, "/var/log/scheduler.log"
 else
-  set :output, "#{Rails.root}/log/schedule.log"
+  set :output, "#{Rails.root}/log/scheduler.log"
 end
 
-every 1.hour do
-  runner "StorySearcher::SpacebattlesSearcher.search!(1.day.ago.to_date)"
+Scheduler::SCHEDULED.each do |task, time|
+  every time do
+    runner "Scheduler.run(:#{task})"
+  end
 end
