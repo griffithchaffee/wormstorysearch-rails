@@ -27,3 +27,5 @@
 /script.rb
 *.swp
 *.swo
+/public/assets
+/vendor/bundle
