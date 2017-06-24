@@ -23,8 +23,8 @@ else
   set :output, "#{Rails.root}/log/scheduler.log"
 end
 
-Scheduler::SCHEDULED.each do |task, time|
+Scheduler::SCHEDULE.each do |task, time|
   every time do
-    runner "Scheduler.run(:#{task})"
+    rake "schedule:#{task}"
   end
 end

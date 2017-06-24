@@ -11,6 +11,7 @@ end
 gem "rails", "~> 5.1.1"
 gem "pg",    "~> 0.21", platforms: :ruby
 gem "puma",  "~> 3.7"
+gem "unicorn"
 gem "colored"
 gem "action_presenter-base", git: "git@github.com:griffithchaffee/action_presenter-base.git"
 
