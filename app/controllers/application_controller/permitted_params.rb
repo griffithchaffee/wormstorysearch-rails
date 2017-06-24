@@ -153,10 +153,10 @@ private
     end
     # setup
     namespace = namespace.blank? ? "#{controller_name}_#{action_name}_#{params[:id]}".remove(/_+\z/) : namespace
-    variable = "@session_#{namespace}_data"
+    variable = "@session_action_data_for_#{namespace}"
     # return cached record
     return instance_variable_get(variable) if instance_variable_get(variable)
-    session_id = session.id
+    session_id = promised_session.id
     # find or create record
     record = SessionActionData.find_by(session_id: session_id, namespace: namespace)
     record ||= SessionActionData.new(session_id: session_id, namespace: namespace)
@@ -175,6 +175,11 @@ private
       value.is_a?(Array) ? value.map(&:to_param) : value.to_param
     end
     new_params
+  end
+
+  def promised_session
+    session[:init] = nil if session.id.nil?
+    session
   end
 
 end
