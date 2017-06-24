@@ -1,13 +1,13 @@
 class Scheduler
 
-  SCHEDULED = {
+  SCHEDULE = {
     clear_stale_sessions: [1.day],
     update_stories: [1.hour],
   }.with_indifferent_access
 
   class << self
     def scheduled_task(task, task_options = {}, &block)
-      raise ArgumentError, "No schedule set for Schedule.#{task}" if SCHEDULED[task].blank?
+      raise ArgumentError, "No schedule set for Schedule.#{task}" if SCHEDULE[task].blank?
       define_method(task, &block)
     end
 
@@ -29,11 +29,11 @@ class Scheduler
 
   scheduled_task :clear_stale_sessions do
     IdentitySession.seek(updated_at_lteq: 1.months.ago.utc).delete_all
-    SessionActionData.seek(updated_at_lteq: 2.months.ago.utc).delete_all
+    SessionActionData.seek(updated_at_lteq: 1.month.ago.utc).delete_all
   end
 
   scheduled_task :update_stories do
-    duration = task_options.fetch(:duration) { 6.hours }
+    duration = task_options.fetch(:duration) { 3.hours }
     StorySearcher::SpacebattlesSearcher.search!(duration, task_options)
     StorySearcher::SufficientvelocitySearcher.search!(duration, task_options)
   end
