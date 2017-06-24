@@ -27,6 +27,11 @@ console do
   end
 end
 
+Rails.application.configure do
+  # optional: request_id
+  config.log_tags = %i[ remote_ip ]
+end
+
 #=begin
         #unless ActiveSupport::Logger.logger_outputs_to?(Rails.logger, STDOUT)
         #  Rails.logger.extend(ActiveSupport::Logger.broadcast(stdout_logger))
