@@ -7,14 +7,11 @@ Dir["#{Rails.root}/lib/rails/extensions/*.rb"].each { |file| require file }
 
 # settings
 Rails.application.define_singleton_method(:settings) do
-  @settings ||= ActiveSupport::OrderedOptions.new.tap do |settings|
-    File::Configuration.load_rails_config_file("settings.yml").each do |key, value|
-      settings[key] = value
-      settings.namespace ||= Rails.application.class.name.remove("::Application").underscore
-      settings.version = File::Configuration.load_rails_config_file("version.yml")
-      settings.title = settings.namespace.titleize
-    end
-  end
+  @settings ||= File::Configuration.load_rails_config_file("settings.yml").with_indifferent_access.tap do |settings|
+    settings.fetch(:version)
+    settings[:namespace] ||= Rails.application.class.name.remove("::Application").underscore
+    settings[:title]     ||= settings[:namespace].titleize
+  end.to_struct
 end
 
 # rails initializers

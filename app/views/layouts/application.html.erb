@@ -15,7 +15,7 @@
     <meta property="og:site_name" content="<%= Rails.application.settings.title %>"/>
     <meta property="og:type" content="website"/>
     <meta property="og:image" content="http://<%= Rails.application.settings.domain %>/favicon.png"/>
-    <meta property="og:description" content="Worm fanfiction story search."/>
+    <meta property="og:description" content="Worm story search"/>
     <!-- touch icons by realfavicongenerator.net -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -37,7 +37,7 @@
           <%= cp.container_div do %>
             <!-- left brand -->
               <%= cp.link_to(root_url, class: "navbar-brand") do %>
-                <%= cp.span_tag(class: "hidden-xs hidden-sm", content: "Worm Fiction Search") %>
+                <%= cp.span_tag(class: "hidden-xs hidden-sm", content: Rails.application.settings.title) %>
                 <%= cp.span_tag(class: "visible-xs visible-sm", content: "Stories") %>
               <% end %>
 

@@ -45,8 +45,8 @@ module ApplicationTestConcern
     mail = mail_queue[mail_or_key] if mail_or_key.is_a?(Numeric)
     assert_not_nil(mail, "mail_queue[#{mail_or_key}] is blank")
     values = values.with_indifferent_access.reverse_merge!(
-      from:     "noreply@wormfictionsearch.com",
-      reply_to: "noreply@wormfictionsearch.com",
+      from:     "noreply@wormstorysearch.com",
+      reply_to: "noreply@wormstorysearch.com",
       to:       "hometurfpublic@gmail.com",
       cc:       nil,
       bcc:      nil,

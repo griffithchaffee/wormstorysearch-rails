@@ -4,8 +4,8 @@ module StorySearcher
 
     def initialize
       @location = "sufficientvelocity"
-      @configuration = File::Configuration.load_rails_config_file("#{location}.yml").with_indifferent_access
-      @crawler = SiteCrawler.new(configuration.fetch(:site_url))
+      @configuration = Rails.application.settings.send("#{location}!").to_struct
+      @crawler = SiteCrawler.new(configuration.site_url)
       crawler.logger = Rails.logger
     end
 
@@ -22,7 +22,7 @@ module StorySearcher
       # authenticate
       crawler.post(
         "/login/login",
-        { login: configuration.fetch(:username), password: configuration.fetch(:password) },
+        { login: configuration.username, password: configuration.password },
         { follow_redirects: false, log_level: Logger::WARN }
       )
     end
@@ -33,7 +33,7 @@ module StorySearcher
       while page do
         page += 1
         # prevent infinite loop
-        raise ArgumentError, "crawled too many pages on: #{configuration[:site_url]}" if page > configuration.fetch(:max_pages)
+        raise ArgumentError, "crawled too many pages on: #{configuration[:site_url]}" if page > configuration.max_pages
         # crawl latest threads
         crawler.get("forums/user-fiction.2/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
         threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
