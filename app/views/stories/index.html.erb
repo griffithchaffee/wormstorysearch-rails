@@ -1,7 +1,7 @@
 <%= cp.page_header(
   content:    "Stories",
   sub_text:   "(#{@stories.raw_count} Stories)",
-  sub_header: "Use filters and sorters to find updates to your favorite stories.",
+  sub_header: "Use filters and sorters to find updates to your favorite stories (updated hourly).",
 ) %>
 
 <%= render_partial("searchable_table", collection: @stories) %>
