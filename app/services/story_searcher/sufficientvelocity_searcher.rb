@@ -13,7 +13,7 @@ module StorySearcher
       @search_options = search_options.with_indifferent_access
       time = time.ago if time.is_a?(ActiveSupport::Duration)
       Rails.logger.silence(Logger::INFO) do
-        #login!
+        login!
         update_stories_newer_than!(time)
       end
     end
