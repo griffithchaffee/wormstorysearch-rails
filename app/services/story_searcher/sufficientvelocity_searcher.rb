@@ -36,14 +36,13 @@ module StorySearcher
         raise ArgumentError, "crawled too many pages on: #{configuration[:site_url]}" if page > configuration.fetch(:max_pages)
         # crawl latest threads
         crawler.get("forums/user-fiction.2/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
-        threads_html = crawler.html.find_all("div.threadmarkList ol.discussionListItems li.discussionListItem:not(.sticky)")
+        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
         # stop on last page
         return if threads_html.size == 0
         # parse threads
         threads_html.each do |thread_html|
           story = update_story_for_thread!(thread_html)
           next if !story # not a worm story
-          Rails.logger.info("Reading Story: #{story.title}")
           update_chapters_for_story!(story)
           # stop if older than time
           return if story.story_active_at < time
@@ -81,9 +80,13 @@ module StorySearcher
       end
       # skip worm stories
       title_words = story.title.slugify.split("_")
-      is_worm_story = (title_words & %w[ worm wormverse wormfic wormsnip ]).blank?
+      is_worm_story = (title_words & %w[ worm wormverse wormfic wormsnip taylor ]).present?
       is_worm_story ||= title_words.find { |title| title.starts_with?("wormx") }
-      return if !is_worm_story
+      if is_worm_story
+        Rails.logger.info("Read: #{story.title.green}")
+      else
+        Rails.logger.info("Skip: #{story.title.yellow}")
+      end
       story.save! if story.has_changes_to_save?
       story
     end
@@ -94,7 +97,7 @@ module StorySearcher
       # parse threadmarks
       position = 0
       new_chapters = []
-      crawler.html.find_all("li.primaryContent").each do |html_li|
+      crawler.html.find_all("div.threadmarkList li.primaryContent").each do |html_li|
         position += 1
         # parts
         updated_html = html_li.css(".DateTime").first

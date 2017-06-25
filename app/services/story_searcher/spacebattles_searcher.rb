@@ -42,7 +42,7 @@ module StorySearcher
         # parse threads
         threads_html.each do |thread_html|
           story, = update_story_for_thread!(thread_html)
-          Rails.logger.info("Reading Story: #{story.title}")
+          Rails.logger.info("Read: #{story.title.green}")
           update_chapters_for_story!(story)
           # stop if older than time
           return if story.story_active_at < time
