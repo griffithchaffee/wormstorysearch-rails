@@ -43,6 +43,7 @@ module StorySearcher
         threads_html.each do |thread_html|
           story = update_story_for_thread!(thread_html)
           next if !story # not a worm story
+          next if story.title !~ /angel/i
           Rails.logger.info("Reading Story: #{story.title}")
           update_chapters_for_story!(story)
           # stop if older than time
@@ -61,10 +62,10 @@ module StorySearcher
       created_html = main_html.css(".DateTime").first
       active_html = thread_html.css(".lastPostInfo .DateTime").first
       # build story
-      location_id = thread_html[:id]
+      location_story_id = thread_html[:id]
       created_at  = abbr_html_to_time(created_html)
       active_at   = abbr_html_to_time(active_html)
-      story_finder = { location: location, location_id: location_id }
+      story_finder = { location: location, location_story_id: location_story_id }
       story = Story.find_by(story_finder) || Story.new(story_finder)
       story.assign_attributes(
         location_path: "/#{title_html[:href].remove(/\/(unread)?\z/)}",

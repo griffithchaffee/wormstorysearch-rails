@@ -1,15 +1,8 @@
-# firefly server stdout logging
-if ENV["LOG_TO_STDOUT"] == "true"
-  stdout_logger = ActiveSupport::Logger.new(STDOUT)
-  stdout_logger.formatter = Rails.logger.formatter
-  stdout_logger.level = Rails.logger.level
-  Rails.logger.extend(ActiveSupport::Logger.broadcast(stdout_logger))
-end
-
+# add formatter
 Rails.logger.formatter = Logger::ApplicationFormatter.new
 Rails.logger = ActiveSupport::TaggedLogging.new(Rails.logger)
 
-# Rake::Task logger level
+# logger level for production and rake tasks
 if Rails.env.production? || defined?(Rake::Task)
   Rails.logger.level = Logger::INFO
 else
@@ -27,20 +20,16 @@ console do
   end
 end
 
+# easy stdout logging
+if ENV["BROADCAST_TO_STDOUT"] == "true"
+  stdout_logger = ActiveSupport::Logger.new($stdout)
+  stdout_logger.formatter = Rails.logger.formatter
+  stdout_logger.level = Rails.logger.level
+  Rails.logger.extend(ActiveSupport::Logger.broadcast(stdout_logger))
+end
+
+# request tags
 Rails.application.configure do
   # optional: request_id
   config.log_tags = %i[ remote_ip ]
 end
-
-#=begin
-        #unless ActiveSupport::Logger.logger_outputs_to?(Rails.logger, STDOUT)
-        #  Rails.logger.extend(ActiveSupport::Logger.broadcast(stdout_logger))
-        #end
-#=end
-=begin
-Rails.application.configure do
-  config.after_initialize do |app|
-   app.assets.logger = Logger.new('/dev/null')
-  end
-end
-=end

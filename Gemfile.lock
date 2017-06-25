@@ -1,6 +1,5 @@
-GIT
-  remote: git@github.com:griffithchaffee/action_presenter-base.git
-  revision: 13dc477c4cacae6480b0443a75ee48fff18662ad
+PATH
+  remote: /root/griffithchaffee/action_presenter-base
   specs:
     action_presenter-base (0.1.0)
 

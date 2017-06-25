@@ -1,19 +1,13 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require_relative "lib/tasks/task_helper"
-include TaskHelper
+ENV["BROADCAST_TO_STDOUT"] = "true"
+require_relative "lib/tasks/application_task_concern"
+include ApplicationTaskConcern
 require_relative "config/application"
-
-if !Rails.logger
-  Rails.logger = ActiveSupport::Logger.new(STDOUT)
-  Rails.logger.formatter = Logger::ApplicationFormatter.new
-  Rails.logger = ActiveSupport::TaggedLogging.new Rails.logger
-  Rails.logger.level = Logger::INFO
-end
 
 Rails.application.load_tasks
 
-Rake::Task.clear_namespace("db")
-Rake::Task.clear_namespace("test")
-Rake::Task.clear_namespace("doc")
+%w[ db test doc ].each do |namespace|
+  Rake::Task.clear_namespace(namespace)
+end

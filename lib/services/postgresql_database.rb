@@ -50,6 +50,7 @@ class PostgresqlDatabase
       Rails.logger.info(database) { "creating database" }
       create!
       ActiveRecord::Migration[migration_version].suppress_messages { migrate_to_latest_schema! }
+      #ApplicationDatabase.reset_column_information
     end
   end
 

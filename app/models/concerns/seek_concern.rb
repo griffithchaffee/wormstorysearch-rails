@@ -295,7 +295,7 @@ module SeekConcern
           end
           seek_model =
             if association == table_name
-              association.classify.constantize
+              unscoped.klass
             else
               reflection = reflect_on_association(association)
               if !reflection

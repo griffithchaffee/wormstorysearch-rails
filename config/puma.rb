@@ -1,5 +1,5 @@
 # https://github.com/puma/puma/blob/master/examples/config.rb
-ENV["LOG_TO_STDOUT"] = "true"
+ENV["BROADCAST_TO_STDOUT"] ||= "true"
 
 puma_config = {}.tap do |config|
   config[:bind]         = "tcp://0.0.0.0:8080"

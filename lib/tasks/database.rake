@@ -1,31 +1,31 @@
 namespace :database do
   desc "Update database schema"
   task :schema do
+    Rake::Task["environment"].invoke
     ApplicationDatabase.database_configuration.manage.update_schema
   end
 
   desc "Create database database"
   task :create do |_, params|
-  #  ApplicationDatabase.disconnect
+    Rake::Task["environment"].invoke
     ApplicationDatabase.database_configuration.manage.create
-  #  ApplicationDatabase.reset_column_information
   end
 
   desc "Drop database database"
   task :drop do |_, params|
-  #  ApplicationDatabase.disconnect
+    Rake::Task["environment"].invoke
     ApplicationDatabase.database_configuration.manage.drop
   end
 
   desc "Migrate database database"
   task :migrate, :force do |_, params|
-  #  ApplicationDatabase.disconnect
+    Rake::Task["environment"].invoke
     ApplicationDatabase.database_configuration.manage.migrate params[:force]
   end
 
   desc "Rollback database database"
   task :rollback do |_, params|
-  #  ApplicationDatabase.disconnect
+    Rake::Task["environment"].invoke
     ApplicationDatabase.database_configuration.manage.rollback
   end
 

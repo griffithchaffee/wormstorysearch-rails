@@ -13,18 +13,16 @@
 require_relative "application"
 require "#{Rails.root}/app/services/scheduler"
 
-set :path, Rails.root.to_s
-set :environment, Rails.env
-set :environment_variable, "RAILS_ENV"
+set(:path, Rails.root.to_s)
+set(:environment, Rails.env)
+set(:environment_variable, "RAILS_ENV")
 
 if Rails.env.production?
-  set :output, "/var/log/scheduler.log"
+  set(:output, "/var/log/scheduler.log")
 else
-  set :output, "#{Rails.root}/log/scheduler.log"
+  set(:output, "#{Rails.root}/log/scheduler.log")
 end
 
-Scheduler::SCHEDULE.each do |task, time|
-  every time do
-    rake "schedule:#{task}"
-  end
+Scheduler.const.tasks.each do |task|
+  every(task.every) { rake("schedule:#{task.task}") }
 end

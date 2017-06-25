@@ -1,19 +1,20 @@
 class Story < ApplicationRecord
   # modules/constants
+  extend ClassOptionsAttribute
 
-  LOCATIONS = {
-    spacebattles:       "SpaceBattles",
-    sufficientvelocity: "SufficientVelocity",
-  }.with_indifferent_access
+  class_constant(:locations, %w[ location label host ]) do |new_const|
+    new_const.add(location: "spacebattles",       label: "SpaceBattles",       host: "https://forums.spacebattles.com")
+    new_const.add(location: "sufficientvelocity", label: "SufficientVelocity", host: "https://forums.sufficientvelocity.com")
+  end
 
   # associations/scopes/validations/callbacks/macros
-  has_many :chapters, class_name: "StoryChapter"
+  has_many :chapters, dependent: :destroy, class_name: "StoryChapter"
 
   generate_column_scopes
   scope :seek_word_count_gteq, -> (word_count) { where_word_count(gteq: word_count.to_s.human_size_to_i) }
 
   validates_presence_of_required_columns
-  validates_in_list :location, LOCATIONS.keys
+  validates_in_list(:location, const.locations.map(&:location))
 
   # transient story_active_at used in searchers
   attr_accessor :story_active_at
@@ -40,21 +41,18 @@ class Story < ApplicationRecord
   end
 
   def location_label
-    LOCATIONS[location]
+    const.locations.fetch(location).label
   end
 
   def location_host
-    case location.verify_in!(LOCATIONS)
-    when "spacebattles"       then "https://forums.#{location}.com"
-    when "sufficientvelocity" then "https://forums.#{location}.com"
-    end
+    const.locations.fetch(location).host
   end
 
   def location_url
     "#{location_host}#{location_path}"
   end
 
-  def threadmarks_url
+  def read_url
     chapters.size == 0 ? location_url : "#{location_url}/threadmarks"
   end
 

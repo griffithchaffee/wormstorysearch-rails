@@ -31,15 +31,24 @@ class StoriesPresenter < ApplicationPresenter
   end
 
   # html
-  def status_class
+  def status_class(*hashes)
+    record = extract_record(*hashes)
     record.recently_created? ? "info" : ""
   end
 
   def recently_created_icon(*hashes, &content_block)
+    record = extract_record(*hashes)
     if record.recently_created?
       icon("calendar", tooltip: "top", title: "Created #{record.story_created_on.friendly_b_d.capitalize}")
     end
   end
+
+  def read_story_link(*hashes, &content_block)
+    record = extract_record(*hashes)
+    default_content = icon("external-link") + " " + extract_content(*hashes, content: "Read")
+    tab_link(record.read_url, *hashes, content: default_content, &content_block)
+  end
+  define_extension(:read_story_link, :read_story_link_btn, add_class: "btn btn-primary")
 
   # filters
   def details_filter(params = {})

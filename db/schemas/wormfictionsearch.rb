@@ -36,8 +36,8 @@ def change
     t.string "crossover"
     t.string "description"
     t.string "location", null: false
-    t.string "location_id", null: false
     t.string "location_path", null: false
+    t.string "location_story_id", null: false
     t.string "title", null: false
   end
 

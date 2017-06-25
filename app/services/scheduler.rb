@@ -1,13 +1,17 @@
 class Scheduler
 
-  SCHEDULE = {
-    clear_stale_sessions: [1.day],
-    update_stories: [1.hour],
-  }.with_indifferent_access
+  extend ClassOptionsAttribute
+
+  class_constant(:tasks, %w[ task every ]) do |const|
+    # often
+    const.add(task: "update_stories", every: [1.hour])
+    # 5AM UTC = 9PM PST / 12AM EST
+    const.add(task: "clear_stale_sessions", every: [1.day, at: "5:00 am"])
+  end
 
   class << self
     def scheduled_task(task, task_options = {}, &block)
-      raise ArgumentError, "No schedule set for Schedule.#{task}" if SCHEDULE[task].blank?
+      raise ArgumentError, "No schedule set for task: #{task}" if const.tasks.fetch(task.to_s).blank?
       define_method(task, &block)
     end
 
@@ -17,9 +21,6 @@ class Scheduler
   end
 
   attr_reader :task, :task_options
-
-  def initialize
-  end
 
   def run(task, task_options = {})
     @task = task

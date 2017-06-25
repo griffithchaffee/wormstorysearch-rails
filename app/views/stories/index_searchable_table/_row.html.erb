@@ -14,7 +14,7 @@
   <% end %>
 
   <%= cp.td_tag(class: "title") do %>
-    <%= cp.tab_to(story.threadmarks_url, content: story.title) %>
+    <%= cp.tab_link(story.read_url, content: story.title) %>
   <% end %>
 
   <%= cp.td_tag(class: "word_count") do %>

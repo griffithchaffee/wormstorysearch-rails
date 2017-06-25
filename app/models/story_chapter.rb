@@ -1,6 +1,9 @@
 class StoryChapter < ApplicationRecord
   # modules/constants
-  CATEGORIES = %w[ chapter omake ]
+  class_constant(:categories, %w[ category label ]) do |new_const|
+    new_const.add(category: "chapter", label: "Chapter")
+    new_const.add(category: "omake",   label: "Omake")
+  end
 
   # associations/scopes/validations/callbacks/macros
   belongs_to :story
@@ -8,10 +11,10 @@ class StoryChapter < ApplicationRecord
   generate_column_scopes
 
   validates_presence_of_required_columns
-  validates_in_list :category, CATEGORIES
+  validates_in_list :category, const.categories.map(&:category)
 
-  before_save do
-    if will_save_change_to_title?
+  before_validation do
+    if will_save_change_to_title? && !category?
       self.category = "omake".in?(title.downcase.split(/\W/)) ? "omake" : "chapter"
     end
   end
@@ -30,6 +33,10 @@ class StoryChapter < ApplicationRecord
 
   def word_count=(new_word_count)
     self[:word_count] = new_word_count.to_s.human_size_to_i
+  end
+
+  def category_label
+    const.categories.fetch(category)
   end
 
 end

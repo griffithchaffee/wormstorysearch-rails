@@ -1,58 +1,13 @@
 def up
   change_table(:stories) do |t|
-    t.boolean  :is_locked, null: false, default: false
-  end
-  create_table(:stories) do |t|
-    t.string   :location,      null: false
-    t.string   :location_id,   null: false
-    t.string   :location_path, null: false
-    t.string   :title,         null: false
-    t.string   :author,        null: false
-    t.string   :crossover
-    t.string   :description
-    t.integer  :word_count,       null: false, default: 0
-    t.date     :story_created_on, null: false
-    t.datetime :story_updated_at, null: false
-    t.boolean  :is_locked, null: false, default: true
-    t.timestamps null: false
-  end
-
-  create_table(:story_chapters) do |t|
-    t.belongs_to :story,      null: false, index: true
-    t.integer :position,      null: false
-    t.string  :location_path, null: false
-    t.string  :title,         null: false
-    t.string  :category,      null: false, default: "chapter"
-    t.integer :word_count,    null: false, default: 0
-    t.datetime :chapter_created_at, null: false
-    t.datetime :chapter_updated_at, null: false
-    t.timestamps null: false
-  end
-
-  create_table "session_action_data", force: :cascade do |t|
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-    t.string   "namespace",         null: false
-    t.string   "session_id",        null: false
-    t.text     "data_params",       null: false
-    t.text     "pagination_params", null: false
-    t.text     "search_params",     null: false
-    t.index [:session_id, :namespace], unique: true
-  end
-
-  create_table "identity_sessions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "session_id", null: false, index: { unique: true }
-    t.text     "data"
+    t.rename :location_id, :location_story_id
   end
 end
 
 def down
-  drop_table(:stories)
-  drop_table(:story_chapters)
-  drop_table(:session_action_data)
-  drop_table(:identity_sessions)
+  change_table(:stories) do |t|
+    t.rename :location_story_id, :location_id
+  end
 end
 
 

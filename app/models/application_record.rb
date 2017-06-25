@@ -1,9 +1,10 @@
 class ApplicationRecord < ApplicationDatabase
 
-  self.abstract_class = true
-
+  extend ClassOptionsAttribute
   include SeekConcern
   include ValidationConcern
+
+  self.abstract_class = true
 
   def saved?
     !new_record?

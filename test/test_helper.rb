@@ -1,9 +1,12 @@
-require File.expand_path('../../config/environment', __FILE__)
-require 'rails/test_help'
+require File.expand_path("../../config/environment", __FILE__)
 
-class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-  fixtures :all
+require "rails/test_help"
+#require "minitest/reporters"
+require "factory_girl"
+FactoryGirl.find_definitions
 
-  # Add more helper methods to be used by all tests here...
-end
+require_relative "lib/application_test_concern"
+require_relative "lib/application_record_test_case"
+require_relative "lib/application_controller_test_case"
+require_relative "lib/minitest_pretty_reporter"
+Minitest::Reporters.use!(Minitest::Reporters::SuiteReporter.new)
