@@ -87,6 +87,7 @@
               <%= cp.br_tag %>
               <%= cp.small_tag do %>
                 Click <%= cp.link_to(contact_path, content: "here") %> to provide feedback, suggestions, and bug reports.
+                Version: v<%= Rails.application.settings.version %>
               <% end %>
             <% end %>
           <% end %>
