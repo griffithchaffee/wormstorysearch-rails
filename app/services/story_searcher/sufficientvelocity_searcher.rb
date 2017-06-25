@@ -84,11 +84,12 @@ module StorySearcher
       is_worm_story ||= title_words.find { |title| title.starts_with?("wormx") }
       if is_worm_story
         Rails.logger.info("Read: #{story.title.green}")
+        story.save! if story.has_changes_to_save?
+        story
       else
         Rails.logger.info("Skip: #{story.title.yellow}")
+        nil
       end
-      story.save! if story.has_changes_to_save?
-      story
     end
 
     def update_chapters_for_story!(story)

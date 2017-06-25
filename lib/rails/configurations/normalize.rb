@@ -7,7 +7,7 @@ Rails.application.configure do
 
   # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
   # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-  config.time_zone = "Eastern Time (US & Canada)" # rake -D time
+  config.time_zone = "Pacific Time (US & Canada)" # rake -D time
 
   # used bust cached assets
   config.assets.version = Rails.application.settings.version

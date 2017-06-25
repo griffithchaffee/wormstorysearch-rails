@@ -3,11 +3,10 @@ class IdentitySessionStore < ActionDispatch::Session::AbstractStore
     session_model = IdentitySession
     if session_id.present?
       # always find session (no caching)
-      session_model.find_by(session_id: session_id)
-    else
-      # provided session
-      yield(session_model) if block_given?
+      session = session_model.find_by(session_id: session_id)
+      return session if session
     end
+    yield(session_model) if block_given?
   end
 
   def find_session(env, session_id)
