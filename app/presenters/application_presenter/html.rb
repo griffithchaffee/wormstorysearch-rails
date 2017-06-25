@@ -2,6 +2,8 @@ class ApplicationPresenter < ActionPresenter::Base
 
   # col
   define_extension(:col_div, :full_div, col_sm: 8, col_md: 6)
+  define_extension(:col_class,        :label_for_class,     col_sm: 3, col_md: 2, add_class: :core_label_class)
+  define_extension(:col_offset_class, :label_for_gap_class, col_sm: 3, col_md: 2)
   # col modal
   define_extension(:col_div,          :modal_full_div,        col_xs: 9)
   define_extension(:col_class,        :modal_label_class,     col_xs: 3)
@@ -9,6 +11,17 @@ class ApplicationPresenter < ActionPresenter::Base
   # div
   define_extension(:div_tag, :container_div, class: "container")
   define_extension(:div_tag, :btn_group_div, class: "btn-group")
+  # other
+  define_extension(:h3_tag,     :section_header,  add_class: "section-header")
+  define_extension(:submit_tag, :form_submit_btn, add_class: "btn btn-primary")
+  define_extension(:span_tag,   :help_span,       add_class: "help-block")
+
+  def form_submit_div(*hashes)
+    full_div(add_class: "#{label_for_gap_class} form-submit") do
+      content = form_submit_btn(add_class: "submit")
+      content += back_link_btn(add_class: "secondary-link")
+    end
+  end
 
   def icon(icon, *hashes, &content_block)
     # optional tooltip
@@ -26,22 +39,19 @@ class ApplicationPresenter < ActionPresenter::Base
     span_tag(*hashes, add_class: "icon icon-#{icon}", &content_block)
   end
 
-  def page_title(*hashes, &content_block)
+  def page_header(*hashes, &content_block)
     title_content = extract_content(*hashes, &content_block)
-    sub_title_content = extract(:sub_title, *hashes)
     sub_text_content = extract(:sub_text, *hashes)
+    sub_header_content = extract(:sub_header, *hashes)
     insert_divider = extract(:divider, *hashes)
-    page_title = h1_tag(*hashes, add_class: "page-title") do
+    # build header
+    h1_tag(*hashes, add_class: "page-header") do
       content = "".html_safe + title_content
-      content += small_tag(content: sub_title_content) if sub_title_content.present?
+      content += " ".html_safe + small_tag(content: sub_text_content) if sub_text_content.present?
+      content += " ".html_safe + strong_tag(content: sub_header_content) if sub_header_content.present?
       content
     end
-    page_title += sub_title(content: sub_text_content) if sub_text_content.present?
-    page_title += legend_tag if insert_divider == true
-    page_title
   end
-  define_extension(:h3_tag, :section_title, add_class: "section-title")
-  define_extension(:h6_tag, :sub_title, add_class: "sub-title")
 
   # links/btns
   def home_link(*hashes, &content_block)

@@ -14,9 +14,12 @@ while :; do
   rm -f "$PID_FILE"
   # start server
   printf "Starting Server: \e[32m$START_SERVER\e[0m\n"
+  SECONDS=0
   FIREFLY=true $START_SERVER
+  duration=$SECONDS
   # sleep between restart attempts
-  if [[ $? != 0 ]]; then
+  if [[ $duration -lt 5 ]]; then
+    printf "\e[33mWaiting 5 seconds between restart attempts\e[0m\n"
     sleep 5
   fi
 done

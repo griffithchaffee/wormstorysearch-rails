@@ -35,18 +35,22 @@
         <!-- navigation -->
         <%= cp.html_tag(:nav, class: "navbar navbar-inverse navbar-static-top", style: "padding-left: 0px; padding-right: 0px;") do %>
           <%= cp.container_div do %>
-            <!-- brand logo -->
-            <%= cp.link_to(root_url, class: "navbar-brand", style: "padding-left: 0px;") do %>
-              Worm Fiction Search
-            <% end %>
-            <!-- development request -->
-            <% if Rails.env.development? %>
-              <% Rails.application.settings.request_count ||= 0 %>
-              <% request_count = Rails.application.settings.request_count += 1 %>
-              <%= cp.p_tag(class: "navbar-text", style: "margin-left: 5px; margin-right: 5px;") do %>
-                <%= cp.label_span(request_count == 1 ? "success" : "info", content: "Request: #{request_count}") %>
+            <!-- left brand -->
+              <%= cp.link_to(root_url, class: "navbar-brand") do %>
+                <%= cp.span_tag(class: "hidden-xs hidden-sm", content: "Worm Fiction Search") %>
+                <%= cp.span_tag(class: "visible-xs visible-sm", content: "Stories") %>
               <% end %>
-            <% end %>
+
+              <% if Rails.env.development? %>
+                <% Rails.application.settings.request_count ||= 0 %>
+                <% request_count = Rails.application.settings.request_count += 1 %>
+                <%= cp.p_tag(class: "navbar-text", style: "margin-left: 5px; margin-right: 5px; display: inline-block;") do %>
+                  <%= cp.label_span(request_count == 1 ? "success" : "info", content: "Request: #{request_count}") %>
+                <% end %>
+              <% end %>
+
+              <!-- right brand -->
+              <%= cp.link_to(about_url, class: "navbar-brand", content: "About", style: "float: right;") %>
           <% end %>
         <% end %>
       <% end %>
@@ -55,14 +59,14 @@
       <%= cp.container_div do %>
         <!-- flash -->
         <%= cp.row_div(id: "flash") do %>
-          <%= cp.col_div(col_md: 12) do %>
+          <%= cp.col_div(col_sm: 12) do %>
             <%= render partial: "layouts/flash" %>
           <% end %>
         <% end %>
 
         <!-- content -->
         <%= cp.row_div(id: "content") do %>
-          <%= cp.col_div(col_md: 12) do %>
+          <%= cp.col_div(col_sm: 12) do %>
             <%= yield %>
           <% end %>
         <% end %>
@@ -77,9 +81,13 @@
       <%= cp.container_div do %>
         <%= cp.html_tag(:footer) do %>
           <%= cp.row_div(id: "footer") do %>
-            <%= cp.col_div(col_md: 12) do %>
+            <%= cp.col_div(col_sm: 12) do %>
               <%= cp.hr_tag %>
-              Thank you, authors for your great stories!
+              Thank you wormverse community for being so awesome!
+              <%= cp.br_tag %>
+              <%= cp.small_tag do %>
+                Click <%= cp.link_to(contact_path, content: "here") %> to provide feedback, suggestions, and bug reports.
+              <% end %>
             <% end %>
           <% end %>
         <% end %>

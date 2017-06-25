@@ -1,5 +1,5 @@
-<% if exception.present? && (Rails.env.development? || is_admin?) %>
-  <%= cp.section_title(content: "Development Debug") %>
+<% if exception.present? && is_admin? %>
+<%= cp.section_header(content: "Development Debug") %>
 
 <%= cp.pre_tag do %>
 STATUS: <%= exception_status_code %>

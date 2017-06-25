@@ -4,6 +4,12 @@ Rails.application.routes.draw do
 
   resources :stories, only: %w[ index show edit update ]
 
+  controller :static do
+    get  "/contact", action: "contact", as: "contact"
+    post "/contact", action: "contact"
+    get  "/about",   action: "about", as: "about"
+  end
+
   # errors
   %w[
     catch_all not_found bad_request internal_server_error unprocessable_entity

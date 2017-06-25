@@ -1,0 +1,68 @@
+<%= cp.page_header(
+  content:  "About",
+  sub_text: "Short summary about this site and what to expect",
+) %>
+
+<%= cp.p_tag do %>
+  It all started when found Worm after browsing to the HFY story
+  <%= cp.tab_link("https://forums.spacebattles.com/threads/the-last-angel.244209/", content: "The Last Angel") %> from reddit.
+  After reading that amazing story I somehow found my way to
+  <%= cp.tab_link("https://parahumans.wordpress.com/", content: "Worm") %>.
+  Things escalated quickly from there... and a year later there were no more unread stories across fanfiction.net, spacebattles, and sufficientvelocity.
+  That is when I started following all the new and updating stories on each of the sites much more closely.
+<% end %>
+
+<%= cp.p_tag do %>
+  I often thought about writing my own story, I actually got around to completely outlining one that was similar, but darker in tone then
+  <%= cp.tab_link("https://forums.sufficientvelocity.com/threads/messages-from-an-angel-worm.31268/threadmarks", content: "Messages from an Angel") %>.
+  This was before it and many of the additional friendbringer fics came out.
+  Since my
+  <%= cp.em_tag(title: "
+    I almost missed this mistake but decided to leave it in as the perfect example.
+    This is a great way for me to pretend all the other ones are on purpose too.".strip,
+    data: { toggle: "tooltip" },
+  ) do %>
+    writing and (especially) grammer
+  <% end %>skills are well below average, I basically decided that my stories would never become reality.
+  I went back to just reading and following anything that popped up on the front page of each site.
+<% end %>
+
+<%= cp.p_tag do %>
+  This is where the primary motivation for creating this site came into play.
+  I found it very frustrating to try and stay up to date with all the activity.
+  Each of the sites seemed to be lacking in several search, filter, and follow features that I wanted.
+  For example, find all the recently created and updated stories for the week sorted by popularity.
+  This came to a head one friday evening and I spent the weekend writing a command line site crawler to pull all the recently threadmarked stories for spacebattles.
+  I continued to tweak the script for a few weeks, before I got annoyed that I had to keep copy/pasting the links into my browser.
+<% end %>
+
+<%= cp.p_tag do %>
+  At the start of the week this site went live, I decided to write the much needed frontend to the script during my off hours from work, so that I could finally filter, sort, and open each story in my browser.
+  Several sleepless nights later, one domain registration, a single Amazon Web Service instance (what a trooper), and here we are.
+<% end %>
+
+<%= cp.p_tag do %>
+  While I did make this site for myself, I also consider it my way of giving back to the great wormverse community.
+  It will stay up for at least as long as I am still actively reading the stories.
+<% end %>
+
+<%= cp.hr_tag %>
+
+<%= cp.p_tag do %>
+  <%= cp.b_tag(content: "Word of caution") %>, I enjoy tinkering with cutting edge web technologies and use this site as a testing ground to see how they operate and scale.
+  This will cause errors, downtime, or broken functionality for the site when things do not go as planned.
+  For example, I will soon be messing around with the filtering and sorting options.
+  You will likely see several filters moved into a dropdown, freeing up space in the table and a cleaner mobile experience.
+<% end %>
+
+<%= cp.section_header(content: "Planned Features:") %>
+
+<%= cp.ul_tag do %>
+  <%= cp.li_tag(content: "Pull fanfiction.net stories") %>
+  <%= cp.li_tag(content: 'Add "Popular" sorting that uses the average likes and favorites per story chapter') %>
+  <%= cp.li_tag(content: "Filter tinkering") %>
+<% end %>
+
+<%= cp.small_tag do %>
+  You can suggest additional features <%= cp.link_to(contact_path, content: "here") %>
+<% end %>

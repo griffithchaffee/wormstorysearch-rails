@@ -1,0 +1,29 @@
+<%= cp.page_header(
+  content:    "Contact",
+  sub_text:   "Provide feedback, suggestions, and bug reports",
+  sub_header: "Upcoming features: fanfiction.net scraper, popularity sorter (average likes per chapter)",
+) %>
+
+<%= cp.form_tag(contact_path, class: "form-horizontal") do %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.reply_to_label %>
+    <%= cp.full_div do %>
+      <%= cp.reply_to_field %>
+      <%= cp.help_span(content: "Leave blank to remain anonymous") %>
+    <% end %>
+  <% end %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.subject_label %>
+    <%= cp.full_div { cp.subject_field } %>
+  <% end %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.body_label %>
+    <%= cp.full_div { cp.body_field } %>
+  <% end %>
+
+
+  <%= cp.form_submit_div %>
+<% end %>

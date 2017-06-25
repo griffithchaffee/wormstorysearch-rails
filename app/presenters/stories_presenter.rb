@@ -64,19 +64,19 @@ class StoriesPresenter < ApplicationPresenter
       "3 Days"   => 3.days.ago.to_date,
       "1 Week"   => 1.week.ago.to_date,
     }
-    select_tag(:story_updated_at_gteq, content: content, prompt: "Updated...")
+    select_tag(:story_updated_at_gteq, content: content, prompt: "Updated")
   end
 
   def title_filter(params = {})
-    text_field_tag(:title_matches, params, placeholder: "By title...")
+    text_field_tag(:title_matches, params, placeholder: "Title")
   end
 
   def word_count_filter(params = {})
-    text_field_tag(:word_count_gteq, params, placeholder: "Words...")
+    text_field_tag(:word_count_gteq, params, placeholder: "Words")
   end
 
   def author_filter(params = {})
-    text_field_tag(:author_matches, params, placeholder: "Author...")
+    text_field_tag(:author_matches, params, placeholder: "Author")
   end
 
   # sorters

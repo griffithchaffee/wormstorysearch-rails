@@ -1,4 +1,18 @@
-.page-title { margin-top: 10px; }
+.page-header {
+  margin-top: 10px;
+  strong {
+    color: #888;
+    margin: 5px 0 0px;
+    font-size: 35%;
+    display: block;
+  }
+}
+
+div.form-submit {
+  input, a { &.submit { margin-left: -10px } }
+}
+
+.secondary-link { margin-left: 10px }
 
 a span { display: inline; }
 

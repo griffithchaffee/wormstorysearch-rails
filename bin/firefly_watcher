@@ -5,7 +5,7 @@ require "colored"
 root = File.expand_path("../..",  __FILE__)
 paths = %w[ app lib config vendor db/schemas bin ../action_presenter-base ].map { |directory| "#{root}/#{directory}" }
 pid_file = "#{root}/tmp/pids/puma.pid"
-restart_command = "pkill -INT -F #{pid_file}"
+restart_command = "pkill -USR2 -F #{pid_file}"
 
 puts "server restart command: #{restart_command.green}"
 
@@ -26,8 +26,9 @@ listener = Listen.to(*paths) do |modified, added, removed|
     # server not running or restarting
     else
       puts "server not running - checking if it is restarting".yellow
-      sleep 2
+      sleep 3
       if File.file?(pid_file)
+        puts "server was restarting".yellow
         `#{restart_command}`
       else
         puts "server still not running".red
