@@ -2,14 +2,12 @@ class IdentitySessionStore < ActionDispatch::Session::AbstractStore
   def session_id_to_session(session_id)
     session_model = IdentitySession
     if session_id.present?
-      # already found session
-      return @session if @session && @session.session_id == session_id
-      # find session
-      @session = session_model.find_by(session_id: session_id)
-      return @session if @session
+      # always find session (no caching)
+      session_model.find_by(session_id: session_id)
+    else
+      # provided session
+      yield(session_model) if block_given?
     end
-    # create session
-    @session = yield(session_model)
   end
 
   def find_session(env, session_id)
@@ -22,12 +20,13 @@ class IdentitySessionStore < ActionDispatch::Session::AbstractStore
     if session.unsaved? || session.data != session_data
       session.data = session_data
       session.save!
+    else
     end
     session.session_id
   end
 
   def delete_session(env, session_id, options)
-    session = session_id_to_session(session_id) { |model| nil }
+    session = session_id_to_session(session_id)
     session.destroy! if session
     generate_sid
   end
