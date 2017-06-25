@@ -80,7 +80,10 @@ module StorySearcher
         )
       end
       # skip worm stories
-      return if story.title !~ /worm/i
+      title_words = story.title.slugify.split("_")
+      is_worm_story = (title_words & %w[ worm wormverse wormfic wormsnip ]).blank?
+      is_worm_story ||= title_words.find { |title| title.starts_with?("wormx") }
+      return if !is_worm_story
       story.save! if story.has_changes_to_save?
       story
     end
