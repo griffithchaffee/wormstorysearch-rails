@@ -1,9 +1,9 @@
 // searchable-table
 table.searchable {
   tr.filters {
-    td.details { width: 90px; }
-    td.story_updated_at { width: 150px; }
-    td.word_count { width: 85px; min-width: 85px; }
-    td.author { max-width: 120px; }
+    td.details          { width: 90px;  max-width: 90px; }
+    td.story_updated_at { width: 150px; min-width: 150px; }
+    td.word_count       { width: 85px;  min-width: 85px;  max-width: 85px }
+    td.author           { width: 120px; max-width: 130px;}
   }
 }
