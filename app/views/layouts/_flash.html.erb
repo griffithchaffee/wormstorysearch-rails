@@ -13,7 +13,7 @@
     <%= cp.alert_div(alerts.fetch(key), add_class: "flash-message") do %>
       <%= cp.dismiss_action(:alert) %>
       <% messages.each do |message| %>
-        <%= message.html_safe %>
+        <%= message %>
       <% end %>
     <% end %>
   <% end %>

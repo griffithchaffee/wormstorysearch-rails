@@ -31,7 +31,7 @@ searchableTableBind = ->
   $selects.change     (evt) -> $form.submit()
   $inputs.keydown     (evt) ->
     if evt.keyCode is 13
-      window.finalforms.stop_event(evt)
+      Toolbox.cancelEvent(evt)
       $form.submit()
   # show resets if non-default search
   $inputs.not(".filter-reset-ignore").each (i, input) ->
