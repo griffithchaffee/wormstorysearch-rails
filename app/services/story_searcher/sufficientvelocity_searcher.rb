@@ -36,14 +36,13 @@ module StorySearcher
         raise ArgumentError, "crawled too many pages on: #{configuration[:site_url]}" if page > configuration.fetch(:max_pages)
         # crawl latest threads
         crawler.get("forums/user-fiction.2/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
-        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        threads_html = crawler.html.find_all("div.threadmarkList ol.discussionListItems li.discussionListItem:not(.sticky)")
         # stop on last page
         return if threads_html.size == 0
         # parse threads
         threads_html.each do |thread_html|
           story = update_story_for_thread!(thread_html)
           next if !story # not a worm story
-          next if story.title !~ /angel/i
           Rails.logger.info("Reading Story: #{story.title}")
           update_chapters_for_story!(story)
           # stop if older than time

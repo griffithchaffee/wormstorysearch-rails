@@ -88,7 +88,7 @@ module StorySearcher
       # parse threadmarks
       position = 0
       new_chapters = []
-      crawler.html.find_all("li.primaryContent").each do |html_li|
+      crawler.html.find_all("div.threadmarkList li.primaryContent").each do |html_li|
         position += 1
         # parts
         updated_html = html_li.css(".DateTime").first
