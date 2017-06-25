@@ -24,5 +24,5 @@ else
 end
 
 Scheduler.const.tasks.each do |task|
-  every(task.every) { rake("schedule:#{task.task}") }
+  every(*task.every) { rake("schedule:#{task.task}") }
 end
