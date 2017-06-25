@@ -34,7 +34,7 @@ class StaticController::Test < ApplicationController::TestCase
     @reply_to = %Q[INVALID"<>=@gmail.com]
     post(:contact, params: { reply_to: @reply_to, subject: @subject, body: @body })
     assert_response_redirect(stories_path, flash: { notice: 1 })
-    assert_mail(0, { subject: @subject, body: @body, body: @reply_to })
+    assert_mail(0, { subject: @subject, body: [@body, @reply_to] })
   end
 
   %i[ subject body ].each do |attribute|

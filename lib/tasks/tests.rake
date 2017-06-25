@@ -5,7 +5,7 @@ class ApplicationTestTaskAssistant
     end
 
     def find_files(glob)
-      regex = Regexp.new(glob)
+      regex = Regexp.new(glob || "")
       Dir["#{root}/**/*"].select { |file| file.remove(root) =~ regex }
     end
 
