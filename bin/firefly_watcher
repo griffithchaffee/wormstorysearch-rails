@@ -3,7 +3,7 @@ require "listen"
 require "colored"
 
 root = File.expand_path("../..",  __FILE__)
-paths = %w[ app lib config vendor db/schemas bin ../action_presenter-base ].map { |directory| "#{root}/#{directory}" }
+paths = %w[ app lib config vendor db/schemas bin ].map { |directory| "#{root}/#{directory}" }
 pid_file = "#{root}/tmp/pids/puma.pid"
 restart_command = "pkill -USR2 -F #{pid_file}"
 
