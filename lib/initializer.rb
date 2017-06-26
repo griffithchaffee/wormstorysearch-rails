@@ -7,7 +7,7 @@ Dir["#{Rails.root}/lib/rails/extensions/*.rb"].each { |file| require file }
 
 # settings
 Rails.application.define_singleton_method(:settings) do
-  @settings ||= File::Configuration.load_rails_config_file("settings.yml").with_indifferent_access.tap do |settings|
+  @settings ||= File::Configuration.load_rails_config_file("settings.yml.erb").with_indifferent_access.tap do |settings|
     settings.fetch(:version)
     settings[:namespace] ||= Rails.application.class.name.remove("::Application").underscore
     settings[:title]     ||= settings[:namespace].titleize
