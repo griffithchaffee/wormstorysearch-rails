@@ -2,13 +2,17 @@
 version: 1.1.2
 domain: wormstorysearch.com
 admin_ip: 70.185.183.167
-spacebattles:
-  site_url: https://forums.spacebattles.com
-  username: HomeTurf
-  password: 22k0M8gyE6W4Yar
-  max_pages: 200
-sufficientvelocity:
-  site_url: https://forums.sufficientvelocity.com
-  username: HomeTurf
-  password: 22k0M8gyE6W4Yar
-  max_pages: 200
+vendors:
+  bootstrap_version: 3.3.7
+  font_awesome_version: 4.7.0
+searchers:
+  spacebattles:
+    site_url: https://forums.spacebattles.com
+    username: HomeTurf
+    password: 22k0M8gyE6W4Yar
+    max_pages: 200
+  sufficientvelocity:
+    site_url: https://forums.sufficientvelocity.com
+    username: HomeTurf
+    password: 22k0M8gyE6W4Yar
+    max_pages: 200

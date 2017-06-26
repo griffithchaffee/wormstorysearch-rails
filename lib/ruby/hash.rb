@@ -47,6 +47,12 @@ class Hash
     Struct.new(*keys.map(&:to_sym)).new(*values)
   end
 
+  def to_deep_struct
+    transform_values do |value|
+      value.is_a?(Hash) ? value.to_deep_struct : value
+    end.to_struct
+  end
+
   def to_ostruct
     OpenStruct.new self
   end

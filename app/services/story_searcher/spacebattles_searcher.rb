@@ -4,7 +4,7 @@ module StorySearcher
 
     def initialize
       @location = "spacebattles"
-      @configuration = Rails.application.settings.send("#{location}!").to_struct
+      @configuration = Rails.application.settings.searchers[@location]
       @crawler = SiteCrawler.new(configuration.site_url)
       crawler.logger = Rails.logger
     end

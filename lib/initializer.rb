@@ -11,7 +11,7 @@ Rails.application.define_singleton_method(:settings) do
     settings.fetch(:version)
     settings[:namespace] ||= Rails.application.class.name.remove("::Application").underscore
     settings[:title]     ||= settings[:namespace].titleize
-  end.to_struct
+  end.to_deep_struct
 end
 
 # rails initializers
