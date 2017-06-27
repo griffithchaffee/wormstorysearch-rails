@@ -33,6 +33,14 @@ class Story < ApplicationRecord
     self[:title] = new_title.to_s.strip.presence
   end
 
+  def description=(new_description)
+    self[:description] = new_description.to_s.strip.presence
+  end
+
+  def crossover=(new_crossover)
+    self[:crossover] = new_crossover.to_s.strip.presence
+  end
+
   def word_count=(new_word_count)
     self[:word_count] = new_word_count.to_s.human_size_to_i
   end

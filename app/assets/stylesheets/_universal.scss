@@ -19,6 +19,9 @@ a span { display: inline; }
 .text-default { color: #333; }
 
 pre {
-  &.break { white-space: pre-wrap; }
+  &.break {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
   &.pretty { font-family: inherit; }
 }

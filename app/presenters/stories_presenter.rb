@@ -15,7 +15,7 @@ class StoriesPresenter < ApplicationPresenter
   end
 
   def description_field(*hashes)
-    text_area(:description, *hashes, placeholder: "Short overview about story", rows: 3)
+    text_area(:description, *hashes, placeholder: "Short overview about story", rows: 6)
   end
 
   def is_locked_label(*hashes)
