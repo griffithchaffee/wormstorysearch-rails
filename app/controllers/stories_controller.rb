@@ -23,6 +23,7 @@ class StoriesController < ApplicationController
   end
 
   def index
+    # preload chapters because read_url requires them
     @stories = Story.preload(:chapters)
       .search(permitted_action_search_params(save: true))
       .order_story_updated_at(:desc)

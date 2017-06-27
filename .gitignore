@@ -5,6 +5,7 @@
 /.bundle
 /.gem
 /script.rb
+/todo.rb
 # directories
 /public/assets
 /vendor/bundle
