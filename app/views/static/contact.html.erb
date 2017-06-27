@@ -1,7 +1,7 @@
 <%= cp.page_header(
   content:    "Contact",
   sub_text:   "Provide feedback, suggestions, and bug reports",
-  sub_header: "Upcoming features: fanfiction.net scraper, popularity sorter (average likes per chapter)",
+  sub_header: "Upcoming features: popularity sorter (average likes per chapter)",
 ) %>
 
 <%= cp.form_tag(contact_path, class: "form-horizontal") do %>
@@ -23,7 +23,6 @@
     <%= cp.body_label %>
     <%= cp.full_div { cp.body_field } %>
   <% end %>
-
 
   <%= cp.form_submit_div %>
 <% end %>
