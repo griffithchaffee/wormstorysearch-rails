@@ -3,6 +3,7 @@ class Story < ApplicationRecord
   extend ClassOptionsAttribute
 
   class_constant(:locations, %w[ location label host ]) do |new_const|
+    new_const.add(location: "fanfiction",         label: "FanFiction",         host: "https://www.fanfiction.net")
     new_const.add(location: "spacebattles",       label: "SpaceBattles",       host: "https://forums.spacebattles.com")
     new_const.add(location: "sufficientvelocity", label: "SufficientVelocity", host: "https://forums.sufficientvelocity.com")
   end

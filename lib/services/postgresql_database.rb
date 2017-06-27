@@ -47,32 +47,41 @@ class PostgresqlDatabase
 
   def create
     if !exists?
-      Rails.logger.info(database) { "creating database" }
+      logger.info(database) { "creating database" }
       create!
       ActiveRecord::Migration[migration_version].suppress_messages { migrate_to_latest_schema! }
       #ApplicationDatabase.reset_column_information
     end
   end
 
+  def logger
+    return Rails.logger if Rails.logger
+    return @logger if @logger
+    @logger ||= Logger.new($stdout)
+    @logger.formatter = Logger::ApplicationFormatter.new
+    @logger = ActiveSupport::TaggedLogging.new(@logger)
+    @logger
+  end
+
   def drop
     if exists?
-      Rails.logger.info(database) { "dropping database" }
+      logger.info(database) { "dropping database" }
       drop!
     end
   end
 
   def migrate(force = false)
     if force.to_s.in?(%w[ true force ]) || current_schema != latest_schema
-      Rails.logger.info(database) { "migrating" }
+      logger.info(database) { "migrating" }
       migrate!
-      Rails.logger.warn(database) { "current schema != latest schema" } if current_schema != latest_schema
+      logger.warn(database) { "current schema != latest schema" } if current_schema != latest_schema
     else
-      Rails.logger.info(database) { "current schema == latest schema" }
+      logger.info(database) { "current schema == latest schema" }
     end
   end
 
   def rollback
-    Rails.logger.info(database) { "reverting" }
+    logger.info(database) { "reverting" }
     rollback!
   end
 
@@ -87,7 +96,7 @@ class PostgresqlDatabase
   end
 
   def update_schema
-    Rails.logger.info(database) { "updating schema #{schema_file}" }
+    logger.info(database) { "updating schema #{schema_file}" }
     File.open(schema_file, "w") { |file| file.write(current_schema) }
   end
 

@@ -34,8 +34,15 @@ namespace :tests do
 
   desc "Run all tests"
   task :run, :glob do |name, params|
+    if !Rails.env.test?
+      puts "Tests can only be run in the test environment: " + "RAILS_ENV=test rake tests".green
+      exit!
+    end
+    if ENV["RESET"] == "true"
+      Rake::Task["database:reset"].invoke
+    end
+    ENV["BROADCAST_TO_STDOUT"] = "false"
     Time.use_zone "UTC" do
-      ENV["BROADCAST_TO_STDOUT"] = "false"
       Rake::Task["app:load"].invoke
       Rake::Task["tests:prepare"].invoke
       ApplicationTestTaskAssistant.find_test_files(params[:glob]).each do |path|
