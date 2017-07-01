@@ -2,7 +2,7 @@ class Scheduler
 
   extend ClassOptionsAttribute
 
-  class_constant(:tasks, %w[ task every ]) do |const|
+  class_constant_builder(:tasks, %w[ task every ]) do |const|
     # often
     const.add(task: "update_stories", every: [1.hour])
     # 5AM UTC = 9PM PST / 12AM EST

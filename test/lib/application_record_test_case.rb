@@ -1,7 +1,8 @@
 class ApplicationRecord::TestCase < ActiveSupport::TestCase
   include ApplicationTestConcern
 
-  setup do
+  def factory
+    self.class.name.split("::").first.underscore
   end
 
 end

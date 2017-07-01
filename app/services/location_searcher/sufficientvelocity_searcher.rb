@@ -1,3 +1,4 @@
+=begin
 module StorySearcher
   class SufficientvelocitySearcher < UniversalSearcher
     attr_reader :configuration, :crawler, :location, :search_options
@@ -135,3 +136,4 @@ module StorySearcher
     end
   end
 end
+=end

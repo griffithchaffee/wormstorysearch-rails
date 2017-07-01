@@ -1,6 +1,6 @@
 class StoryChapter < ApplicationRecord
   # modules/constants
-  class_constant(:categories, %w[ category label ]) do |new_const|
+  class_constant_builder(:categories, %w[ category label ]) do |new_const|
     new_const.add(category: "chapter", label: "Chapter")
     new_const.add(category: "omake",   label: "Omake")
   end

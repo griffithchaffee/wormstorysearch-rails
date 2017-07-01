@@ -1,13 +1,42 @@
 def up
-  change_table(:stories) do |t|
-    t.rename :location_id, :location_story_id
+
+  create_table "spacebattles_stories", force: :cascade do |t|
+    t.bigint "story_id", index: true
+    t.boolean "is_locked", default: false, null: false
+    t.date "story_created_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "story_updated_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "word_count", default: 0, null: false
+    t.integer "likes", default: 0, null: false
+    t.string "author", null: false
+    t.string "location_path", null: false
+    t.string "location_id", null: false
+    t.string "title", null: false
+    t.string "read_url", null: false
+    t.string "category", null: false, default: "story"
   end
+
+
+  create_table "spacebattles_story_chapters", force: :cascade do |t|
+    t.bigint "story_id", null: false, index: true
+    t.date "chapter_created_on", null: false
+    t.datetime "chapter_updated_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "position", null: false
+    t.integer "word_count", default: 0, null: false
+    t.integer "likes", default: 0, null: false
+    t.string "category", default: "chapter", null: false
+    t.string "location_path", null: false
+    t.string "title", null: false
+  end
+
 end
 
 def down
-  change_table(:stories) do |t|
-    t.rename :location_story_id, :location_id
-  end
+  drop_table(:spacebattles_stories)
+  drop_table(:spacebattles_story_chapters)
 end
 
 

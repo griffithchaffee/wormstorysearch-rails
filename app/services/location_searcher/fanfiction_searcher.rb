@@ -1,3 +1,4 @@
+=begin
 module StorySearcher
   class FanfictionSearcher < UniversalSearcher
     attr_reader :configuration, :crawler, :updated_after, :location, :search_options
@@ -114,3 +115,4 @@ module StorySearcher
     end
   end
 end
+=end

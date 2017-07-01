@@ -9,10 +9,9 @@ class ApplicationTestTaskAssistant
       Dir["#{root}/**/*"].select { |file| file.remove(root) =~ regex }
     end
 
-    def find_test_files(glob)
+    def find_test_directory_files(glob)
       find_files(glob).select do |file|
-        next if test_directories.none? { |directory| file.starts_with?(directory) }
-        file.ends_with?("_test.rb")
+        test_directories.any? { |directory| file.starts_with?(directory) }
       end.sort
     end
 
@@ -45,8 +44,13 @@ namespace :tests do
     Time.use_zone "UTC" do
       Rake::Task["app:load"].invoke
       Rake::Task["tests:prepare"].invoke
-      ApplicationTestTaskAssistant.find_test_files(params[:glob]).each do |path|
-        require path
+      # load test concerns
+      ApplicationTestTaskAssistant.find_test_directory_files(/_test_concern\.rb\z/).each do |test_concern_file|
+        require test_concern_file
+      end
+      # load tests
+      ApplicationTestTaskAssistant.find_test_directory_files(params[:glob]).each do |test_file|
+        require test_file if test_file.ends_with?("_test.rb")
       end
     end
   end

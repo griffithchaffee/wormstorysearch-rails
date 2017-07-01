@@ -11,7 +11,7 @@ class SiteCrawler
   end
 
   def logger
-    @logger ||= Logger.new(STDOUT)
+    @logger ||= Rails.logger
   end
 
   def site(options = {}, &block)

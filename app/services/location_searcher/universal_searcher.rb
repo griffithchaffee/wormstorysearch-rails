@@ -1,4 +1,4 @@
-module StorySearcher
+module LocationSearcher
   class UniversalSearcher
 
     class << self

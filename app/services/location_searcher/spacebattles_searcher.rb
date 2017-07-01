@@ -1,12 +1,11 @@
-module StorySearcher
+module LocationSearcher
   class SpacebattlesSearcher < UniversalSearcher
-    attr_reader :configuration, :crawler, :location, :search_options
+    attr_reader :config, :crawler, :search_options, :story_model
 
     def initialize
-      @location = "spacebattles"
-      @configuration = Rails.application.settings.searchers[@location]
-      @crawler = SiteCrawler.new(Story.const.locations.fetch(@location).host)
-      crawler.logger = Rails.logger
+      @story_model = SpacebattlesStory
+      @config = story_model.const
+      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def search!(time, search_options = {})
@@ -19,12 +18,21 @@ module StorySearcher
     end
 
     def login!
-      # authenticate
-      crawler.post(
-        "/login/login",
-        { login: configuration.username, password: configuration.password },
-        { follow_redirects: false, log_level: Logger::WARN }
-      )
+      if config.location_username && config.location_password
+        # authenticate
+        crawler.post(
+          "/login/login",
+          { login: config.location_username, password: config.location_password, redirect: "#{config.location_host}/authenticated" },
+          { follow_redirects: false, log_level: Logger::INFO }
+        )
+        if crawler.response.status == 303
+          Rails.logger.info { "Logged in as #{config.location_username}".green }
+        else
+          Rails.logger.warn { "Login failed for #{config.location_username}".yellow }
+        end
+      else
+        Rails.logger.warn { "Skipping login".yellow }
+      end
     end
 
     def update_stories_newer_than!(time)
@@ -33,7 +41,7 @@ module StorySearcher
       while continue do
         page += 1
         # prevent infinite loop
-        raise ArgumentError, "crawled too many pages on" if page > configuration.max_pages
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
         # crawl latest threads
         crawler.get("/forums/worm.115/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
         threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
@@ -42,7 +50,7 @@ module StorySearcher
         # parse threads
         threads_html.each do |thread_html|
           story = update_story_for_thread!(thread_html)
-          Rails.logger.info("Read: #{story.title.green}")
+          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time
@@ -62,16 +70,16 @@ module StorySearcher
       created_html    = main_html.css(".DateTime").first
       active_html     = thread_html.css(".lastPostInfo .DateTime").first
       # story attributes
-      title             = title_html.text
-      location_path     = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
-      location_story_id = thread_html[:id]
-      author            = author_html.text
-      word_count        = word_count_html.text.remove("Word Count: ")
-      created_at        = abbr_html_to_time(created_html)
-      active_at         = abbr_html_to_time(active_html)
-      story_finder      = { location: location, location_story_id: location_story_id }
+      title         = title_html.text
+      location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
+      location_id   = thread_html[:id]
+      author        = author_html.text
+      word_count    = word_count_html.text.remove("Word Count: ")
+      created_at    = abbr_html_to_time(created_html)
+      active_at     = abbr_html_to_time(active_html)
+      story_finder  = { location_id: location_id }
       # update story
-      story = Story.find_by(story_finder) || Story.new(story_finder)
+      story = story_model.find_by(story_finder) || story_model.new(story_finder)
       story.assign_attributes(
         title:           title,
         location_path:   location_path,
@@ -111,7 +119,7 @@ module StorySearcher
           title: title,
           location_path: location_path,
           word_count: word_count,
-          chapter_created_at: updated_at,
+          chapter_created_on: updated_at,
           chapter_updated_at: updated_at,
         )
         chapter.save! if chapter.has_changes_to_save?

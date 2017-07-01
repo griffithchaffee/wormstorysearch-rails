@@ -12,13 +12,16 @@ module ClassOptionsAttribute
     end
   end
 
-  def class_constant(name, attributes_or_value)
+  def class_constant(name, value)
     class_options_attribute(:const) if !respond_to?(:const)
-    if attributes_or_value.is_a?(Array)
-      new_const = ClassConstant.new(name, attributes_or_value)
-    else
-      new_const = attributes
-    end
+    self.const.send("#{name}=", value)
+    raise ArgumentError, "class_constant does not accept a block" if block_given?
+    value
+  end
+
+  def class_constant_builder(name, *params)
+    class_options_attribute(:const) if !respond_to?(:const)
+    new_const = ClassConstant.new(name, *params)
     self.const.send("#{name}=", new_const)
     yield new_const if block_given?
     new_const
