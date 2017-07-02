@@ -121,78 +121,73 @@ class SiteCrawler
   end
 
   def html
-    @html ||= HtmlParser.new response.body
+    @html ||= html!(response.body)
   end
 
   def html!(body)
-    @html = HtmlParser.new body
+    HtmlParser.parse(body)
   end
 
   def html_fragment(*params)
-    HtmlFragmentParser.new response.body[*params]
+    @fragment ||= html_fragment!(*params)
   end
 
-  def html_fragment!(fragment)
-    HtmlFragmentParser.new fragment
+  def html_fragment!(fragment_or_regex)
+    fragment = fragment_or_regex.is_a?(Regexp) ? response.body[fragment_or_regex] : fragment_or_regex
+    HtmlFragmentParser.parse(fragment)
   end
 
   class HtmlParser
-    attr_reader :document
-    attr_accessor :selection
-    delegate :to_s, :text, to: :document
+    attr_reader :document, :html
 
-    def initialize(html)
+    def parse(html)
       @html = html
-      parse @html
-      find_all("script").remove
-      find_all("link").remove
-    end
-
-    def find_all(selector)
-      self.selection = document.css(selector)
-    end
-
-    def find(selector)
-      self.selection = find_all(selector).first
-    end
-
-    def text
-      document.text
+      @document = Nokogiri::HTML(html)
     end
 
     def reset
-      parse @html
+      parse(@html)
     end
 
-    def parse(html)
-      @document = Nokogiri::HTML html
+    def method_missing(*params, &block)
+      document.send(*params, &block)
+    end
+
+    def respond_to_missing?(*params, &block)
+      document.respond_to?(*params, &block)
+    end
+
+    class << self
+      def parse(html)
+        new.parse(html)
+      end
     end
   end
 
   class HtmlFragmentParser
-    attr_reader :fragment
-    attr_accessor :selection
-    delegate :to_s, :text, to: :fragment
+    attr_reader :fragment, :html
 
-    def initialize(fragment)
-      @fragment = fragment
-      parse @fragment
-    end
-
-    def find_all(selector)
-      self.selection = fragment.css(selector)
-    end
-
-    def find(selector)
-      self.selection = find_all(selector).first
+    def parse(html)
+      @html = html
+      @fragment = Nokogiri::HTML::fragment(html)
     end
 
     def reset
-      parse @fragment
+      parse(@html)
     end
 
-    def parse(fragment)
-      @fragment = Nokogiri::HTML::fragment fragment
+    def method_missing(*params, &block)
+      fragment.send(*params, &block)
+    end
+
+    def respond_to_missing?(*params, &block)
+      fragment.respond_to?(*params, &block)
+    end
+
+    class << self
+      def parse(html)
+        new.parse(html)
+      end
     end
   end
 

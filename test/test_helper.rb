@@ -6,6 +6,7 @@ require "factory_girl"
 FactoryGirl.find_definitions
 
 require_relative "lib/application_test_concern"
+require_relative "lib/application_test_case"
 require_relative "lib/application_record_test_case"
 require_relative "lib/application_controller_test_case"
 require_relative "lib/minitest_pretty_reporter"

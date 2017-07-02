@@ -84,7 +84,8 @@ module LocationStoryConcern
     !is_locked?
   end
 
-  def story!
+  def story!(options = {})
+    options = options.with_indifferent_access.assert_valid_keys(*%w[ autocreate ])
     # already set
     return story if is_locked? || story
     # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
@@ -92,9 +93,9 @@ module LocationStoryConcern
     query = Story.where(category: category)
     # find existing story by title
     [title, parsed_title].each do |search_title|
-      search = query.where(title: search_title)
+      search = query.seek(title_ieq: search_title)
       return search.first if search.count == 1
-      search = query.seek(title_matches: search_title)
+      search = query.seek(title_matches: search_title, author_ieq: author)
       return search.first if search.count == 1
     end
     # create story by title
@@ -103,7 +104,7 @@ module LocationStoryConcern
     if !"crossover".in?(self.class.column_names)
       new_story.crossover = parse_crossover_from_title
     end
-    new_story.save!
+    new_story.save! if options[:autocreate] != false
     new_story
   end
 

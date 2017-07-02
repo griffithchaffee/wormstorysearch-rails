@@ -29,8 +29,8 @@ module LocationStoryConcern::TestConcern
       # story should be updated when chapter created
       assert_equal(chapter.chapter_updated_at.to_i, story.reload.story_updated_at.to_i)
       # story can have updated_at changed
-      story.update!(story_updated_at: 1.day.ago)
-      assert_equal(1.day.ago.to_i, story.story_updated_at.to_i)
+      story.update!(story_updated_at: Date.yesterday)
+      assert_equal(Date.yesterday.to_i, story.story_updated_at.to_i)
       # accessor for latest updated_at
       assert_equal(chapter.chapter_updated_at.to_i, story.story_updated_at!.to_i)
       # chapter updated
@@ -85,6 +85,19 @@ module LocationStoryConcern::TestConcern
         assert_equal("Planeswalker", story.crossover, story.inspect)
       end
       # finds existing story
+      assert_equal(story, location_story.story!)
+      # no existing story
+      story.update!(title: "abc 123", author: "SOMEONE")
+      location_story.story = nil
+      assert_equal(true, location_story.story!(autocreate: false).unsaved?)
+      # exact title match
+      location_story.update!(title: "abc 123")
+      assert_equal(story, location_story.story!)
+      # partial title match
+      location_story.update!(title: "abc")
+      assert_equal(true, location_story.story!(autocreate: false).unsaved?)
+      # partial title match and author
+      location_story.update!(title: "ABC", author: "someone")
       assert_equal(story, location_story.story!)
     end
   end

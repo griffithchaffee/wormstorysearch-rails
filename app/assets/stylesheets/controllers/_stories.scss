@@ -17,3 +17,21 @@ table.searchable {
     td.story_updated_at { white-space: nowrap; }
   }
 }
+
+div.story_filter {
+  width: 100%;
+  ul.dropdown-menu {
+    li {
+      white-space: nowrap;
+      > a {
+        &.radio, &.checkbox {
+          margin: 0px; cursor: pointer;
+          label {
+            display: block;
+            line-height: 20px;
+          }
+        }
+      }
+    }
+  }
+}

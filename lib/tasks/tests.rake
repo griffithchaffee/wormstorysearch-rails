@@ -16,7 +16,7 @@ class ApplicationTestTaskAssistant
     end
 
     def test_directory_names
-      %w[ controllers integration mailers models system ]
+      %w[ controllers integration mailers models system services ]
     end
 
     def test_directories

@@ -16,61 +16,71 @@ module LocationSearcher
       end
     end
 
-    def update_stories_newer_than!(time)
-      continue, page = true, 0
-      # crawl "Creative Writing" subforum "Worm"
-      while continue do
-        page += 1
-        # prevent infinite loop
-        raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
-        # crawl latest threads
-        crawler.get("/forums/worm.115/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
-        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
-        # stop on last page
-        continue = false if threads_html.size == 0
-        # parse threads
-        threads_html.each do |thread_html|
-          story_attributes = parse_thread(thread_html)
-          story = build_story(story_attributes)
-          story = save_story(story)
-          update_chapters_for_story!(story)
-          # stop if older than time
-          if story.story_active_at < time
-            continue = false
-            break
-          end
+    def update_stories!(initial_options = {})
+      # crawl "User Fiction" forum
+      %w[ /book/Worm/ /Worm-Crossovers/10867/0/ ].each do |stories_path|
+        options = initial_options.with_indifferent_access
+        page = options.delete(:page) || 0
+        loop do
+          page += 1
+          # prevent infinite loop
+          raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
+          # crawl latest threads
+          # crawl latest stories
+          #   [srt=1] Sort: Updated At [srt=1]
+          #   [r=10]  Rating: All [r=10]
+          search_params = { srt: 1, r: 10, p: page }
+          crawler.get(stories_path, search_params, log_level: Logger::INFO)
+          results = update_stories_from_html!(crawler.html)
+          # stop on last page
+          break if results[:more] != true
         end
       end
     end
 
-    def update_stories_newer_than!(time)
-      %w[ /book/Worm/ /Worm-Crossovers/10867/0/ ].each do |stories_path|
-        continue, page = true, 0
-        while continue do
-          page += 1
-          # prevent infinite loop
-          raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
-          # crawl latest stories
-          #   [srt=1] Sort: Updated At [srt=1]
-          #   [r=10]  Rating: All [r=10]
-          crawler.get(stories_path, { srt: 1, r: 10, p: page }, { log_level: Logger::INFO })
-          stories_html = crawler.html.find_all("div.z-list")
-          # stop on last page
-          continue = false if stories_html.size == 0
-          # parse stories
-          stories_html.each do |story_html|
-            story_attributes = parse_story_html(story_html)
-            story = build_story(story_attributes)
-            story = save_story(story)
-            update_chapters_for_story!(story)
-            # stop if older than time
-            if story.story_active_at < time
-              continue = false
-              break
-            end
-          end
-        end
+    def update_stories_from_html!(html, options = {})
+      options = options.with_indifferent_access.assert_valid_keys(*%w[ active_after chapters ])
+      stories_html = parse_stories_html(html)
+      stories = []
+      results = -> (more) { { stories: stories, more: more } }
+      # stop on last page
+      return results.call(false) if stories_html.size == 0
+      # parse threads
+      stories_html.each do |story_html|
+        story_attributes = parse_story_html(story_html).merge(options[:attributes].to_h)
+        story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
+        # stop if story too old
+        return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
+        story = save_story(story)
+        update_chapters_for_story!(story) if options[:chapters] != false
+        stories << story
       end
+      results.call(true)
+    end
+
+    def update_chapters_for_story!(story)
+      crawler.get("#{story.location_path}", {}, log_level: Logger::WARN)
+      update_chapters_for_story_from_html!(story, crawler.html)
+    end
+
+    def update_chapters_for_story_from_html!(story, html)
+      new_chapters, position = [], 0
+      parse_chapters_html(html).each do |chapter_html|
+        position += 1
+        chapter_attributes = parse_chapter_html(chapter_html, story)
+        # update chapter
+        chapter = story.chapters.get(position: position) || story.chapters.build(position: position)
+        chapter.assign_attributes(chapter_attributes)
+        chapter.save! if chapter.has_changes_to_save?
+        new_chapters << chapter
+      end
+      story.chapters = new_chapters
+    end
+
+  private
+
+    def parse_stories_html(stories_html)
+      stories_html.css("div.z-list")
     end
 
     def parse_story_html(story_html)
@@ -106,35 +116,26 @@ module LocationSearcher
       }
     end
 
-    def update_chapters_for_story!(story)
-      # get threadmarks
-      crawler.get("#{story.location_path}", {}, { log_level: Logger::WARN })
-      # parse threadmarks
-      position = 0
-      new_chapters = []
-      crawler.html.find_all("#chap_select option").each do |html_option|
-        position += 1
-        # chapter attributes
-        title                  = html_option.text.remove(/\A\d+\. /)
-        # convert location "/s/12547526/1/Lisa-s-Love-Limbo" => "/s/12547526/2/Lisa-s-Love-Limbo"
-        location_path_parts    = story.location_path.split("/")
-        location_path_parts[3] = html_option[:value]
-        location_path          = location_path_parts.join("/")
-        created_at             = story.story_created_on
-        updated_at             = story.story_created_on
-        # update chapter
-        chapter = story.chapters.get(position: position) || story.chapters.build(position: position)
-        chapter.assign_attributes(
-          title: title,
-          location_path: location_path,
-          chapter_created_on: created_at,
-          chapter_updated_at: updated_at,
-        )
-        chapter.save! if chapter.has_changes_to_save?
-        new_chapters << chapter
-      end
-      story.chapters = new_chapters
+    def parse_chapters_html(chapters_html)
+      chapters_html.css("#chap_select option")
+    end
+
+    def parse_chapter_html(chapter_html, story)
+      # parse attributes
+      title                  = chapter_html.text.remove(/\A\d+\. /)
+      # convert location "/s/12547526/1/Lisa-s-Love-Limbo" => "/s/12547526/2/Lisa-s-Love-Limbo"
+      location_path_parts    = story.location_path.split("/")
+      location_path_parts[3] = chapter_html[:value]
+      location_path          = location_path_parts.join("/")
+      created_at             = story.story_created_on
+      updated_at             = story.story_created_on
+      # attributes
+      {
+        title: title,
+        location_path: location_path,
+        chapter_created_on: created_at,
+        chapter_updated_at: updated_at,
+      }.with_indifferent_access
     end
   end
 end
-
