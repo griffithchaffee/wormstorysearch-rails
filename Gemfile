@@ -13,8 +13,8 @@ gem "pg",    "~> 0.21", platforms: :ruby
 gem "puma",  "~> 3.7"
 gem "unicorn"
 gem "colored"
-#gem "action_presenter-base", git: "git@github.com:griffithchaffee/action_presenter-base.git"
-gem "action_presenter-base", path: "/root/griffithchaffee/action_presenter-base"
+gem "action_presenter-base", git: "git@github.com:griffithchaffee/action_presenter-base.git"
+#gem "action_presenter-base", path: "/root/griffithchaffee/action_presenter-base"
 
 # assets
 gem "sass-rails",   "~> 5.0"
