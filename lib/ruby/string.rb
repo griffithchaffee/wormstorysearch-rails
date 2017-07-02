@@ -7,6 +7,10 @@ class String
     strip.squeeze(" ")
   end
 
+  def lalign
+    remove(/^ +/)
+  end
+
   def human_size_to_i
     case self
     # 123, 123.5

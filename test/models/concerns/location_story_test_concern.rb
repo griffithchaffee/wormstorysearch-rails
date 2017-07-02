@@ -6,8 +6,8 @@ module LocationStoryConcern::TestConcern
       story = FactoryGirl.create(factory)
       %w[ title description crossover ].each do |attribute|
         next if !attribute.in?(story.class.column_names)
-        story.update!(attribute => " \n\r MULTI  WORD   VALUE \n\r ")
-        assert_equal("MULTI WORD VALUE", story.send(attribute))
+        story.update!(attribute => " \n\r MULTI  #{attribute}   VALUE \n\r ")
+        assert_equal("MULTI #{attribute} VALUE", story.send(attribute))
       end
     end
 

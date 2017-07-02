@@ -4,7 +4,7 @@ class DynamicMailer < ApplicationMailer
     params = params.with_indifferent_access.assert_valid_keys(*%w[ reply_to subject body ])
     params[:to] = "hometurfpublic@gmail.com"
     @body = params.delete(:body)
-    mail(params.select_present)
+    mail(params.select { |k,v| v.present? })
   end
 
 end

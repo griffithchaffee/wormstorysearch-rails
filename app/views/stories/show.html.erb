@@ -1,10 +1,6 @@
 <%= content_for(:title) do %>
+  <%= @story.category_label %>:
   <%= @story.title %>
-<% end %>
-
-<%= cp.div_tag do %>
-  <%= cp.b_tag(content: "Source:") %>
-  <%= @story.location_label %>
 <% end %>
 
 <%= cp.div_tag do %>
@@ -26,20 +22,19 @@
 
 <%= cp.div_tag do %>
   <%= cp.b_tag(content: "Created:") %>
-  <%= @story.story_created_on.b_d_Y %>
+  <%= @story.story_created_on.to_full_human_s %>
 <% end %>
 
 <%= cp.div_tag do %>
   <%= cp.b_tag(content: "Updated:") %>
-  <%= @story.story_updated_at.b_d_Y_l_M_p.capitalize %>
+  <%= @story.story_updated_at.to_full_human_s %>
 <% end %>
 
-<%= cp.pre_tag(add_class: "break pretty", style: "margin-top: 10px") do %>
-  <% if @story.description? %>
-    <%= @story.description %>
-  <% else %>
-    No description... you can add one by editing this story.
-  <% end %>
+<% description = @story.description? ? @story.description : "No description... you can add one by editing this story." %>
+<%= cp.pre_tag(add_class: "break pretty", style: "margin-top: 10px", content: description) %>
+
+<% if @story.locations.present? %>
+  <%= render_partial("unsearchable_table", directory: "locations", collection: @story.locations_sorted_by_updated_at) %>
 <% end %>
 
 <%= content_for(:footer) do %>

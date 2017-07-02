@@ -1,4 +1,14 @@
 <%= cp.form_group_div do %>
+  <%= cp.title_label %>
+  <%= cp.title_field %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.author_label %>
+  <%= cp.author_field %>
+<% end %>
+
+<%= cp.form_group_div do %>
   <%= cp.crossover_label %>
   <%= cp.crossover_field %>
 <% end %>
@@ -9,11 +19,19 @@
 <% end %>
 
 <% if is_admin? %>
+  <%= cp.legend_tag(content: "Admin Options") %>
+
   <%= cp.form_group_div do %>
-    <%= cp.is_locked_label %>
     <%= cp.check_box_div_label(style: "margin: 0px;") do %>
       <%= cp.is_locked_check_box %>
       <%= cp.is_locked_check_box_text %>
+    <% end %>
+  <% end %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.check_box_div_label(style: "margin: 0px;") do %>
+      <%= cp.is_archived_check_box %>
+      <%= cp.is_archived_check_box_text %>
     <% end %>
   <% end %>
 <% end %>

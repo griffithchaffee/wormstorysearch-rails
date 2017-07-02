@@ -46,6 +46,10 @@ searchableTableBind = ->
   $radios.not(".filter-reset-ignore").each (i, radio) ->
     if $(radio).prop("checked") then $resets.show()
   $check_boxes.not(".filter-reset-ignore").each (i, check_box) ->
-    if $(check_box).prop("checked") isnt $(check_box).data("search").default then $resets.show()
+    $check_box = $(check_box)
+    if $check_box.prop("checked")
+      if $check_box.val() isnt $check_box.data("search").default then $resets.show()
+    else
+      if $check_box.val() is $check_box.data("search").default then $resets.show()
 
 $(document).on "page:change", searchableTableBind

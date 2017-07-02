@@ -45,13 +45,13 @@ module LocationSearcher
         raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
         # crawl latest threads
         crawler.get("forums/user-fiction.2/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
-        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        stories_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
         # stop on last page
-        continue = false if threads_html.size == 0
+        continue = false if stories_html.size == 0
         # parse threads
-        threads_html.each do |thread_html|
-          story_attributes = parse_thread(thread_html)
-          story = build_story(story_attributes)
+        stories_html.each do |story_html|
+          story_attributes = parse_story_html(story_html)
+          story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
           # skip non-worm threads
           if !is_worm_story?(story)
             Rails.logger.info { "Skip: #{story.title.yellow}" }
@@ -78,14 +78,14 @@ module LocationSearcher
         raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
         # crawl latest threads
         crawler.get("/forums/quests.29/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
-        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        stories_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
         # stop on last page
-        continue = false if threads_html.size == 0
+        continue = false if stories_html.size == 0
         # parse threads
-        threads_html.each do |thread_html|
-          story_attributes = parse_thread(thread_html)
+        stories_html.each do |story_html|
+          story_attributes = parse_story_html(story_html)
           story_attributes[:category] = "quest"
-          story = build_story(story_attributes)
+          story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
           # skip non-worm threads
           if !is_worm_story?(story)
             Rails.logger.info { "Skip: #{story.title.yellow}" }
@@ -103,18 +103,18 @@ module LocationSearcher
       end
     end
 
-    def parse_thread(thread_html)
+    def parse_story_html(story_html)
       # html selections
-      main_html       = thread_html.css(".main")
+      main_html       = story_html.css(".main")
       title_html      = main_html.css("h3.title a.PreviewTooltip").first
       author_html     = main_html.css(".username")
       word_count_html = main_html.css(".OverlayTrigger")
       created_html    = main_html.css(".DateTime").first
-      active_html     = thread_html.css(".lastPostInfo .DateTime").first
+      active_html     = story_html.css(".lastPostInfo .DateTime").first
       # parse attributes
       title         = title_html.text
       location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
-      location_id   = thread_html[:id]
+      location_id   = story_html[:id]
       author        = author_html.text
       word_count    = word_count_html.text.remove("Word Count: ")
       created_at    = abbr_html_to_time(created_html)

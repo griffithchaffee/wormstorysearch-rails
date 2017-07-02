@@ -24,10 +24,10 @@ class StoriesController < ApplicationController
 
   def index
     # preload chapters because read_url requires them
-    @stories = Story.preload(:spacebattles_story, :sufficientvelocity_story)
-      .search(permitted_action_search_params(save: true).to_unsafe_h)
+    @stories = Story.preload(:spacebattles_stories, :sufficientvelocity_stories, :fanfiction_stories)
+      .search(permitted_action_search_params(save: true).to_unsafe_h, is_archived_eq: false)
       .order_story_updated_at(:desc)
-      .paginate(permitted_action_pagination_params(save: true).to_unsafe_h)
+      .paginate(permitted_action_pagination_params(save: true).to_unsafe_h, limit: 15)
   end
 
 private
@@ -40,15 +40,14 @@ private
   end
 
   def permit_story_params
-    permit = %w[ crossover description ]
-    permit += %w[ is_locked ] if is_admin?
+    permit = %w[ title author crossover description ]
+    permit += %w[ is_locked is_archived ] if is_admin?
     permit
   end
 
   def permit_index_search_params
     %w[
-      story_matches category_eq story_updated_at_gteq
-      title_matches story_updated_at_gteq word_count_gteq author_matches
+      story_matches category_eq story_updated_at_gteq is_archived_eq is_locked_eq
       sort direction
     ]
   end

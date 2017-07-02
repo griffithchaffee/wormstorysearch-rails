@@ -1,13 +1,11 @@
-=begin
-module StorySearcher
+module LocationSearcher
   class FanfictionSearcher < UniversalSearcher
-    attr_reader :configuration, :crawler, :updated_after, :location, :search_options
+    attr_reader :config, :crawler, :search_options, :story_model
 
     def initialize
-      @location = "fanfiction"
-      @configuration = Rails.application.settings.searchers[@location]
-      @crawler = SiteCrawler.new(Story.const.locations.fetch(@location).host)
-      crawler.logger = Rails.logger
+      @story_model = FanfictionStory
+      @config = story_model.const
+      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def search!(time, search_options = {})
@@ -19,12 +17,39 @@ module StorySearcher
     end
 
     def update_stories_newer_than!(time)
+      continue, page = true, 0
+      # crawl "Creative Writing" subforum "Worm"
+      while continue do
+        page += 1
+        # prevent infinite loop
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
+        # crawl latest threads
+        crawler.get("/forums/worm.115/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
+        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        # stop on last page
+        continue = false if threads_html.size == 0
+        # parse threads
+        threads_html.each do |thread_html|
+          story_attributes = parse_thread(thread_html)
+          story = build_story(story_attributes)
+          story = save_story(story)
+          update_chapters_for_story!(story)
+          # stop if older than time
+          if story.story_active_at < time
+            continue = false
+            break
+          end
+        end
+      end
+    end
+
+    def update_stories_newer_than!(time)
       %w[ /book/Worm/ /Worm-Crossovers/10867/0/ ].each do |stories_path|
         continue, page = true, 0
         while continue do
           page += 1
           # prevent infinite loop
-          raise ArgumentError, "crawled too many pages on" if page > configuration.max_pages
+          raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
           # crawl latest stories
           #   [srt=1] Sort: Updated At [srt=1]
           #   [r=10]  Rating: All [r=10]
@@ -34,8 +59,9 @@ module StorySearcher
           continue = false if stories_html.size == 0
           # parse stories
           stories_html.each do |story_html|
-            story = update_story_from_html!(story_html)
-            Rails.logger.info("Read: #{story.title.green}")
+            story_attributes = parse_story_html(story_html)
+            story = build_story(story_attributes)
+            story = save_story(story)
             update_chapters_for_story!(story)
             # stop if older than time
             if story.story_active_at < time
@@ -47,12 +73,12 @@ module StorySearcher
       end
     end
 
-    def update_story_from_html!(story_html)
+    def parse_story_html(story_html)
       # html selections
       title_html = story_html.css("a.stitle").first
       main_html = story_html.css("div")
       details_html = main_html > "div"
-      # story attributes
+      # parse attributes
       title             = title_html.text
       location_path     = title_html[:href]
       location_story_id = location_path.match(/\d+/)[0]
@@ -65,13 +91,11 @@ module StorySearcher
       if "Crossover - ".in?(details_html.text)
         crossover = details_html.text.match(/Crossover - (.*?) - /)[1]
       end
-      # update story
-      story_finder = { location: location, location_story_id: location_story_id }
-      story = Story.find_by(story_finder) || Story.new(story_finder)
-      story.assign_attributes(
+      # attributes
+      {
         title: title,
+        location_id: location_story_id,
         location_path: location_path,
-        location_story_id: location_story_id,
         author: author,
         description: description,
         crossover: crossover,
@@ -79,9 +103,7 @@ module StorySearcher
         story_active_at: active_at,
         story_created_on: created_at,
         story_updated_at: updated_at,
-      )
-      story.save! if story.has_changes_to_save?
-      story
+      }
     end
 
     def update_chapters_for_story!(story)
@@ -105,7 +127,7 @@ module StorySearcher
         chapter.assign_attributes(
           title: title,
           location_path: location_path,
-          chapter_created_at: created_at,
+          chapter_created_on: created_at,
           chapter_updated_at: updated_at,
         )
         chapter.save! if chapter.has_changes_to_save?
@@ -115,4 +137,4 @@ module StorySearcher
     end
   end
 end
-=end
+

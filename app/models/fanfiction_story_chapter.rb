@@ -1,10 +1,10 @@
-class SpacebattlesStoryChapter < ApplicationRecord
+class FanfictionStoryChapter < ApplicationRecord
 
   # modules/constants
   include LocationStoryChapterConcern
 
   # associations/scopes/validations/callbacks/macros
-  belongs_to :story, class_name: "SpacebattlesStory"
+  belongs_to :story, class_name: "FanfictionStory"
 
   generate_column_scopes
 

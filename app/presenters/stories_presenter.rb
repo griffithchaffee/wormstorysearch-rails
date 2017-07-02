@@ -2,38 +2,27 @@ class StoriesPresenter < ApplicationPresenter
   presenter_options.presents = :story
 
   # form
-  def crossover_label(*hashes)
-    label(:crossover, *hashes, content: "Crossover:")
-  end
+  define_extension(:label, :title_label,       :title,  content: "Title:")
+  define_extension(:label, :author_label,      :author, content: "Author:")
+  define_extension(:label, :crossover_label,   :crossover, content: "Crossover:")
+  define_extension(:label, :description_label, :description, content: "Description:")
 
-  def crossover_field(*hashes)
-    text_field(:crossover, *hashes, placeholder: "Justice League")
-  end
+  define_extension(:text_field, :title_field,     :title, placeholder: "Messages from an Angel")
+  define_extension(:text_field, :author_field,    :author, placeholder: "Ack")
+  define_extension(:text_field, :crossover_field, :crossover, placeholder: "Justice Leauge")
 
-  def description_label(*hashes)
-    label(:description, *hashes, content: "Description:")
-  end
+  define_extension(:text_area,  :description_field, :description, placeholder: "Short overview about this story", rows: 5)
 
-  def description_field(*hashes)
-    text_area(:description, *hashes, placeholder: "Short overview about story", rows: 6)
-  end
+  define_extension(:check_box, :is_locked_check_box,   :is_locked)
+  define_extension(:check_box, :is_archived_check_box, :is_archived)
 
-  def is_locked_label(*hashes)
-    label(:is_locked, *hashes, content: "Lock:")
-  end
-
-  def is_locked_check_box(*hashes)
-    check_box(:is_locked, *hashes)
-  end
-
-  def is_locked_check_box_text
-    "Lock this story to prevent any future updates"
-  end
+  define_extension(:span_tag, :is_locked_check_box_text, content: "Lock this story to prevent any future updates")
+  define_extension(:span_tag, :is_archived_check_box_text, content: "Archive this story to hide from index")
 
   # html
   def status_class(*hashes)
-    record = extract_record(*hashes)
-    record.recently_created? ? "info" : ""
+    story = extract_record(*hashes)
+    story.recently_created? ? "info" : ""
   end
 
   def recently_created_icon(*hashes, &content_block)
@@ -51,19 +40,6 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:read_story_link, :read_story_link_btn, add_class: "btn btn-primary")
 
   # filters
-  def story_updated_at_filter
-    content = {
-      "3 Hours"  => 3.hours.ago.beginning_of_hour,
-      "6 Hours"  => 6.hours.ago.beginning_of_hour,
-      "12 Hours" => 12.hours.ago.beginning_of_hour,
-      "1 Day"    => 1.day.ago.to_date,
-      "3 Days"   => 3.days.ago.to_date,
-      "1 Week"   => 1.week.ago.to_date,
-      "1 Month"   => 1.month.ago.to_date,
-    }
-    select_tag(:story_updated_at_gteq, content: content, prompt: "Updated")
-  end
-
   def story_filter(params = {})
     text_field_tag(:story_matches, params, placeholder: "Title, Crossover, or Author")
   end
@@ -72,31 +48,6 @@ class StoriesPresenter < ApplicationPresenter
     text_field_tag(:word_count_gteq, params, placeholder: "Words")
   end
 
-  def author_filter(params = {})
-    text_field_tag(:author_matches, params, placeholder: "Author")
-  end
-=begin
-  def dropdown_filter(params = {})
-    dropdown_div do
-      dropdown_content = "".html_safe
-      dropdown_content += dropdown_toggle_btn(content: icon("filter") + " ".html_safe + caret_span)
-      dropdown_content += dropdown_menu_ul do
-        menu_content = "".html_safe
-        menu_content += li_tag(class: "dropdown-header", content: "Filters")
-        menu_content += li_tag do
-          a_tag do
-            text_field_tag(:author_matches, params, placeholder: "Author", add_class: "input-sm")
-          end
-        end
-        menu_content += li_tag do
-          a_tag do
-            word_count_filter
-          end
-        end
-      end
-    end
-  end
-=end
   # sorters
   def story_created_on_sorter
     sorter_link("stories.story_created_on", content: "Created", default_direction: "desc")
@@ -108,10 +59,6 @@ class StoriesPresenter < ApplicationPresenter
 
   def title_sorter
     sorter_link("stories.title", content: "Title")
-  end
-
-  def author_sorter
-    sorter_link("stories.author", content: "Author")
   end
 
   def word_count_sorter

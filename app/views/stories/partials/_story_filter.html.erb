@@ -1,7 +1,9 @@
 <%
   # filters
-  category_filters = {}.with_indifferent_access
+  category_filters   = {}.with_indifferent_access
   updated_at_filters = {}.with_indifferent_access
+  archived_filters   = {}.with_indifferent_access
+  locked_filters     = {}.with_indifferent_access
 
   # filter values
   Story.const.categories.each do |category|
@@ -18,21 +20,33 @@
   }.each do |label, value|
     updated_at_filters[value.to_i.to_s] = label
   end
+  archived_filters["true"] = "Archived"
+  locked_filters["true"]   = "Locked"
 
   # filter ids
   category_filter_id   = "category_eq"
   updated_at_filter_id = "story_updated_at_gteq"
+  archived_filter_id   = "is_archived_eq"
+  locked_filter_id     = "is_locked_eq"
 
   # active filters
   active_category_filter   = params[category_filter_id]
   active_updated_at_filter = params[updated_at_filter_id]
-  actively_filtering       = active_category_filter.present? || active_updated_at_filter.present?
+  active_archived_filter   = params[archived_filter_id]
+  active_locked_filter     = params[locked_filter_id]
+  actively_filtering       = [
+    active_category_filter,
+    active_updated_at_filter,
+    active_archived_filter,
+    active_locked_filter,
+  ].any?(&:present?)
 
   get_filter_id = -> (status) { "#{status}_status_filter" }
 
   # onchange js
   #onclick_js = CoffeeScript.compile("$(this).find('input').click()")
-  radio_toggle_js = CoffeeScript.compile("$(this).find('input[type=radio]').prop('checked', true).change();")
+  radio_toggle_js     = CoffeeScript.compile("$(this).find('input[type=radio]').prop('checked', true).change();")
+  check_box_toggle_js = CoffeeScript.compile("$(this).find('input[type=checkbox]').click();")
 %>
 
 <%= cp.div_tag(class: "input-group", style: "width: 100%;") do %>
@@ -59,11 +73,37 @@
       <!-- updated_at_filter -->
       <%= cp.li_tag(class: "dropdown-header", content: "Updated Within") %>
       <% updated_at_filters.each do |value, label| %>
-        <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_category_filter == value)) do %>
-          <%= cp.a_tag do %>
-            <%= cp.div_tag(class: "radio", style: "margin: 0px;") do %>
+        <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_updated_at_filter == value)) do %>
+          <%= cp.a_tag(class: "radio", style: "margin: 0px; cursor: pointer;", onclick: radio_toggle_js) do %>
+            <%= cp.label_tag(style: "display: block;") do %>
+              <%= cp.radio_button_tag(updated_at_filter_id, content: value, id: nil) %>
+              <%= label %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- admin filters -->
+      <% if is_admin? %>
+        <%= cp.li_tag(class: "dropdown-header", content: "Options") %>
+        <!-- archived_filter -->
+        <% archived_filters.each do |value, label| %>
+          <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_archived_filter == value)) do %>
+            <%= cp.a_tag(class: "checkbox", style: "margin: 0px; cursor: pointer;", onclick: check_box_toggle_js) do %>
               <%= cp.label_tag(style: "display: block;") do %>
-                <%= cp.radio_button_tag(updated_at_filter_id, content: value, id: nil) %>
+                <%= cp.check_box_tag(archived_filter_id, content: "true") %>
+                <%= label %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <!-- locked_filter -->
+        <% locked_filters.each do |value, label| %>
+          <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_locked_filter == value)) do %>
+            <%= cp.a_tag(class: "checkbox", style: "margin: 0px; cursor: pointer;", onclick: check_box_toggle_js) do %>
+              <%= cp.label_tag(style: "display: block;") do %>
+                <%= cp.check_box_tag(locked_filter_id, content: "true") %>
                 <%= label %>
               <% end %>
             <% end %>

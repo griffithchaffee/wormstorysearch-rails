@@ -8,7 +8,7 @@
 <% empty_message   ||= "No results..." %>
 
 <%= cp.div_tag(add_class: "table-responsive", id: container_id) do %>
-  <%= cp.table_tag(id: table_id, class: "table table-hover unsearchable #{table_classes}".strip) do %>
+  <%= cp.table_tag(id: table_id, class: "table table-bordered table-hover unsearchable #{table_classes}".strip) do %>
     <% {
       headers: locals[:headers] != false,
       filters: locals[:filters] == true,

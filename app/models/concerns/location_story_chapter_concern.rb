@@ -2,22 +2,25 @@ module LocationStoryChapterConcern
   extend ActiveSupport::Concern
 
   included do
+    # modules/constants
     class_constant_builder(:categories, %w[ category label ]) do |new_const|
       new_const.add(category: "chapter", label: "Chapter")
       new_const.add(category: "omake",   label: "Omake")
     end
 
-    before_validation do
-      if will_save_change_to_title? && !category?
-        self.category = category!
-      end
-    end
-
+    # associations/scopes/validations/callbacks/macros
+    validates_in_list(:category, const.categories.map(&:category))
     validate do
       if chapter_created_on? && chapter_updated_at? && chapter_created_on > chapter_updated_at
         errors.add(:chapter_updated_at, "[#{chapter_updated_at}] must come after chapter creation date [#{chapter_created_on}]")
       elsif chapter_created_on? && chapter_created_on < story.story_created_on
         errors.add(:chapter_created_on, "[#{chapter_created_on}] must come after story creation date [#{story.story_created_on}]")
+      end
+    end
+
+    before_validation do
+      if will_save_change_to_title? && !category?
+        self.category = category!
       end
     end
 
@@ -31,6 +34,7 @@ module LocationStoryChapterConcern
     end
   end
 
+  # public/private/protected/classes
   def title=(new_title)
     self[:title] = new_title.to_s.normalize.presence
   end
@@ -40,7 +44,7 @@ module LocationStoryChapterConcern
   end
 
   def category_label
-    const.categories.fetch(category)
+    const.categories.fetch(category).label
   end
 
   def category!

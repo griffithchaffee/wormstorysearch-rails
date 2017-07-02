@@ -177,7 +177,7 @@ module SeekConcern
         when *%w[ in not_in ]
           value = value.csv_to_a if value.is_a?(String)
           # skip empty arrays if ignoring blank values
-          options[:ignore_blank_values] ? Array(value).select_present.presence : Array(value)
+          options[:ignore_blank_values] ? Array(value).select(&:present?).presence : Array(value)
         when *%w[ matches does_not_match ]
           if value.blank?
             nil # always ignore blank values
@@ -503,12 +503,12 @@ module SeekConcern
       @query = query.order_id(:desc)
     end
 
-    def paginate(params = {})
-      params = params.with_indifferent_access
+    def paginate(params = {}, defaults = {})
+      params = params.with_indifferent_access.select { |k,v| v.present? }.reverse_merge(defaults)
       max = params[:max].to_i > 0 ? params[:max].to_i : 30
       min = params[:min].to_i > 0 && params[:min].to_i < max ? params[:min].to_i : 1
       @raw_count = @query.count(:id)
-      @limit = params[:limit].to_i.between?(min,max) ? params[:limit].to_i : 20
+      @limit = params[:limit].to_i.between?(min, max) ? params[:limit].to_i : 20
       @limit = 1 if @limit < 1
       @pages = (@raw_count.to_f / @limit).ceil.to_i
       @pages = 1 if @pages < 1

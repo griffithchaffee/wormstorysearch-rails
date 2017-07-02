@@ -2,7 +2,7 @@
 <%= cp.tr_tag(id: cp.record_to_namespace(story), class: cp.status_class) do %>
   <%= cp.td_tag(class: "details") do %>
     <%= cp.recently_created_icon %>
-    <% link_options = { content: "", add_class: "text-default", merge_data: { toggle: "tooltip" } } %>
+    <% link_options = { content: "", add_class: "text-default", merge_data: { toggle: "tooltip-desktop" } } %>
     <%= cp.modal_show_link(link_options.dup, icon: "list", title: "View details") %>
     <% if story.is_unlocked? %>
       <%= cp.modal_edit_link(link_options.dup, title: "Edit details") %>
