@@ -53,7 +53,6 @@ module LocationSearcher
           story_attributes = parse_story_html(story_html)
           story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
           story = save_story(story)
-          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time
@@ -87,7 +86,6 @@ module LocationSearcher
             next
           end
           story = save_story(story)
-          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time

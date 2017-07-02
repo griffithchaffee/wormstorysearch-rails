@@ -47,7 +47,7 @@ private
 
   def permit_index_search_params
     %w[
-      story_matches category_eq story_updated_at_gteq is_archived_eq is_locked_eq
+      story_matches category_eq story_updated_at_gteq is_archived_eq is_locked_eq word_count_gteq
       sort direction
     ]
   end

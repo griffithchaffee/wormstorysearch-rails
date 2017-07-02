@@ -58,7 +58,6 @@ module LocationSearcher
             next
           end
           story = save_story(story)
-          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time
@@ -92,7 +91,6 @@ module LocationSearcher
             next
           end
           story = save_story(story)
-          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time

@@ -1,0 +1,2 @@
+class OldStory < ApplicationRecord
+end
