@@ -10,18 +10,23 @@
   <% end %>
 
   <%= cp.td_tag(class: "story_updated_at") do %>
-    <%= story.story_updated_at.friendly_b_d_l_M_p.capitalize %>
+    <%= cp.span_tag(class: "hidden-sm hidden-xs", content: story.story_updated_at.to_full_human_s) %>
+    <%= cp.span_tag(class: "hidden-md hidden-lg", content: story.story_updated_at.to_brief_human_s) %>
   <% end %>
 
   <%= cp.td_tag(class: "title") do %>
-    <%= cp.tab_link(story.read_url, content: story.title) %>
+    <%= cp.tab_link(story.read_url, content: story.title) do %>
+      <%= story.title %> <% if story.crossover? %>[<%= story.crossover %>]<% end %>
+    <% end %> by <%= story.active_location.author %>
+    <%= cp.br_tag %>
+    <% story.locations.each do |location| %>
+      <%= cp.tab_link(location.read_url, style: "text-decoration: none;") do %>
+        <%= cp.label_span("primary", content: location.const.location_label) %>
+      <% end %>
+    <% end %>
   <% end %>
 
   <%= cp.td_tag(class: "word_count") do %>
     <%= story.word_count.to_human_size %>
-  <% end %>
-
-  <%= cp.td_tag(class: "author") do %>
-    <%= story.author %>
   <% end %>
 <% end %>

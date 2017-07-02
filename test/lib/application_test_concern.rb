@@ -11,6 +11,14 @@ module ApplicationTestConcern
     end
   end
 
+  def assert_same(expected, actual, message = nil)
+    if expected.nil?
+      assert_nil(actual, message)
+    else
+      assert_equal(expected, actual, message)
+    end
+  end
+
   def assert_hash_change(original_hash, update_hash, new_hash, expected_changes = [])
     update_hash.each do |key, value|
       assert_not_equal(original_hash[key], value, "#{key}: original value must be different from update value")

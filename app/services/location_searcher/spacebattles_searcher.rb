@@ -14,6 +14,7 @@ module LocationSearcher
       Rails.logger.silence(Logger::INFO) do
         login!
         update_stories_newer_than!(time)
+        update_quests_newer_than!(time)
       end
     end
 
@@ -37,7 +38,7 @@ module LocationSearcher
 
     def update_stories_newer_than!(time)
       continue, page = true, 0
-      # crawl worm subform
+      # crawl "Creative Writing" subforum "Worm"
       while continue do
         page += 1
         # prevent infinite loop
@@ -49,7 +50,9 @@ module LocationSearcher
         continue = false if threads_html.size == 0
         # parse threads
         threads_html.each do |thread_html|
-          story = update_story_for_thread!(thread_html)
+          story_attributes = parse_thread(thread_html)
+          story = build_story(story_attributes)
+          story = save_story(story)
           Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
@@ -61,7 +64,41 @@ module LocationSearcher
       end
     end
 
-    def update_story_for_thread!(thread_html)
+    def update_quests_newer_than!(time)
+      continue, page = true, 0
+      # crawl "Roleplaying & Quests" forum
+      while continue do
+        page += 1
+        # prevent infinite loop
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
+        # crawl latest threads
+        crawler.get("/forums/roleplaying-quests.60/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
+        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        # stop on last page
+        continue = false if threads_html.size == 0
+        # parse threads
+        threads_html.each do |thread_html|
+          story_attributes = parse_thread(thread_html)
+          story_attributes[:category] = "quest"
+          story = build_story(story_attributes)
+          # skip non-worm quests
+          if !is_worm_story?(story)
+            Rails.logger.info { "Skip: #{story.title.yellow}" }
+            next
+          end
+          story = save_story(story)
+          Rails.logger.info { "Read: #{story.title.green}" }
+          update_chapters_for_story!(story)
+          # stop if older than time
+          if story.story_active_at < time
+            continue = false
+            break
+          end
+        end
+      end
+    end
+
+    def parse_thread(thread_html)
       # html selections
       main_html       = thread_html.css(".main")
       title_html      = main_html.css("h3.title a.PreviewTooltip").first
@@ -69,7 +106,7 @@ module LocationSearcher
       word_count_html = main_html.css(".OverlayTrigger")
       created_html    = main_html.css(".DateTime").first
       active_html     = thread_html.css(".lastPostInfo .DateTime").first
-      # story attributes
+      # parse attributes
       title         = title_html.text
       location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
       location_id   = thread_html[:id]
@@ -77,24 +114,17 @@ module LocationSearcher
       word_count    = word_count_html.text.remove("Word Count: ")
       created_at    = abbr_html_to_time(created_html)
       active_at     = abbr_html_to_time(active_html)
-      story_finder  = { location_id: location_id }
-      # update story
-      story = story_model.find_by(story_finder) || story_model.new(story_finder)
-      story.assign_attributes(
-        title:           title,
-        location_path:   location_path,
-        author:          author,
-        word_count:      word_count,
-        story_active_at: active_at,
-      )
-      if story.unsaved? || search_options[:reset]
-        story.assign_attributes(
-          story_created_on: created_at,
-          story_updated_at: created_at,
-        )
-      end
-      story.save! if story.has_changes_to_save?
-      story
+      # attributes
+      {
+        title:            title,
+        location_id:      location_id,
+        location_path:    location_path,
+        author:           author,
+        word_count:       word_count,
+        story_active_at:  active_at,
+        story_created_on: created_at,
+        story_updated_at: created_at,
+      }
     end
 
     def update_chapters_for_story!(story)

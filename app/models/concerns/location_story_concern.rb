@@ -10,6 +10,7 @@ module LocationStoryConcern
 
     validates_presence_of_required_columns
     validates :location_id, uniqueness: true
+    validates :story_id,    uniqueness: true
     validate do
       if story_created_on? && story_updated_at? && story_created_on > story_updated_at
         errors.add(:story_updated_at, "[#{story_updated_at}] must come after story creation date [#{story_created_on}]")
@@ -20,12 +21,21 @@ module LocationStoryConcern
       self.read_url = read_url! if !read_url?
     end
 
+    after_save do
+      # cache latest update to story for easy queries
+      if story && story.is_unlocked?
+        if saved_change_to_attribute?(:story_updated_at) || saved_change_to_attribute(:story_id)
+          story.update!(story_updated_at: story_updated_at) if story.reload.story_updated_at < story_updated_at
+        end
+      end
+    end
+
     # transient story_active_at used in searchers
     attr_accessor :story_active_at
   end
 
   def title=(new_title)
-    self[:title] = new_title.to_s.strip.presence
+    self[:title] = new_title.to_s.normalize.presence
   end
 
   def word_count=(new_word_count)
@@ -51,5 +61,47 @@ module LocationStoryConcern
 
   def is_unlocked?
     !is_locked?
+  end
+
+  def story!
+    # already set
+    return story if is_locked? || story
+    # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
+    parsed_title = title.remove(/\(.*?\)/).remove(/\[.*?\]/).normalize
+    query = Story.where(category: category)
+    # find existing story by title
+    [title, parsed_title].each do |search_title|
+      search = query.where(title: search_title)
+      return search.first if search.count == 1
+      search = query.seek(title_matches: search_title)
+      return search.first if search.count == 1
+    end
+    # create story by title
+    Story.create!(
+      title: parsed_title,
+      crossover: parse_crossover_from_title,
+      word_count: word_count,
+      author: author,
+      category: category,
+      story_created_on: story_created_on,
+      story_updated_at: story_updated_at,
+    )
+  end
+
+  def parse_crossover_from_title(local_title = title)
+    [/\(Worm ?(X|\/) ?(?<value>.*?)\)/, /\[Worm ?(X|\/) ?(?<value>.*?)\]/, /\((?<value>.*?)\)/, /\[(?<value>.*?)\]/].each do |regex|
+      scan = local_title.scan(regex).flatten
+      local_title.scan(regex).flatten.each do |raw_crossover|
+        if raw_crossover
+          crossover = raw_crossover.split(/[^-A-Za-z0-9]/).select do |word|
+            word !~ /worm|canon/i &&
+            word !~ /\AAlt|AU/ &&
+            !word.downcase.in?(%w[ fic power fusion fanfic cross taylor pre post prepost quest a ])
+          end.select(&:present?).join(" ").normalize
+          return crossover if crossover.present?
+        end
+      end
+    end
+    nil
   end
 end

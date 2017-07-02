@@ -7,15 +7,11 @@
     <%= cp.story_updated_at_sorter %>
   <% end %>
 
-  <%= cp.td_tag(class: "title") do %>
+  <%= cp.td_tag(class: "story") do %>
     <%= cp.title_sorter %>
   <% end %>
 
   <%= cp.td_tag(class: "word_count") do %>
     <%= cp.word_count_sorter %>
-  <% end %>
-
-  <%= cp.td_tag(class: "author") do %>
-    <%= cp.author_sorter %>
   <% end %>
 <% end %>

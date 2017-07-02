@@ -1,13 +1,11 @@
-=begin
-module StorySearcher
+module LocationSearcher
   class SufficientvelocitySearcher < UniversalSearcher
-    attr_reader :configuration, :crawler, :location, :search_options
+    attr_reader :config, :crawler, :search_options, :story_model
 
     def initialize
-      @location = "sufficientvelocity"
-      @configuration = Rails.application.settings.searchers[@location]
-      @crawler = SiteCrawler.new(Story.const.locations.fetch(@location).host)
-      crawler.logger = Rails.logger
+      @story_model = SufficientvelocityStory
+      @config = story_model.const
+      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def search!(time, search_options = {})
@@ -16,25 +14,35 @@ module StorySearcher
       Rails.logger.silence(Logger::INFO) do
         login!
         update_stories_newer_than!(time)
+        update_quests_newer_than!(time)
       end
     end
 
     def login!
-      # authenticate
-      crawler.post(
-        "/login/login",
-        { login: configuration.username, password: configuration.password },
-        { follow_redirects: false, log_level: Logger::WARN }
-      )
+      if config.location_username && config.location_password
+        # authenticate
+        crawler.post(
+          "/login/login",
+          { login: config.location_username, password: config.location_password, redirect: "#{config.location_host}/authenticated" },
+          { follow_redirects: false, log_level: Logger::INFO }
+        )
+        if crawler.response.status == 303
+          Rails.logger.info { "Logged in as #{config.location_username}".green }
+        else
+          Rails.logger.warn { "Login failed for #{config.location_username}".yellow }
+        end
+      else
+        Rails.logger.warn { "Skipping login".yellow }
+      end
     end
 
     def update_stories_newer_than!(time)
-      # crawl worm subform
       continue, page = true, 0
+      # crawl "User Fiction" forum
       while continue do
         page += 1
         # prevent infinite loop
-        raise ArgumentError, "crawled too many pages on" if page > configuration.max_pages
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_story_pages
         # crawl latest threads
         crawler.get("forums/user-fiction.2/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
         threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
@@ -42,8 +50,15 @@ module StorySearcher
         continue = false if threads_html.size == 0
         # parse threads
         threads_html.each do |thread_html|
-          story = update_story_for_thread!(thread_html)
-          next if !story # not a worm story
+          story_attributes = parse_thread(thread_html)
+          story = build_story(story_attributes)
+          # skip non-worm threads
+          if !is_worm_story?(story)
+            Rails.logger.info { "Skip: #{story.title.yellow}" }
+            next
+          end
+          story = save_story(story)
+          Rails.logger.info { "Read: #{story.title.green}" }
           update_chapters_for_story!(story)
           # stop if older than time
           if story.story_active_at < time
@@ -54,7 +69,41 @@ module StorySearcher
       end
     end
 
-    def update_story_for_thread!(thread_html)
+    def update_quests_newer_than!(time)
+      continue, page = true, 0
+      # crawl "Quests" forum
+      while continue do
+        page += 1
+        # prevent infinite loop
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
+        # crawl latest threads
+        crawler.get("/forums/quests.29/#{"page-#{page}" if page > 1}", { order: "last_post_date", direction: "desc" }, { log_level: Logger::INFO })
+        threads_html = crawler.html.find_all("ol.discussionListItems li.discussionListItem:not(.sticky)")
+        # stop on last page
+        continue = false if threads_html.size == 0
+        # parse threads
+        threads_html.each do |thread_html|
+          story_attributes = parse_thread(thread_html)
+          story_attributes[:category] = "quest"
+          story = build_story(story_attributes)
+          # skip non-worm threads
+          if !is_worm_story?(story)
+            Rails.logger.info { "Skip: #{story.title.yellow}" }
+            next
+          end
+          story = save_story(story)
+          Rails.logger.info { "Read: #{story.title.green}" }
+          update_chapters_for_story!(story)
+          # stop if older than time
+          if story.story_active_at < time
+            continue = false
+            break
+          end
+        end
+      end
+    end
+
+    def parse_thread(thread_html)
       # html selections
       main_html       = thread_html.css(".main")
       title_html      = main_html.css("h3.title a.PreviewTooltip").first
@@ -62,42 +111,25 @@ module StorySearcher
       word_count_html = main_html.css(".OverlayTrigger")
       created_html    = main_html.css(".DateTime").first
       active_html     = thread_html.css(".lastPostInfo .DateTime").first
-      # story attributes
-      title             = title_html.text
-      location_path     = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
-      author            = author_html.text
-      word_count        = word_count_html.text.remove("Word Count: ")
-      location_story_id = thread_html[:id]
-      created_at        = abbr_html_to_time(created_html)
-      active_at         = abbr_html_to_time(active_html)
-      story_finder      = { location: location, location_story_id: location_story_id }
-      # update story
-      story = Story.find_by(story_finder) || Story.new(story_finder)
-      story.assign_attributes(
-        location_path:   "/#{title_html[:href].remove(/\/(unread)?\z/)}",
-        title:           title_html.text,
-        author:          author_html.text,
-        word_count:      word_count_html.text.remove("Word Count: "),
-        story_active_at: active_at,
-      )
-      if story.unsaved? || search_options[:reset]
-        story.assign_attributes(
-          story_created_on: created_at,
-          story_updated_at: created_at,
-        )
-      end
-      # read only worm stories
-      title_words = story.title.slugify.split("_")
-      is_worm_story = (title_words & %w[ worm wormverse wormfic wormsnip taylor ]).present?
-      is_worm_story ||= title_words.find { |title| title.starts_with?("wormx") }
-      if is_worm_story
-        Rails.logger.info("Read: #{story.title.green}")
-        story.save! if story.has_changes_to_save?
-        story
-      else
-        Rails.logger.info("Skip: #{story.title.yellow}")
-        nil
-      end
+      # parse attributes
+      title         = title_html.text
+      location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
+      location_id   = thread_html[:id]
+      author        = author_html.text
+      word_count    = word_count_html.text.remove("Word Count: ")
+      created_at    = abbr_html_to_time(created_html)
+      active_at     = abbr_html_to_time(active_html)
+      # attributes
+      {
+        title:            title,
+        location_id:      location_id,
+        location_path:    location_path,
+        author:           author,
+        word_count:       word_count,
+        story_active_at:  active_at,
+        story_created_on: created_at,
+        story_updated_at: created_at,
+      }
     end
 
     def update_chapters_for_story!(story)
@@ -119,10 +151,10 @@ module StorySearcher
         # update chapter
         chapter = story.chapters.get(position: position) || story.chapters.build(position: position)
         chapter.assign_attributes(
-          location_path: preview_html[:href],
-          title: preview_html.text,
-          word_count: html_li.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")"),
-          chapter_created_at: updated_at,
+          title: title,
+          location_path: location_path,
+          word_count: word_count,
+          chapter_created_on: updated_at,
           chapter_updated_at: updated_at,
         )
         chapter.save! if chapter.has_changes_to_save?
@@ -136,4 +168,3 @@ module StorySearcher
     end
   end
 end
-=end

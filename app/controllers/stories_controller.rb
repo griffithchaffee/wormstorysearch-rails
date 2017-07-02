@@ -24,10 +24,10 @@ class StoriesController < ApplicationController
 
   def index
     # preload chapters because read_url requires them
-    @stories = Story.preload(:chapters)
-      .search(permitted_action_search_params(save: true))
+    @stories = Story.preload(:spacebattles_story, :sufficientvelocity_story)
+      .search(permitted_action_search_params(save: true).to_unsafe_h)
       .order_story_updated_at(:desc)
-      .paginate(permitted_action_pagination_params(save: true))
+      .paginate(permitted_action_pagination_params(save: true).to_unsafe_h)
   end
 
 private
@@ -47,6 +47,7 @@ private
 
   def permit_index_search_params
     %w[
+      story_matches category_eq story_updated_at_gteq
       title_matches story_updated_at_gteq word_count_gteq author_matches
       sort direction
     ]

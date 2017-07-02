@@ -20,14 +20,14 @@ module ValidationConcern
           # integers can be zero and numericality should be used to validate otherwise
           validates_is_not_nil(column.name.to_sym, presence_validation)
         # belongs_to attribute
-        elsif column.name.ends_with?("_id") && reflect_on_association(column.name.remove(/_id\z/)) && column.name.not_in?(raw_columns)
+        elsif column.name.ends_with?("_id") && reflect_on_association(column.name.remove(/_id\z/)) && !column.name.in?(raw_columns)
           association = column.name.remove(/_id\z/).to_sym
           # association message anchored for has_many through
           presence_validation.reverse_merge!(message: "^#{association.to_s.classify} can't be blank")
           validates(association, presence: presence_validation)
           # move validation errors to column for form field highlighting
           after_validation do
-            errors[association].each { |message| errors.add(column.name, message) if message.not_in?(errors[column.name]) }
+            errors[association].each { |message| errors.add(column.name, message) if !message.in?(errors[column.name]) }
             errors.delete(association)
           end
         # polymorphic type attribute - skipped because id column performs validation
@@ -77,7 +77,7 @@ module ValidationConcern
         validate do
           if validation[:if].is_a?(Proc) ? instance_exec(&validation[:if]) : send(validation[:if])
             valid_list = list.is_a?(Proc) ? instance_exec(&list) : send(list)
-            if send(attribute).not_in? valid_list
+            if !send(attribute).in?(valid_list)
               errors.add attribute, "value #{send(attribute).inspect} is not included in the list: [#{valid_list.to_or_s}]"
             end
           end

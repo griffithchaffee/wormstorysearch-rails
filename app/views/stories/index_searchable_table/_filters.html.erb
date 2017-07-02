@@ -3,19 +3,11 @@
     <%= cp.reset_filter %>
   <% end %>
 
-  <%= cp.td_tag(class: "story_updated_at") do %>
-    <%= cp.story_updated_at_filter %>
-  <% end %>
-
-  <%= cp.td_tag(class: "title") do %>
-    <%= cp.title_filter %>
+  <%= cp.td_tag(class: "story", colspan: "2") do %>
+    <%= render_partial(:story_filter) %>
   <% end %>
 
   <%= cp.td_tag(class: "word_count") do %>
     <%= cp.word_count_filter %>
-  <% end %>
-
-  <%= cp.td_tag(class: "author") do %>
-    <%= cp.author_filter %>
   <% end %>
 <% end %>

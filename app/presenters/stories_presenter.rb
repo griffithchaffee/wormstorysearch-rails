@@ -37,9 +37,9 @@ class StoriesPresenter < ApplicationPresenter
   end
 
   def recently_created_icon(*hashes, &content_block)
-    record = extract_record(*hashes)
-    if record.recently_created?
-      icon("calendar", tooltip: "top", title: "Created #{record.story_created_on.friendly_b_d.capitalize}")
+    story = extract_record(*hashes)
+    if story.recently_created?
+      icon("calendar", tooltip: "top", title: "Created #{story.story_created_on.to_full_human_s}")
     end
   end
 
@@ -51,10 +51,6 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:read_story_link, :read_story_link_btn, add_class: "btn btn-primary")
 
   # filters
-  def details_filter(params = {})
-    "Details"
-  end
-
   def story_updated_at_filter
     content = {
       "3 Hours"  => 3.hours.ago.beginning_of_hour,
@@ -63,12 +59,13 @@ class StoriesPresenter < ApplicationPresenter
       "1 Day"    => 1.day.ago.to_date,
       "3 Days"   => 3.days.ago.to_date,
       "1 Week"   => 1.week.ago.to_date,
+      "1 Month"   => 1.month.ago.to_date,
     }
     select_tag(:story_updated_at_gteq, content: content, prompt: "Updated")
   end
 
-  def title_filter(params = {})
-    text_field_tag(:title_matches, params, placeholder: "Title")
+  def story_filter(params = {})
+    text_field_tag(:story_matches, params, placeholder: "Title, Crossover, or Author")
   end
 
   def word_count_filter(params = {})
@@ -78,7 +75,28 @@ class StoriesPresenter < ApplicationPresenter
   def author_filter(params = {})
     text_field_tag(:author_matches, params, placeholder: "Author")
   end
-
+=begin
+  def dropdown_filter(params = {})
+    dropdown_div do
+      dropdown_content = "".html_safe
+      dropdown_content += dropdown_toggle_btn(content: icon("filter") + " ".html_safe + caret_span)
+      dropdown_content += dropdown_menu_ul do
+        menu_content = "".html_safe
+        menu_content += li_tag(class: "dropdown-header", content: "Filters")
+        menu_content += li_tag do
+          a_tag do
+            text_field_tag(:author_matches, params, placeholder: "Author", add_class: "input-sm")
+          end
+        end
+        menu_content += li_tag do
+          a_tag do
+            word_count_filter
+          end
+        end
+      end
+    end
+  end
+=end
   # sorters
   def story_created_on_sorter
     sorter_link("stories.story_created_on", content: "Created", default_direction: "desc")

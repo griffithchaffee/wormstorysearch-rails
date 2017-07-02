@@ -32,15 +32,11 @@ module LocationStoryChapterConcern
   end
 
   def title=(new_title)
-    self[:title] = new_title.to_s.strip.presence
+    self[:title] = new_title.to_s.normalize.presence
   end
 
   def word_count=(new_word_count)
     self[:word_count] = new_word_count.to_s.human_size_to_i
-  end
-
-  def category!
-    "omake".in?(title.slugify.split("_")) ? "omake" : "chapter"
   end
 
   def category_label

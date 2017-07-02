@@ -27,9 +27,14 @@ module SeekConcern
         %w[ gteq lteq eq not_eq ].each do |operator|
           scope "seek_#{column.name}_#{operator}", -> (value) do
             begin
-              value = column.type == :date ? Date.parse(value.to_param) : DateTime.parse(value.to_param)
+              if value =~ /\d+/
+                value = Time.at(value.to_i)
+              else
+                value = column.type == :date ? Date.parse(value.to_param) : DateTime.parse(value.to_param)
+              end
               send("where_#{column.name}", operator => value)
-            rescue StandardError
+            rescue StandardError => e
+              Rails.logger.fatal { "#{e.class} #{e.message}" }
               all
             end
           end
@@ -163,7 +168,7 @@ module SeekConcern
       # modify value
       if value.is_a?(ActiveRecord::Relation)
         # check for valid subquery operator [in, not_in]
-        raise ArgumentError, "operator [#{operator}] does not accept subqueries" if operator.not_in?(%w[ in not_in ])
+        raise ArgumentError, "operator [#{operator}] does not accept subqueries" if !operator.in?(%w[ in not_in ])
         # select id if no selects
         value = value.arel.projections.first.try(:name) == "*" ? value.select_id : value
       else
@@ -336,7 +341,7 @@ module SeekConcern
             Error: #{error.message}
             Backtrace:
             #{error.backtrace.join("\n")}
-          ".to_multiline_s
+          ".lalign
           if Rails.env.production?
             DynamicMailer.email(subject: subject, body: body).deliver_now
           else
@@ -411,7 +416,7 @@ module SeekConcern
               Error: #{error.message}
               Backtrace:
               #{error.backtrace.join("\n")}
-            ".to_multiline_s
+            ".lalign
             DynamicMailer.email(subject: subject, body: body).deliver_now
             raise error if !Rails.env.production?
           end

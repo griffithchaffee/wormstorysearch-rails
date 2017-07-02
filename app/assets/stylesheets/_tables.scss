@@ -1,7 +1,14 @@
+// prevent dropdown cut-off at bottom of table
+div.table-responsive {
+  overflow-x: inherit;
+}
+
 table.table {
   tr > td, th {
     line-height: 1.2em;
     vertical-align: middle;
     a.sorter { white-space: nowrap; }
+    .dropdown-toggle { height: 34px; }
+    .input-group .dropdown-toggle { border-right-width: 0px; }
   }
 }

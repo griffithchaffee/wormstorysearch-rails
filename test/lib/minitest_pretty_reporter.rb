@@ -167,11 +167,13 @@ module Minitest
         end
 
         def average_test_time
-          Time.at(elapsed_time.to_f / (completed_test_count.min(1))).gmtime
+          completed_test_count = 1 if completed_test_count.to_i < 1
+          Time.at(elapsed_time.to_f / completed_test_count).gmtime
         end
 
         def average_suite_time
-          Time.at(elapsed_time.to_f / (completed_suite_count.min(1))).gmtime
+          completed_test_count = 1 if completed_test_count.to_i < 1
+          Time.at(elapsed_time.to_f / completed_suite_count).gmtime
         end
 
         def completed_suite!(suite)

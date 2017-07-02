@@ -14,7 +14,9 @@ div.form-submit {
 
 .secondary-link { margin-left: 10px }
 
-a span { display: inline; }
+a {
+  span { display: inline; }
+}
 
 .text-default { color: #333; }
 

@@ -1,0 +1,77 @@
+<%
+  # filters
+  category_filters = {}.with_indifferent_access
+  updated_at_filters = {}.with_indifferent_access
+
+  # filter values
+  Story.const.categories.each do |category|
+    category_filters[category.category] = category.label
+  end
+  {
+    "3 Hours"  => 3.hours.ago.beginning_of_hour,
+    "6 Hours"  => 6.hours.ago.beginning_of_hour,
+    "12 Hours" => 12.hours.ago.beginning_of_hour,
+    "1 Day"    => 1.day.ago.to_date,
+    "3 Days"   => 3.days.ago.to_date,
+    "1 Week"   => 1.week.ago.to_date,
+    "1 Month"  => 1.month.ago.to_date,
+  }.each do |label, value|
+    updated_at_filters[value.to_i.to_s] = label
+  end
+
+  # filter ids
+  category_filter_id   = "category_eq"
+  updated_at_filter_id = "story_updated_at_gteq"
+
+  # active filters
+  active_category_filter   = params[category_filter_id]
+  active_updated_at_filter = params[updated_at_filter_id]
+  actively_filtering       = active_category_filter.present? || active_updated_at_filter.present?
+
+  get_filter_id = -> (status) { "#{status}_status_filter" }
+
+  # onchange js
+  #onclick_js = CoffeeScript.compile("$(this).find('input').click()")
+  radio_toggle_js = CoffeeScript.compile("$(this).find('input[type=radio]').prop('checked', true).change();")
+%>
+
+<%= cp.div_tag(class: "input-group", style: "width: 100%;") do %>
+  <%= cp.div_tag(class: "input-group-btn") do %>
+    <% toggle_params = actively_filtering ? { add_class: "btn-primary", remove_class: "btn-default" } : {} %>
+    <%= cp.dropdown_toggle_btn(toggle_params) do %>
+      <%= cp.icon("filter") %> <%= cp.caret_span %>
+    <% end %>
+
+    <%= cp.dropdown_menu_ul do %>
+      <!-- category_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Category") %>
+      <% category_filters.each do |value, label| %>
+        <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_category_filter == value)) do %>
+          <%= cp.a_tag(class: "radio", style: "margin: 0px; cursor: pointer;", onclick: radio_toggle_js) do %>
+            <%= cp.label_tag(style: "display: block;") do %>
+              <%= cp.radio_button_tag(category_filter_id, content: value, id: nil) %>
+              <%= label %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- updated_at_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Updated Within") %>
+      <% updated_at_filters.each do |value, label| %>
+        <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if active_category_filter == value)) do %>
+          <%= cp.a_tag do %>
+            <%= cp.div_tag(class: "radio", style: "margin: 0px;") do %>
+              <%= cp.label_tag(style: "display: block;") do %>
+                <%= cp.radio_button_tag(updated_at_filter_id, content: value, id: nil) %>
+                <%= label %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+    <% end %>
+  <% end %>
+  <%= cp.story_filter %>
+<% end %>
