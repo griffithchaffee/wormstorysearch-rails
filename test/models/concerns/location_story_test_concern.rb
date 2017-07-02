@@ -44,7 +44,7 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "story.story_updated_at autoset in after_save" do
-      location_story = FactoryGirl.create(factory, story_updated_at: 10.hours.ago)
+      location_story = FactoryGirl.create(factory, story: nil, story_updated_at: 10.hours.ago)
       story = location_story.story!
       story.update!(story_created_on: 12.hours.ago, story_updated_at: 12.hours.ago)
       # story_id change
@@ -74,12 +74,16 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "story!" do
-      location_story = FactoryGirl.create(factory, title: "Well Traveled [Worm](Planeswalker Taylor)")
+      location_story = FactoryGirl.create(factory, story: nil, title: "Well Traveled [Worm](Planeswalker Taylor)")
       # creates story
       story = location_story.story!
       assert_equal(true, story.saved?)
       assert_equal("Well Traveled", story.title, story.inspect)
-      assert_equal("Planeswalker", story.crossover, story.inspect)
+      if location_story.try(:crossover)
+        assert_equal(location_story.crossover, story.crossover, story.inspect)
+      else
+        assert_equal("Planeswalker", story.crossover, story.inspect)
+      end
       # finds existing story
       assert_equal(story, location_story.story!)
     end

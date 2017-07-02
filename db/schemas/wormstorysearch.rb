@@ -5,7 +5,7 @@ def change
 
 
   create_table "fanfiction_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false
+    t.bigint "story_id"
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
@@ -80,7 +80,7 @@ def change
 
 
   create_table "spacebattles_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false
+    t.bigint "story_id"
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
@@ -132,7 +132,7 @@ def change
 
 
   create_table "sufficientvelocity_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false
+    t.bigint "story_id"
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false

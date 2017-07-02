@@ -20,7 +20,7 @@ class StoriesController::Test < ApplicationController::TestCase
       "Description:",
       story.description,
     ])
-    assert_not_in_response_body(["Lock:"])
+    assert_not_in_response_body("Lock")
   end
 
   testing "#{action} with modal layout as admin" do
@@ -28,7 +28,7 @@ class StoriesController::Test < ApplicationController::TestCase
     story = FactoryGirl.create(:story, crossover: "CROSS", description: "DESC")
     get(:edit, params: { id: story.id, layout: "modal" })
     assert_response_ok
-    assert_in_response_body("Lock:")
+    assert_in_response_body("Lock")
   end
 
 end

@@ -185,7 +185,8 @@ module SeekConcern
             # accept ^ and $ for start and end of match
             value =~ /\A%|%\z/ ? value : "%#{value}%".remove(/\A%\^|\$%\z/)
           end
-        else options[:ignore_blank_values] ? value.presence : value
+        else
+          options[:ignore_blank_values] && !value.in?([true, false]) ? value.presence : value
         end
       end
     end

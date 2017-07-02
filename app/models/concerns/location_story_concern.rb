@@ -3,7 +3,10 @@ module LocationStoryConcern
 
   included do
     # modules/constants
-    class_constant(:categories, Story.const.categories)
+    class_constant_builder(:categories, %w[ category label ]) do |new_const|
+      new_const.add(category: "story", label: "Story")
+      new_const.add(category: "quest", label: "Quest")
+    end
 
     # associations/scopes/validations/callbacks/macros
     belongs_to :story
@@ -29,12 +32,16 @@ module LocationStoryConcern
       # cache latest update to story for easy queries
       if story && story.is_unlocked?
         if saved_changes?
-          story.sync_with_locations!
+          story.sync_with_active_location!
         end
       end
       if saved_change_to_attribute(:story_id)
-        Story.archive_management!
+        Story.seek(id_in: saved_change_to_story_id.compact).archive_management!
       end
+    end
+
+    after_destroy do
+      Story.where(id: story_id).archive_management! if story_id
     end
 
     # transient story_active_at used in searchers
@@ -91,7 +98,13 @@ module LocationStoryConcern
       return search.first if search.count == 1
     end
     # create story by title
-    Story.create!(attributes.slice(*Story.column_names).except(*%w[ id created_at updated_at ]))
+    new_story = Story.new(attributes.slice(*Story.column_names).except(*%w[ id created_at updated_at ]))
+    new_story.title = title.remove(/\(.*?\)/).remove(/\[.*?\]/).normalize
+    if !"crossover".in?(self.class.column_names)
+      new_story.crossover = parse_crossover_from_title
+    end
+    new_story.save!
+    new_story
   end
 
   def parse_crossover_from_title(local_title = title)
@@ -109,5 +122,12 @@ module LocationStoryConcern
       end
     end
     nil
+  end
+
+  def <=>(other)
+    sorter = -> (record) do
+      [record.story_updated_at, record.story_created_on, -record.id]
+    end
+    sorter.call(self) <=> sorter.call(other)
   end
 end

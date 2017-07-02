@@ -34,4 +34,9 @@ class String
     end
   end
   alias_method :verify_is!, :verify_in!
+
+  def escape_html
+    CGI.escape_html(to_str)
+  end
+
 end

@@ -21,7 +21,7 @@ def up
   end
 
   create_table "spacebattles_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false, index: true
+    t.bigint "story_id", index: true
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
@@ -53,7 +53,7 @@ def up
   end
 
   create_table "sufficientvelocity_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false, index: true
+    t.bigint "story_id", index: true
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
@@ -85,7 +85,7 @@ def up
   end
 
   create_table "fanfiction_stories", force: :cascade do |t|
-    t.bigint "story_id", null: false, index: true
+    t.bigint "story_id", index: true
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false

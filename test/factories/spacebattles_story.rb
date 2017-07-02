@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory(:spacebattles_story) do
+    story { FactoryGirl.create(:story) }
     title { FactoryGirl.generate(:uniq_s) }
     location_id { FactoryGirl.generate(:uniq_s) }
     location_path { location_id ? "/#{location_id}" : "/#{FactoryGirl.generate(:uniq_s)}" }

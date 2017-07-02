@@ -29,13 +29,13 @@ class ApplicationController::TestCase < ActionController::TestCase
 
   def assert_in_response_body(values)
     Array(values).each do |value|
-      assert_equal(true, @response.body.to_s.include?(value), "@response.body should include: #{value}")
+      assert_equal(true, @response.body.to_s.include?(value.to_s), "@response.body should include: #{value}")
     end
   end
 
   def assert_not_in_response_body(values)
     Array(values).each do |value|
-      assert_equal(false, @response.body.to_s.include?(value), "@response.body should not include: #{value}")
+      assert_equal(false, @response.body.to_s.include?(value.to_s), "@response.body should not include: #{value}")
     end
   end
 
