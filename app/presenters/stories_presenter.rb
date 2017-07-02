@@ -45,7 +45,7 @@ class StoriesPresenter < ApplicationPresenter
   end
 
   def word_count_filter(params = {})
-    text_field_tag(:word_count_gteq, params, placeholder: "Words")
+    text_field_tag(:word_count_gteq, params, placeholder: "Words", title: "Ex: 10k", data: { toggle: "tooltip" })
   end
 
   # sorters

@@ -14,6 +14,7 @@ table.searchable {
     }
   }
   tbody.rows {
+    td.details a { text-decoration: none; }
     td.story_updated_at { white-space: nowrap; }
   }
 }

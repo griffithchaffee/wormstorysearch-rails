@@ -15,11 +15,6 @@ searchableTableBind = ->
     $(radio).data("search", { default:  "#{if $(radio).data("search-default")? then $(radio).data("search-default") else $(radio).val()}" })
   $check_boxes.each (i, check_box) ->
     $(check_box).data("search", { default: "#{$(check_box).data("search-default")}" is "true" })
-  # build helpful tooltip for text fields if first search
-  if window.location.search is ""
-    $inputs.tooltip({ placement: "top", title: "Press enter to apply", trigger: "focus" })
-    # remove help tooltip after displaying
-    $inputs.blur -> $inputs.tooltip("destroy")
   # reset filters
   resetBind = (evt) ->
     $inputs.not(".filter-reset-ignore").each (i, input) -> $(input).val($(input).data("search").default)
