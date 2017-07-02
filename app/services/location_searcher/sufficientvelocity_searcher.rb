@@ -83,6 +83,7 @@ module LocationSearcher
         # parse threads
         stories_html.each do |story_html|
           story_attributes = parse_story_html(story_html)
+          next if !story_attributes
           story_attributes[:category] = "quest"
           story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
           # skip non-worm threads
@@ -110,6 +111,9 @@ module LocationSearcher
       created_html    = main_html.css(".DateTime").first
       active_html     = story_html.css(".lastPostInfo .DateTime").first
       # parse attributes
+      # skip N/A threads - Intro to Questing
+      # https://forums.sufficientvelocity.com/forums/quests.29/page-132?direction=desc&order=last_post_date
+      return false if title_html.blank?
       title         = title_html.text
       location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
       location_id   = story_html[:id]

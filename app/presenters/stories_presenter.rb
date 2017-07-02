@@ -9,7 +9,7 @@ class StoriesPresenter < ApplicationPresenter
 
   define_extension(:text_field, :title_field,     :title, placeholder: "Messages from an Angel")
   define_extension(:text_field, :author_field,    :author, placeholder: "Ack")
-  define_extension(:text_field, :crossover_field, :crossover, placeholder: "Justice Leauge")
+  define_extension(:text_field, :crossover_field, :crossover, placeholder: "Justice League")
 
   define_extension(:text_area,  :description_field, :description, placeholder: "Short overview about this story", rows: 5)
 

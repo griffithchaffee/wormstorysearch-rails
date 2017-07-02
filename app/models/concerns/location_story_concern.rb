@@ -115,7 +115,7 @@ module LocationStoryConcern
           crossover = raw_crossover.split(/[^-A-Za-z0-9]/).select do |word|
             word !~ /worm|canon/i &&
             word !~ /\AAlt|AU/ &&
-            !word.downcase.in?(%w[ fic power fusion fanfic cross taylor pre post prepost quest a x cross crossover ])
+            !word.downcase.in?(%w[ fic power fusion fanfic cross taylor pre post prepost quest a s x cross crossover ])
           end.select(&:present?).join(" ").normalize
           return crossover if crossover.present?
         end
