@@ -41,7 +41,7 @@ class StoriesPresenter < ApplicationPresenter
 
   # filters
   def story_filter(params = {})
-    text_field_tag(:story_matches, params, placeholder: "Title, Crossover, or Author")
+    text_field_tag(:story_matches, params, placeholder: "Title, Crossover, Author, or Description")
   end
 
   def word_count_filter(params = {})

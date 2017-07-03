@@ -30,6 +30,9 @@ Rails.application.configure do
         if exception.class.to_s == "ActionView::MissingTemplate"
           skip_email ||= env["REQUEST_URI"] == "/"
         end
+      when "catch_all"
+        # ignore wrong formats (usually scanning)
+        skip_email ||= exception.class.to_s == "ActionController::UnknownFormat"
       end
       if skip_email
         Rails.logger.warn { "ErrorsController [#{real_action.classify}]: #{exception.class}: #{exception.message}" }
