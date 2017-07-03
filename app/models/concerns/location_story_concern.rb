@@ -90,12 +90,13 @@ module LocationStoryConcern
     return story if is_locked? || story
     # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
     parsed_title = title.remove(/\(.*?\)/).remove(/\[.*?\]/).normalize
+    normalize_author = -> (name) { name.downcase.remove(/[^a-z0-9]/) }
     query = Story.where(category: category)
-    # find existing story by title
+    # find existing story
     [title, parsed_title].each do |search_title|
       search = query.seek(title_ieq: search_title)
       return search.first if search.count == 1
-      search = query.seek(title_matches: search_title, author_ieq: author)
+      search = query.seek(title_matches: search_title).select { |result| normalize_author.call(result.author) == normalize_author.call(author) }
       return search.first if search.count == 1
     end
     # create story by title
