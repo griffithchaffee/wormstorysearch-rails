@@ -2,33 +2,52 @@ class StoriesController::Test < ApplicationController::TestCase
 
   action = "get edit"
 
-  testing "#{action} without modal layout" do
-    story = FactoryGirl.create(:story)
-    assert_raises(ArgumentError) do
-      get(:edit, params: { id: story.id })
-    end
-  end
-
-  testing "#{action} with modal layout" do
-    story = FactoryGirl.create(:story, crossover: "CROSS", description: "DESC")
-    get(:edit, params: { id: story.id, layout: "modal" })
+  testing "#{action}" do
+    story = FactoryGirl.create(:story, crossover: "CROSSOVER", description: "DESCRIPTION")
+    get(:edit, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
+      story.author,
       story.title,
-      "Crossover:",
-      story.crossover,
-      "Description:",
       story.description,
+      story.crossover,
+      story.read_url,
     ])
-    assert_not_in_response_body("Lock")
+    assert_not_in_response_body(%w[ Archived Locked ])
+    assert_equal("application", @controller.view_layout)
   end
 
-  testing "#{action} with modal layout as admin" do
-    become_admin
-    story = FactoryGirl.create(:story, crossover: "CROSS", description: "DESC")
-    get(:edit, params: { id: story.id, layout: "modal" })
+  testing "#{action} with view_layout=modal" do
+    story = FactoryGirl.create(:story, crossover: "CROSSOVER", description: "DESCRIPTION")
+    @request.env["HTTP_X_VIEW_LAYOUT"] = "modal"
+    get(:edit, params: { id: story.id })
     assert_response_ok
-    assert_in_response_body("Lock")
+    assert_in_response_body([
+      story.author,
+      story.title,
+      story.description,
+      story.crossover,
+      story.read_url,
+    ])
+    assert_not_in_response_body(%w[ Archived Locked ])
+    assert_equal("modal", @controller.view_layout)
   end
+
+  testing "#{action} as admin" do
+    story = FactoryGirl.create(:story, crossover: "CROSSOVER", description: "DESCRIPTION")
+    become_admin
+    get(:edit, params: { id: story.id })
+    assert_response_ok
+    assert_in_response_body([
+      story.author,
+      story.title,
+      story.description,
+      story.crossover,
+      story.read_url,
+      *%w[ Archive Lock ],
+    ])
+    assert_equal("application", @controller.view_layout)
+  end
+
 
 end
