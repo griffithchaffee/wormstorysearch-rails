@@ -1,6 +1,7 @@
 // prevent dropdown cut-off at bottom of table
 div.table-responsive {
   overflow-x: inherit;
+  overflow-y: inherit;
 }
 
 table.table {

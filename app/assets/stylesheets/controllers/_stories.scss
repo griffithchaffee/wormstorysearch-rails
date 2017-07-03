@@ -20,10 +20,12 @@ table.searchable {
 }
 
 div.story_filter {
+  // expand over multiple colspan
   width: 100%;
   ul.dropdown-menu {
     li {
       white-space: nowrap;
+      // force labels to span entire ul to catch clicks
       > a.radio, a.checkbox {
         margin: 0px;
         padding: 0px;
