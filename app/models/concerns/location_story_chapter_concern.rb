@@ -14,7 +14,12 @@ module LocationStoryChapterConcern
       if chapter_created_on? && chapter_updated_at? && chapter_created_on > chapter_updated_at
         errors.add(:chapter_updated_at, "[#{chapter_updated_at}] must come after chapter creation date [#{chapter_created_on}]")
       elsif chapter_created_on? && chapter_created_on < story.story_created_on
-        errors.add(:chapter_created_on, "[#{chapter_created_on}] must come after story creation date [#{story.story_created_on}]")
+        # chapters can slightly newer than story due to timezone conversions
+        if chapter_created_on == story.story_created_on - 1.day
+          self.chapter_created_on = story.story_created_on
+        else
+          errors.add(:chapter_created_on, "[#{chapter_created_on}] must come after story creation date [#{story.story_created_on}]")
+        end
       end
     end
 
