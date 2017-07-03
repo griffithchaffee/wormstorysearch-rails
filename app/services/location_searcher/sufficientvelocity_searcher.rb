@@ -47,7 +47,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/user-fiction.2/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
-        results = update_stories_from_html!(crawler.html, options.merge(is_worm_story: true))
+        results = update_stories_from_html!(crawler.html, options)
         # stop on last page
         break if results[:more] != true
       end
@@ -71,7 +71,7 @@ module LocationSearcher
     end
 
     def update_stories_from_html!(html, options = {})
-      options = options.with_indifferent_access.assert_valid_keys(*%w[ active_after is_worm_story attributes chapters ])
+      options = options.with_indifferent_access.assert_valid_keys(*%w[ active_after attributes chapters ])
       stories_html = parse_stories_html(html)
       stories = []
       results = -> (more) { { stories: stories, more: more } }
@@ -84,7 +84,7 @@ module LocationSearcher
         # stop if story too old
         return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
         # skip if not worm story
-        if !options.fetch(:is_worm_story) { is_worm_story?(story) }
+        if !is_worm_story?(story)
           Rails.logger.info { "Skip: #{story.title.yellow}" }
           next
         end
