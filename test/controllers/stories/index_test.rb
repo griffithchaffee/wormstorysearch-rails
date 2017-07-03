@@ -14,7 +14,7 @@ class StoriesController::Test < ApplicationController::TestCase
       location_story = FactoryGirl.create("#{location_model.const.location_slug}_story")
       stories << location_story.story
     end
-    Story.archive_management!
+    Story.reset_archived_state!
     assert_equal(true, archived_story.reload.is_archived?)
     get(:index)
     assert_response_ok

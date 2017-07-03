@@ -50,8 +50,7 @@ class Story < ApplicationRecord
   end
 
   def active_location
-    return @active_location if @active_location && !Rails.env.test?
-    @active_location = locations_sorted_by_updated_at.first
+    locations_sorted_by_updated_at.first
   end
 
   def locations
@@ -70,14 +69,17 @@ class Story < ApplicationRecord
     if active_location
       self.word_count = active_location.word_count
       self.story_updated_at = active_location.story_updated_at
-      save! if has_changes_to_save?
+      self.is_archived = false
+    else
+      self.is_archived = true
     end
+    save! if has_changes_to_save?
     self
   end
 
   class << self
     # remove stories without any locations
-    def archive_management!
+    def reset_archived_state!
       should_be_archived = all
       const.location_models.each do |location_model|
         should_be_archived = should_be_archived.seek(id_not_in: location_model.select_story_id)

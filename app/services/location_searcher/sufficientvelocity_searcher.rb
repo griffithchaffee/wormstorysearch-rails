@@ -8,13 +8,13 @@ module LocationSearcher
       @crawler = SiteCrawler.new(config.location_host)
     end
 
-    def search!(time, search_options = {})
+    def search!(active_after, search_options = {})
       @search_options = search_options.with_indifferent_access
-      time = time.ago if time.is_a?(ActiveSupport::Duration)
+      active_after = active_after.ago if active_after.is_a?(ActiveSupport::Duration)
       Rails.logger.silence(Logger::INFO) do
         login!
-        update_stories_newer_than!(time)
-        update_quests_newer_than!(time)
+        update_stories!(active_after: active_after)
+        update_quests!(active_after: active_after)
       end
     end
 

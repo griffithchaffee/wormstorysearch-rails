@@ -79,13 +79,13 @@ class Story::Test < ApplicationRecord::TestCase
     # manually call class helper
     story.update!(is_archived: true)
     assert_equal(true, story.reload.is_archived?)
-    Story.archive_management!
+    Story.reset_archived_state!
     assert_equal(false, story.reload.is_archived?)
     spacebattles_story.destroy!
     assert_equal(true, story.reload.is_archived?)
     story.update!(is_archived: false)
     assert_equal(false, story.reload.is_archived?)
-    Story.archive_management!
+    Story.reset_archived_state!
     assert_equal(true, story.reload.is_archived?)
   end
 

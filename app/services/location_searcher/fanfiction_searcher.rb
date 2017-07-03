@@ -8,11 +8,11 @@ module LocationSearcher
       @crawler = SiteCrawler.new(config.location_host)
     end
 
-    def search!(time, search_options = {})
+    def search!(active_after, search_options = {})
       @search_options = search_options.with_indifferent_access
-      time = time.ago if time.is_a?(ActiveSupport::Duration)
+      active_after = active_after.ago if active_after.is_a?(ActiveSupport::Duration)
       Rails.logger.silence(Logger::INFO) do
-        update_stories_newer_than!(time)
+        update_stories!(active_after: active_after)
       end
     end
 
@@ -31,7 +31,7 @@ module LocationSearcher
           #   [r=10]  Rating: All [r=10]
           search_params = { srt: 1, r: 10, p: page }
           crawler.get(stories_path, search_params, log_level: Logger::INFO)
-          results = update_stories_from_html!(crawler.html)
+          results = update_stories_from_html!(crawler.html, options)
           # stop on last page
           break if results[:more] != true
         end

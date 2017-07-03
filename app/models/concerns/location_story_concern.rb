@@ -29,19 +29,19 @@ module LocationStoryConcern
     end
 
     after_save do
-      # cache latest update to story for easy queries
-      if story && story.is_unlocked?
-        if saved_changes?
-          story.sync_with_active_location!
-        end
+      # cache latest updates to story for easy queries
+      if saved_changes? && story
+        story.sync_with_active_location!
       end
       if saved_change_to_attribute(:story_id)
-        Story.seek(id_in: saved_change_to_story_id.compact).archive_management!
+        Story.seek(id_in: saved_change_to_story_id.compact).each(&:sync_with_active_location!)
       end
     end
 
     after_destroy do
-      Story.where(id: story_id).archive_management! if story_id
+      if story_id
+        Story.where(id: story_id).each(&:sync_with_active_location!)
+      end
     end
 
     # transient story_active_at used in searchers

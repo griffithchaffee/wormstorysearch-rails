@@ -34,7 +34,7 @@ class Scheduler
   end
 
   scheduled_task :update_stories do
-    duration = task_options.fetch(:duration) { 1.day }
+    duration = task_options.fetch(:duration) { 12.hours }
     LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
     LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     LocationSearcher::FanfictionSearcher.search!(duration, task_options)

@@ -16,7 +16,13 @@ module LocationSearcher
 
     def save_story(story)
       story.story = story.story!
-      Rails.logger.info { "Save: #{story.title.green} [#{story.id || "New"}] => #{story.story_id} - #{story.story.title} [#{story.story.crossover}]" }
+      Rails.logger.info do
+        log = "Save: #{story.title.green} [#{story.id || "New"}]".ljust(70)
+        log += " => #{story.story.title.green}"
+        log += " [#{story.story.crossover}]".green if story.story.crossover?
+        log += " [#{story.story_id}]"
+        log
+      end
       story.save! if story.has_changes_to_save?
       story
     end

@@ -53,11 +53,11 @@ module LocationStoryConcern::TestConcern
       # story_updated_at change
       location_story.update!(story_updated_at: 8.hours.ago)
       assert_equal(location_story.story_updated_at.to_i, story.reload.story_updated_at.to_i)
-      # locked story
+      # locked story has no effect on sync_with_active_location
       story.update!(is_locked: true)
       locked_updated_at = story.story_updated_at
-      location_story.update!(story_updated_at: 6.hours.ago)
-      assert_equal(locked_updated_at.to_i, story.reload.story_updated_at.to_i)
+      location_story.reload.update!(story_updated_at: 6.hours.ago)
+      assert_equal(location_story.story_updated_at.to_i, story.reload.story_updated_at.to_i)
     end
 
     testing "default parse_crossover_from_title" do
