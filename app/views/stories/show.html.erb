@@ -1,6 +1,17 @@
-<%= content_for(:title) do %>
-  <%= @story.category_label %>:
-  <%= @story.title %>
+<% if view_layout == "modal" %>
+  <%= content_for(:title) do %>
+    <%= @story.title %>
+    <%= cp.small_tag(content: "(#{@story.category_label})") %>
+  <% end %>
+<% else %>
+  <%= cp.page_header_div do %>
+    <%= cp.page_actions_div do %>
+      <%= cp.read_link_btn %>
+      <%= cp.edit_link_btn %>
+    <% end %>
+
+    <%= cp.page_title(content: @story.title, sub_text: "(#{@story.category_label})") %>
+  <% end %>
 <% end %>
 
 <%= cp.div_tag do %>
@@ -37,7 +48,9 @@
   <%= render_partial("unsearchable_table", directory: "locations", collection: @story.locations_sorted_by_updated_at) %>
 <% end %>
 
-<%= content_for(:footer) do %>
-  <%= cp.read_story_link_btn %>
-  <%= cp.modal_close_btn %>
+<% if view_layout == "modal" %>
+  <%= content_for(:footer) do %>
+    <%= cp.read_link_btn %>
+    <%= cp.modal_close_btn %>
+  <% end %>
 <% end %>

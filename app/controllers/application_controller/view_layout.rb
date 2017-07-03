@@ -2,12 +2,23 @@ class ApplicationController < ActionController::Base
 
   layout(:view_layout)
 
+  class ViewLayout
+    attr_reader :layout
+
+    def initialize(layout, options = {})
+      layout = layout.to_s
+      options = options.with_indifferent_access
+      @layout =
+        case layout
+        when "" then options.fetch(:default_layout) { "application" }
+        when "false" then false
+        else layout
+        end
+    end
+  end
+
   def view_layout
-    return @view_layout if !@view_layout.nil?
-    provided_layout ||= params[:layout].to_s
-    @view_layout = provided_layout == "" ? "application" : provided_layout
-    @view_layout = false if @view_layout == "false"
-    @view_layout
+    @view_layout ||= ViewLayout.new(request.headers["X-View-Layout"] || params[:view_layout]).layout
   end
   helper_method :view_layout
 

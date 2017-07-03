@@ -278,6 +278,7 @@ module SeekConcern
         begin
           namespace, column_and_operator = original_namespace.split(".")
           association = namespace.dup
+          debug_details = "#{global_namespace || :seek}: #{original_namespace} => #{original_value}".inspect
           # parse options [isolate, without]
           option_regex = /\Awithout_/
           option_without = association =~ option_regex ? true : false
@@ -297,6 +298,9 @@ module SeekConcern
           seeks[namespace] ||= { association: association, isolate: option_isolate, without: option_without, queries: [] }
           seek_namespace = seeks[namespace]
           store_seek = -> (new_seek_query) do
+            if !new_seek_query.is_a?(ActiveRecord::Relation)
+              raise ArgumentError, "expected #{new_seek_query.inspect} to be a query scope: #{debug_details}"
+            end
             (seek_namespace[:isolate] ? seek_namespace[:queries] : seek_namespace[:queries].clear) << new_seek_query
           end
           seek_model =
@@ -315,7 +319,7 @@ module SeekConcern
             if seek_query.table_name == query.table_name && seek_query.respond_to?("#{operator}_#{column}")
               next store_seek.call(seek_query.send("#{operator}_#{column}", value))
             else
-              Rails.env.production? ? next : raise(ArgumentError, "invalid sort seek: #{original_namespace} => #{original_value}")
+              Rails.env.production? ? next : raise(ArgumentError, "invalid sort: #{debug_details}")
             end
           # custom seek scope on query
           elsif query.respond_to?("seek_#{original_namespace.slugify}")
@@ -329,11 +333,11 @@ module SeekConcern
           # auto seek
           elsif seek_query.respond_to?("where_#{column}")
             if operator.blank?
-              raise ArgumentError, "no operator provided for #{global_namespace || :seek} query: #{original_namespace} => #{original_value}"
+              raise ArgumentError, "no operator provided: #{debug_details}"
             end
             next store_seek.call(seek_query.send("where_#{column}", operator => value))
           end
-          raise ArgumentError, "unknown #{global_namespace || :seek}: #{original_namespace} => #{original_value}"
+          raise ArgumentError, "unknown #{debug_details}"
         rescue StandardError => error
           subject = "#{(global_namespace || "seek").classify}Error [#{error.class}]: #{error.message}"
           body = "

@@ -6,6 +6,8 @@ searchableTableBind = ->
   $inputs      = $form.find(".filters input, input.filter").not("[name=utf8],[type=checkbox],[type=radio]").not(".filter-ignore")
   $selects     = $form.find("select, select.filter").not(".filter-ignore")
   $resets      = $form.find(".search-reset")
+  $search_hide = $form.find(".search-hide")
+  $search_show = $form.find(".search-show, .search-reset")
   # set default values used to hide/show filter resets
   $inputs.each (i, input) ->
     $(input).data("search", { default:  "#{if $(input).data("search-default")? then $(input).data("search-default") else ""}" })
@@ -34,17 +36,25 @@ searchableTableBind = ->
       Toolbox.cancelEvent(evt)
       $form.submit()
   # show resets if non-default search
+  searching = (value) ->
+    if value
+      $search_hide.hide()
+      $search_show.show()
+    else
+      $search_hide.show()
+      $search_show.hide()
+  searching(false)
   $inputs.not(".filter-reset-ignore").each (i, input) ->
-    if $(input).val() isnt $(input).data("search").default then $resets.show()
+    if $(input).val() isnt $(input).data("search").default then searching(true)
   $selects.not(".filter-reset-ignore").each (i, select) ->
-    if $(select).val() isnt $(select).data("search").default then $resets.show()
+    if $(select).val() isnt $(select).data("search").default then searching(true)
   $radios.not(".filter-reset-ignore").each (i, radio) ->
-    if $(radio).prop("checked") then $resets.show()
+    if $(radio).prop("checked") then searching(true)
   $check_boxes.not(".filter-reset-ignore").each (i, check_box) ->
     $check_box = $(check_box)
     if $check_box.prop("checked")
-      if $check_box.val() isnt $check_box.data("search").default then $resets.show()
+      if $check_box.val() isnt $check_box.data("search").default then searching(true)
     else
-      if $check_box.val() is $check_box.data("search").default then $resets.show()
+      if $check_box.val() is $check_box.data("search").default then searching(true)
 
 $(document).on "page:change", searchableTableBind

@@ -1,6 +1,17 @@
 class String
-  def slugify
-    scan(/[A-Za-z0-9]+/).join("_").underscore
+  def tokenize(regex = /[A-Za-z0-9]/)
+    scan(/(?:#{regex}|"[^"]*")+/).map do |token|
+      exact_match_regex = /\A"|"\z/
+      if token =~ exact_match_regex
+        token.remove(exact_match_regex).downcase
+      else
+        token.underscore.split("_")
+      end
+    end.flatten.uniq
+  end
+
+  def slugify(regex = /[A-Za-z0-9]+/)
+    scan(regex).join("_").underscore
   end
 
   def normalize

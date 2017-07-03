@@ -1,15 +1,13 @@
-.page-header {
-  margin-top: 10px;
+.page-title {
+  padding-bottom: (($line-height-computed / 2) - 1);
+  margin: ($line-height-computed / 2) 0 $line-height-computed;
+  border-bottom: 1px solid $page-header-border-color;
   strong {
-    color: #888;
-    margin: 5px 0 0px;
+    color: lighten($gray-base, 55%);
+    margin: ($line-height-computed / 4) 0 0;
     font-size: 35%;
     display: block;
   }
-}
-
-div.form-submit {
-  input, a { &.submit { margin-left: -10px } }
 }
 
 .secondary-link { margin-left: 10px }
@@ -26,4 +24,9 @@ pre {
     word-break: break-word;
   }
   &.pretty { font-family: inherit; }
+}
+
+.popover {
+  max-width: 100%;
+  ul { padding-left: 15px; }
 }

@@ -40,11 +40,9 @@ class ApplicationPresenter < ActionPresenter::Base
     end
   end
 
-  def reset_filter
-    div_tag(add_class: "text-center") do
-      void_link(add_class: "search-reset text-danger", style: "display: none;") do
-        icon("ban", title: "Reset Filters", style: "font-size: 18px; padding-top: 4px;")
-      end
+  def filters_reset_icon
+    div_tag(add_class: "text-center search-reset text-danger", style: "cursor: pointer;") do
+      icon("ban", add_class: "icon-md")
     end
   end
 

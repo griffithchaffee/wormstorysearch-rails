@@ -3,7 +3,11 @@ $(document).on "click", "a.dynamic-modal", (evt) ->
   Toolbox.cancelEvent(evt)
   $modal = $("#dynamic-modal").modal("show")
   # replace modal content with response content
-  $.ajax({ url: @href, type: "GET" }).done (response, status, evt) ->
+  $.ajax({
+    url: @href,
+    type: "GET",
+    headers: { "x-view-layout": "modal" }
+  }).done (response, status, evt) ->
     $response = $(response)
     $.each ["header", "body", "footer"], (i, section) ->
       $modal.find(".modal-#{section}").replaceWith($response.find(".modal-#{section}"))

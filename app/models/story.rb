@@ -11,19 +11,32 @@ class Story < ApplicationRecord
   generate_column_scopes
 
   scope :seek_word_count_gteq, -> (word_count) { where_word_count(gteq: word_count.to_s.human_size_to_i) }
-  scope :search_story_matches, -> (value) do
-    seek_or(
-      title_matches: value,
-      author_matches: value,
-      crossover_matches: value,
-      description_matches: value,
-    )
+  scope :search_story_keywords, -> (words) do
+    query = all
+    words.to_s.tokenize(/[A-Za-z0-9^$]/).each do |word|
+      # special starts with search
+      if word.starts_with?("^") || word.ends_with?("$")
+        query = query.seek_or(title_matches: word)
+      else
+        query = query.seek_or(
+          title_matches: word,
+          author_matches: word,
+          crossover_matches: word,
+          description_matches: word,
+        )
+      end
+    end
+    query
   end
 
   validates_presence_of_required_columns
   validates_in_list(:category, const.categories.map(&:category))
 
   # public/private/protected/classes
+  def crossover_title
+    crossover? ? "#{title} [#{crossover}]" : title
+  end
+
   def title=(new_title)
     self[:title] = new_title.to_s.normalize.presence
   end

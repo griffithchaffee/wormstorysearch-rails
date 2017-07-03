@@ -1,11 +1,9 @@
 class StoriesController < ApplicationController
 
   def show
-    view_layout.verify_is!("modal")
   end
 
   def edit
-    view_layout.verify_is!("modal")
   end
 
   def update
@@ -14,7 +12,7 @@ class StoriesController < ApplicationController
     else
       @story.assign_attributes(permitted_action_story_params)
       if @story.save
-        flash.notice("Successfully updated #{@story.title}")
+        flash.notice("Successfully updated: #{@story.title} by #{@story.author}")
       else
         flash.alert("There was a problem while trying to update #{@story.title}:\n#{@story.errors.full_messages.join("\n")}")
       end
@@ -47,7 +45,7 @@ private
 
   def permit_index_search_params
     %w[
-      story_matches category_eq story_updated_at_gteq is_archived_eq is_locked_eq word_count_gteq
+      story_keywords category_eq story_updated_at_gteq is_archived_eq is_locked_eq word_count_gteq
       sort direction
     ]
   end

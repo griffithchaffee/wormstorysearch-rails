@@ -17,6 +17,10 @@
   animation: icon-spin 1s infinite steps(8);
 }
 
+.icon-md {
+  font-size: 18px;
+}
+
 @-webkit-keyframes icon-spin {
   0% {
     -webkit-transform: rotate(0deg);
@@ -41,16 +45,19 @@
 
 // http://fontawesome.io/icons
 <% {
-  filter:   "f0b0",
-  refresh:  "f021",
-  ban:      "f05e",
-  eye:      "f06e",
-  list:     "f03a",
-  edit:     "f044",
-  calendar: "f073",
+  "ban"     => "f05e",
+  "eye"     => "f06e",
+  "list"    => "f03a",
+  "edit"    => "f044", # pencil-square-o
+  "info"    => "f05a",
+  "filter"  => "f0b0",
+  "refresh" => "f021",
+  "calendar"      => "f073",
   "external-link" => "f08e",
-  "chevron-up" => "f077", "chevron-down" => "f078",
-  "angle-up"   => "f106", "angle-down" => "f107",
+  "chevron-up"    => "f077", "chevron-down" => "f078",
+  "angle-up"      => "f106", "angle-down"   => "f107",
+  "question-circle-o" => "f29c",
+  "question-circle"   => "f059",
 }.each do |name, unicode| %>
   .icon-<%= name %> {
     &:before { content: "\<%= unicode %>"; }

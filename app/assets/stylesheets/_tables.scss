@@ -10,5 +10,12 @@ table.table {
     a.sorter { white-space: nowrap; }
     .dropdown-toggle { height: 34px; }
     .input-group .dropdown-toggle { border-right-width: 0px; }
+    &.reset {
+      icon { padding-top: 4px }
+    }
   }
+}
+
+.search-hide {
+  display: none;
 }
