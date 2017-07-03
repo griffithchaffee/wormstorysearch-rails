@@ -40,13 +40,6 @@
     active_archived_filter,
     active_locked_filter,
   ].any?(&:present?)
-
-  get_filter_id = -> (status) { "#{status}_status_filter" }
-
-  # onchange js
-  #onclick_js = CoffeeScript.compile("$(this).find('input').click()")
-  radio_toggle_js     = CoffeeScript.compile("$(this).find('input[type=radio]').prop('checked', true).change();")
-  check_box_toggle_js = CoffeeScript.compile("$(this).find('input[type=checkbox]').click();")
 %>
 
 
@@ -62,10 +55,10 @@
       <%= cp.li_tag(class: "dropdown-header", content: "Category") %>
       <% category_filters.each do |value, label| %>
         <%= cp.li_tag(add_class: ("active" if active_category_filter == value)) do %>
-          <%= cp.a_tag(class: "radio", onclick: radio_toggle_js) do %>
+          <%= cp.a_tag(class: "radio") do %>
             <%= cp.label_tag do %>
               <%= cp.radio_button_tag(category_filter_id, content: value, id: nil) %>
-              <%= label %>
+              <%= cp.span_tag(content: label) %>
             <% end %>
           <% end %>
         <% end %>
@@ -75,10 +68,10 @@
       <%= cp.li_tag(class: "dropdown-header", content: "Updated Within") %>
       <% updated_at_filters.each do |value, label| %>
         <%= cp.li_tag(add_class: ("active" if active_updated_at_filter == value)) do %>
-          <%= cp.a_tag(class: "radio", onclick: radio_toggle_js) do %>
-            <%= cp.label_tag(style: "display: block;") do %>
+          <%= cp.a_tag(class: "radio") do %>
+            <%= cp.label_tag do %>
               <%= cp.radio_button_tag(updated_at_filter_id, content: value, id: nil) %>
-              <%= label %>
+              <%= cp.span_tag(content: label) %>
             <% end %>
           <% end %>
         <% end %>
@@ -90,10 +83,10 @@
         <!-- archived_filter -->
         <% archived_filters.each do |value, label| %>
           <%= cp.li_tag(add_class: ("active" if active_archived_filter == value)) do %>
-            <%= cp.a_tag(class: "checkbox", onclick: check_box_toggle_js) do %>
-              <%= cp.label_tag(style: "display: block;") do %>
+            <%= cp.a_tag(class: "checkbox") do %>
+              <%= cp.label_tag do %>
                 <%= cp.check_box_tag(archived_filter_id, content: "true") %>
-                <%= label %>
+                <%= cp.span_tag(content: label) %>
               <% end %>
             <% end %>
           <% end %>
@@ -102,10 +95,10 @@
         <!-- locked_filter -->
         <% locked_filters.each do |value, label| %>
           <%= cp.li_tag(add_class: ("active" if active_locked_filter == value)) do %>
-            <%= cp.a_tag(class: "checkbox", onclick: check_box_toggle_js) do %>
-              <%= cp.label_tag(style: "display: block;") do %>
+            <%= cp.a_tag(class: "checkbox") do %>
+              <%= cp.label_tag do %>
                 <%= cp.check_box_tag(locked_filter_id, content: "true") %>
-                <%= label %>
+                <%= cp.span_tag(content: label) %>
               <% end %>
             <% end %>
           <% end %>

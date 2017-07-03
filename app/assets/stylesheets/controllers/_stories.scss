@@ -24,12 +24,16 @@ div.story_filter {
   ul.dropdown-menu {
     li {
       white-space: nowrap;
-      > a {
-        &.radio, &.checkbox {
-          margin: 0px; cursor: pointer;
-          label {
-            display: block;
-            line-height: 20px;
+      > a.radio, a.checkbox {
+        margin: 0px;
+        padding: 0px;
+        label {
+          display: block;
+          padding: 3px 20px 3px 40px;
+          input[type=radio], input[type=checkbox] {
+            position: relative;
+            vertical-align: middle;
+            margin: -1px 0px 0px -20px;
           }
         }
       }
