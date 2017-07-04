@@ -32,8 +32,10 @@ module LocationStoryChapterConcern
     after_save do
       # cache latest update to story for easy queries
       if story && story.is_unlocked?
-        if saved_change_to_attribute?(:chapter_updated_at)
-          story.update!(story_updated_at: chapter_updated_at) if story.reload.story_updated_at < chapter_updated_at
+        if saved_change_to_attribute?(:chapter_updated_at) && story.reload.story_updated_at < chapter_updated_at
+          story.story_updated_at = chapter_updated_at
+          story.read_url = story.read_url!
+          story.save! if story.has_changes_to_save?
         end
       end
     end
