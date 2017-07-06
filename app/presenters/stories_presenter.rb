@@ -110,7 +110,7 @@ class StoriesPresenter < ApplicationPresenter
         example_span = -> (content) { span_tag(style: "", content: "(Ex: #{content})") }
         content += li_tag { b_tag(content: "Keywords Filter") }
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
-        content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["P.E.N.N.Y"]) }
+        content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
         content += li_tag { b_tag(content: "Words Filter") }
         content += li_tag(style: sub_li_style) { %Q[Shorthand: 10k ] }
       end

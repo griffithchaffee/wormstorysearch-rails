@@ -80,6 +80,7 @@ module LocationSearcher
       # parse threads
       stories_html.each do |story_html|
         story_attributes = parse_story_html(story_html).merge(options[:attributes].to_h)
+        next if story_html == false
         story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
         # stop if story too old
         return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
@@ -121,6 +122,8 @@ module LocationSearcher
     end
 
     def parse_story_html(story_html)
+      # skip unavailable stories
+      return false if story_html.css(".lastPostInfo").text.strip == "N/A"
       # html selections
       main_html       = story_html.css(".main")
       title_html      = main_html.css("h3.title a.PreviewTooltip").first
