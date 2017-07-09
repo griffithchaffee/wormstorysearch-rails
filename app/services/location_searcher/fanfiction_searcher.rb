@@ -95,7 +95,7 @@ module LocationSearcher
       author            = story_html.css("a[href^='/u/']").text
       description       = main_html.text.remove(details_html.text)
       word_count        = details_html.text.match(/Words: ([0-9,]+)/)[1].remove(/\D/)
-      status            = details_html.text.match(/- Complete/) ? "complete" : "ongoing"
+      status            = details_html.text.strip.ends_with?("- Complete") ? "complete" : "ongoing"
       updated_at        = Time.at(details_html.css("span").first["data-xutime"].to_i.nonzero?)
       created_at        = Time.at(details_html.css("span").last["data-xutime"].to_i.nonzero?)
       active_at         = updated_at
