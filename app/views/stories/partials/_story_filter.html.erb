@@ -1,6 +1,7 @@
 <%
   # filters
   category_filters   = {}.with_indifferent_access
+  status_filters     = {}.with_indifferent_access
   updated_at_filters = {}.with_indifferent_access
   archived_filters   = {}.with_indifferent_access
   locked_filters     = {}.with_indifferent_access
@@ -8,6 +9,9 @@
   # filter values
   Story.const.categories.each do |category|
     category_filters[category.category] = category.label
+  end
+  Story.const.statuses.each do |status|
+    status_filters[status.status] = status.label
   end
   {
     "3 Hours"  => 3.hours.ago.beginning_of_hour,
@@ -25,17 +29,20 @@
 
   # filter ids
   category_filter_id   = "category_eq"
+  status_filter_id     = "status_eq"
   updated_at_filter_id = "story_updated_at_gteq"
   archived_filter_id   = "is_archived_eq"
   locked_filter_id     = "is_locked_eq"
 
   # active filters
   active_category_filter   = params[category_filter_id]
+  active_status_filter     = params[status_filter_id]
   active_updated_at_filter = params[updated_at_filter_id]
   active_archived_filter   = params[archived_filter_id]
   active_locked_filter     = params[locked_filter_id]
   actively_filtering       = [
     active_category_filter,
+    active_status_filter,
     active_updated_at_filter,
     active_archived_filter,
     active_locked_filter,
@@ -71,6 +78,19 @@
           <%= cp.a_tag(class: "radio") do %>
             <%= cp.label_tag do %>
               <%= cp.radio_button_tag(updated_at_filter_id, content: value, id: nil) %>
+              <%= cp.span_tag(content: label) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- status_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Status") %>
+      <% status_filters.each do |value, label| %>
+        <%= cp.li_tag(add_class: ("active" if active_status_filter == value)) do %>
+          <%= cp.a_tag(class: "radio") do %>
+            <%= cp.label_tag do %>
+              <%= cp.radio_button_tag(status_filter_id, content: value, id: nil) %>
               <%= cp.span_tag(content: label) %>
             <% end %>
           <% end %>

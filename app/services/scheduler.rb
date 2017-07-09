@@ -7,6 +7,7 @@ class Scheduler
     const.add(task: "update_stories", every: [1.hour])
     # 5AM UTC = 9PM PST / 12AM EST
     const.add(task: "clear_stale_sessions", every: [1.day, at: "5:00 am"])
+    const.add(task: "update_story_statuses", every: [1.day, at: "5:05 am"])
   end
 
   class << self
@@ -31,6 +32,10 @@ class Scheduler
   scheduled_task :clear_stale_sessions do
     IdentitySession.seek(updated_at_lteq: 1.months.ago.utc).delete_all
     SessionActionData.seek(updated_at_lteq: 1.month.ago.utc).delete_all
+  end
+
+  scheduled_task :update_story_statuses do
+    Story.update_statuses!
   end
 
   scheduled_task :update_stories do

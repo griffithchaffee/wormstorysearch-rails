@@ -89,13 +89,13 @@ module LocationStoryConcern::TestConcern
       # no existing story
       story.update!(title: "abc 123", author: "SOMEONE")
       location_story.story = nil
-      assert_equal(true, location_story.story!(autocreate: false).unsaved?)
+      assert_equal(true, location_story.story!(create: false).unsaved?)
       # exact title match
       location_story.update!(title: "abc 123")
       assert_equal(story, location_story.story!)
       # partial title match
       location_story.update!(title: "abc")
-      assert_equal(true, location_story.story!(autocreate: false).unsaved?)
+      assert_equal(true, location_story.story!(create: false).unsaved?)
       # partial title match and author
       location_story.update!(title: "ABC", author: "someone")
       assert_equal(story, location_story.story!)

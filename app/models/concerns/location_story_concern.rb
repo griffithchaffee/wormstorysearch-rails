@@ -85,32 +85,40 @@ module LocationStoryConcern
   end
 
   def story!(options = {})
-    options = options.with_indifferent_access.assert_valid_keys(*%w[ autocreate ])
+    options = options.with_indifferent_access.assert_valid_keys(*%w[ search create ])
     # already set
     return story if is_locked? || story
     # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
-    parsed_title = title.remove(/\(.*?\)/).remove(/\[.*?\]/).normalize
+    parsed_title = Story.new(title: title).title
     normalize_author = -> (name) { name.downcase.remove(/[^a-z0-9]/) }
-    query = Story.where(category: category)
     # find existing story
-    [title, parsed_title].each do |search_title|
-      search = query.seek(title_ieq: search_title)
-      return search.first if search.count == 1
-      search = query.seek(title_matches: search_title).select { |result| normalize_author.call(result.author) == normalize_author.call(author) }
-      return search.first if search.count == 1
+    if options[:search] != false
+      query = Story.where(category: category)
+      [title, parsed_title].each do |search_title|
+        search = query.seek(title_ieq: search_title)
+        return search.first if search.count == 1
+        search = query.seek(title_matches: search_title).select { |result| normalize_author.call(result.author) == normalize_author.call(author) }
+        return search.first if search.count == 1
+      end
     end
     # create story by title
     new_story = Story.new(attributes.slice(*Story.column_names).except(*%w[ id created_at updated_at ]))
-    new_story.title = title.remove(/\(.*?\)/).remove(/\[.*?\]/).normalize
     if !"crossover".in?(self.class.column_names)
       new_story.crossover = parse_crossover_from_title
     end
-    new_story.save! if options[:autocreate] != false
+    new_story.save! if options[:create] != false
     new_story
   end
 
   def parse_crossover_from_title(local_title = title)
-    [/\(Worm ?(X|\/) ?(?<value>.*?)\)/, /\[Worm ?(X|\/) ?(?<value>.*?)\]/, /\((?<value>.*?)\)/, /\[(?<value>.*?)\]/].each do |regex|
+    [
+      /\(Worm ?(X|\/) ?(?<value>.*?)\)/,
+      /\[Worm ?(X|\/) ?(?<value>.*?)\]/,
+      /\{Worm ?(X|\/) ?(?<value>.*?)\}/,
+      /\((?<value>.*?)\)/,
+      /\[(?<value>.*?)\]/,
+      /\{(?<value>.*?)\}/
+    ].each do |regex|
       scan = local_title.scan(regex).flatten
       local_title.scan(regex).flatten.each do |raw_crossover|
         if raw_crossover

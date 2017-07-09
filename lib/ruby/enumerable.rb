@@ -1,6 +1,6 @@
 module Enumerable
 
-  delegate :nest, :nest_to_hash, to: :to_a
+  delegate :nest, :nest_to_h, to: :to_a
 
   def get(params = {}, &block)
     if block

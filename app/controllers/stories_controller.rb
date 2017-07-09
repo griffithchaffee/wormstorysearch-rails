@@ -38,14 +38,14 @@ private
   end
 
   def permit_story_params
-    permit = %w[ title author crossover description ]
+    permit = %w[ title author crossover description status ]
     permit += %w[ is_locked is_archived ] if is_admin?
     permit
   end
 
   def permit_index_search_params
     %w[
-      story_keywords category_eq story_updated_at_gteq is_archived_eq is_locked_eq word_count_gteq
+      story_keywords category_eq story_updated_at_gteq is_archived_eq is_locked_eq word_count_gteq status_eq
       sort direction
     ]
   end

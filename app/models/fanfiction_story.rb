@@ -7,8 +7,14 @@ class FanfictionStory < ApplicationRecord
   Rails.application.settings.locations[const.location_slug].to_h.each do |key, value|
     class_constant("location_#{key}", value)
   end
+  class_constant_builder(:statuses, %w[ status label ]) do |new_const|
+    new_const.add(status: "ongoing",  label: "Ongoing")
+    new_const.add(status: "complete", label: "Complete")
+  end
 
   # associations/scopes/validations/callbacks/macros
+  validates_in_list(:status, const.statuses.map(&:status))
+
   after_create do
     if story && story.is_unlocked?
       # overwrite crossover

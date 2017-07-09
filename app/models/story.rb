@@ -1,7 +1,14 @@
 class Story < ApplicationRecord
   # modules/constants
+  class_constant(:dead_status_duration, 1.year)
   class_constant(:categories, SpacebattlesStory.const.categories)
   class_constant(:location_models, [SpacebattlesStory, SufficientvelocityStory, FanfictionStory])
+
+  class_constant_builder(:statuses, %w[ status label ]) do |new_const|
+    new_const.add(status: "ongoing",  label: "Ongoing")
+    new_const.add(status: "dead",     label: "Dead")
+    new_const.add(status: "complete", label: "Complete")
+  end
 
   # associations/scopes/validations/callbacks/macros
   const.location_models.each do |location_model|
@@ -31,6 +38,14 @@ class Story < ApplicationRecord
 
   validates_presence_of_required_columns
   validates_in_list(:category, const.categories.map(&:category))
+  validates_in_list(:status, const.statuses.map(&:status))
+
+  before_update do
+    # remove dead status if updated
+    if is_unlocked? && status == "dead" && will_save_change_to_attribute?(:story_updated_at) && story_updated_at > const.dead_status_duration.ago
+      self.status = "ongoing"
+    end
+  end
 
   # public/private/protected/classes
   def crossover_title
@@ -38,7 +53,22 @@ class Story < ApplicationRecord
   end
 
   def title=(new_title)
-    self[:title] = new_title.to_s.normalize.presence
+    self[:title] = new_title.to_s
+      .gsub("’", "'")
+      .gsub(/—|~|–|-+/, "-")
+      .gsub(/\|/, "/")
+      .gsub(/;/, ":")
+      .gsub(/;/, ":")
+      .remove(/[^-A-Za-z0-9 .':{}()\[\]?,!&*+_\/]/) # non ascii
+      .remove(/\(.*?\)/).remove(/\[.*?\]/).remove(/\{.*?\}/) # crossover
+      .remove(/[(){}"\[\]]/)  # stray parenthesis and brackets
+      .gsub(/ *:+ */, ": ")   # normalize colons
+      .gsub(/ +,+ */, ", ")   # normalize commas
+      .gsub(/ +\.+ */, ". ")  # normalize periods
+      .gsub(/(-+ +)+/, " - ") # normalize dashes
+      .gsub(/([^A-Z.])\.{1}\z/, "\\1") # trailing periods except for ... and Y.Z.
+      .normalize.remove(/\A[^A-Za-z0-9]+|[^A-Za-z0-9.!'?]+\z/) # remove weird starting/ending characters
+      .normalize.presence # cleanup
   end
 
   def description=(new_description)
@@ -108,6 +138,14 @@ class Story < ApplicationRecord
       # perform archiving
       should_be_archived.where(is_archived: false).update_all(is_archived: true) +
       should_not_be_archived.where(is_archived: true).update_all(is_archived: false)
+    end
+
+    def update_statuses!
+      seek(
+        status_eq: "ongoing",
+        is_locked_eq: false,
+        story_updated_at_lteq: const.dead_status_duration.ago,
+      ).update_all(status: "dead")
     end
   end
 

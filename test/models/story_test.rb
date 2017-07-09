@@ -89,4 +89,12 @@ class Story::Test < ApplicationRecord::TestCase
     assert_equal(true, story.reload.is_archived?)
   end
 
+  testing "automatic story status update when story_updated_at changes" do
+    story = FactoryGirl.create(:story, story_created_on: 1.day.ago, story_updated_at: 1.hour.ago)
+    story.reload.update!(status: "dead")
+    assert_equal("dead", story.status)
+    story.update!(story_updated_at: Time.now)
+    assert_equal("ongoing", story.reload.status)
+  end
+
 end

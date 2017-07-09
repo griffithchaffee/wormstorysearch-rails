@@ -4,6 +4,7 @@ class StoriesPresenter < ApplicationPresenter
   # label
   define_extension(:label, :title_label,       :title,  content: "Title")
   define_extension(:label, :author_label,      :author, content: "Author")
+  define_extension(:label, :status_label,      :description, content: "Status")
   define_extension(:label, :crossover_label,   :crossover, content: "Crossover")
   define_extension(:label, :description_label, :description, content: "Description")
   # text_field
@@ -12,6 +13,8 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:text_field, :crossover_field, :crossover, placeholder: "Justice League")
   # text_area
   define_extension(:text_area,  :description_field, :description, placeholder: "Short overview about this story", rows: 5)
+  # select
+  define_extension(:select, :status_select, :status, content: Story.const.statuses.nest(:label, :status))
   # check_box
   define_extension(:check_box, :is_locked_check_box,   :is_locked)
   define_extension(:check_box, :is_archived_check_box, :is_archived)
