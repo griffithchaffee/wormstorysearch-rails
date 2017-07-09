@@ -5,9 +5,9 @@ class Story < ApplicationRecord
   class_constant(:location_models, [SpacebattlesStory, SufficientvelocityStory, FanfictionStory])
 
   class_constant_builder(:statuses, %w[ status label ]) do |new_const|
+    new_const.add(status: "complete", label: "Complete")
     new_const.add(status: "ongoing",  label: "Ongoing")
     new_const.add(status: "dead",     label: "Dead")
-    new_const.add(status: "complete", label: "Complete")
   end
 
   # associations/scopes/validations/callbacks/macros

@@ -60,7 +60,7 @@
 
             <% page = params[:page].presence || collection.page %>
             <% limit = params[:limit].presence || collection.limit %>
-            <% border, spacing = 2, 3 %>
+            <% border, spacing = 2, 2 %>
 
             <%= cp.hidden_field_tag(:page, class: "filter", value: page, data: { search_default: 1 }) %>
             <%= cp.hidden_field_tag(:limit, class: "filter", value: limit, data: { search_default: collection.limit }) %>
