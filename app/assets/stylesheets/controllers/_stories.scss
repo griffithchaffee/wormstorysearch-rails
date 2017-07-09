@@ -1,4 +1,14 @@
 // searchable-table
+#stories-searchable-table-container {
+  min-height: 550px;
+  border: 0px;
+}
+
+#stories-searchable-table {
+  border: 1px solid $table-border-color;
+  td { border: 1px solid $table-border-color; }
+}
+
 table.searchable {
   tbody.filters {
     td.details    { width: 1px;  max-width: 1px;  min-width: 1px; }
