@@ -1,4 +1,12 @@
 class Numeric
+  def min(num)
+    self < num ? num : self
+  end
+
+  def max(num)
+    self > num ? num : self
+  end
+
   def to_human_size
     return self if self < 1_000
     divid_and_round = -> (divider) { (to_f / divider).round(2).to_s.remove(/\.0\z/) }

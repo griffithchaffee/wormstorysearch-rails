@@ -11,5 +11,8 @@ class SpacebattlesStoryChapter < ApplicationRecord
   validates_presence_of_required_columns
 
   # public/private/protected/classes
+  def read_url
+    "#{SpacebattlesStory.const.location_host}#{location_path}"
+  end
 
 end

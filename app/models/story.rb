@@ -127,6 +127,16 @@ class Story < ApplicationRecord
     self
   end
 
+  def update_rating!(update_locations: true)
+    new_rating = locations.map do |location|
+      location.update_rating! if update_locations
+      location.rating
+    end.max || 0
+    self.rating = new_rating.round(2)
+    save! if has_changes_to_save?
+    self
+  end
+
   class << self
     # remove stories without any locations
     def reset_archived_state!
@@ -146,6 +156,29 @@ class Story < ApplicationRecord
         is_locked_eq: false,
         story_updated_at_lteq: const.dead_status_duration.ago,
       ).update_all(status: "dead")
+    end
+
+    def rating_normalizers
+      spacebattles_query       = SpacebattlesStory.seek(average_chapter_likes_not_eq: 0);
+      sufficientvelocity_query = SufficientvelocityStory.seek(average_chapter_likes_not_eq: 0);
+      fanfiction_query         = FanfictionStory.seek(favorites_not_eq: 0);
+      spacebattles_likes_sum, spacebattles_likes_count             = spacebattles_query.sum(:average_chapter_likes), spacebattles_query.count
+      sufficientvelocity_likes_sum, sufficientvelocity_likes_count = sufficientvelocity_query.sum(:average_chapter_likes), sufficientvelocity_query.count
+      fanfiction_favs_sum, fanfiction_favs_count                   = fanfiction_query.sum(:favorites), fanfiction_query.count
+      rating_divider = 10
+      {
+        spacebattles:       rating_divider / (spacebattles_likes_sum.to_f / spacebattles_likes_count),
+        sufficientvelocity: rating_divider / (sufficientvelocity_likes_sum.to_f / sufficientvelocity_likes_count),
+        fanfiction:         rating_divider / (fanfiction_favs_sum.to_f / fanfiction_favs_count),
+      }.transform_values { |value| value.round(4) }.with_indifferent_access
+    end
+
+    def preload_locations
+      preload(const.location_models.map(&:table_name))
+    end
+
+    def preload_locations_with_chapters
+      preload(const.location_models.map(&:table_name).map { |location| [location, :chapters] }.to_h)
     end
   end
 

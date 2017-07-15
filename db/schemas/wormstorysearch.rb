@@ -12,7 +12,7 @@ def change
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_fanfiction_stories_on_story_id"
-    t.integer "likes", default: 0, null: false
+    t.integer "favorites", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false
@@ -33,7 +33,6 @@ def change
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_fanfiction_story_chapters_on_story_id"
-    t.integer "likes", default: 0, null: false
     t.integer "position", null: false
     t.integer "word_count", default: 0, null: false
     t.string "category", default: "chapter", null: false
@@ -70,8 +69,8 @@ def change
     t.datetime "created_at", null: false
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
+    t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_spacebattles_stories_on_story_id"
-    t.integer "likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false
@@ -105,7 +104,7 @@ def change
     t.datetime "created_at", null: false
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "likes", default: 0, null: false
+    t.float "rating", default: 0.0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false
@@ -123,8 +122,8 @@ def change
     t.datetime "created_at", null: false
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
+    t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_sufficientvelocity_stories_on_story_id"
-    t.integer "likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false

@@ -34,4 +34,14 @@ class FanfictionStory < ApplicationRecord
     location_url
   end
 
+  def update_rating!
+    searcher = LocationSearcher::FanfictionSearcher.new
+    searcher.update_story_favorites!(self)
+    self
+  end
+
+  def rating
+    favorites * const.location_rating_normalizer
+  end
+
 end

@@ -11,7 +11,8 @@ module LocationStoryChapterConcern
     # associations/scopes/validations/callbacks/macros
     validates_in_list(:category, const.categories.map(&:category))
     validate do
-      if chapter_created_on? && chapter_updated_at? && chapter_created_on > chapter_updated_at
+      # remove 1 day from created_on due to time-zone differences
+      if chapter_created_on? && chapter_updated_at? && (chapter_created_on - 1.day) > chapter_updated_at
         errors.add(:chapter_updated_at, "[#{chapter_updated_at}] must come after chapter creation date [#{chapter_created_on}]")
       elsif chapter_created_on? && chapter_created_on < story.story_created_on
         # chapters can slightly newer than story due to timezone conversions
@@ -56,5 +57,9 @@ module LocationStoryChapterConcern
 
   def category!
     "omake".in?(title.slugify.split("_")) ? "omake" : "chapter"
+  end
+
+  def <=>(other)
+    position <=> other.position
   end
 end

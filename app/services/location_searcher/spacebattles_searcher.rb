@@ -36,6 +36,25 @@ module LocationSearcher
       end
     end
 
+    def update_chapter_likes!(chapter)
+      crawler.get(chapter.read_url, {}, log_level: Logger::INFO, follow_redirects: true)
+      page_html = crawler.html
+      # no messages
+      return if page_html.css("li.message").size == 0
+      # find chapter id (by url or first post)
+      # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
+      location_id = chapter.location_path.split("#").last if chapter.location_path.include?("#post-")
+      location_id ||= page_html.css("li.message").first[:id]
+      # parse likes
+      likes_html       = page_html.css("#likes-#{location_id}")
+      individual_likes = likes_html.css("a.username").size
+      combined_likes   = likes_html.css("a.OverlayTrigger").text.to_s.remove(/\D/).to_i
+      # set likes
+      chapter.likes = individual_likes + combined_likes
+      chapter.save! if chapter.has_changes_to_save?
+      chapter
+    end
+
     def update_stories!(options = {})
       options = options.with_indifferent_access
       page = options.delete(:page) || 0
@@ -163,7 +182,7 @@ module LocationSearcher
       preview_html = chapter_html.css("a.PreviewTooltip").first
       # parse attributes
       title         = preview_html.text
-      location_path = preview_html[:href]
+      location_path = "/#{preview_html[:href]}"
       word_count    = chapter_html.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")")
       updated_at    = abbr_html_to_time(updated_html)
       # attributes

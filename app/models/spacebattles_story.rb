@@ -15,4 +15,19 @@ class SpacebattlesStory < ApplicationRecord
     chapters.size == 0 ? location_url : "#{location_url}/threadmarks"
   end
 
+  def update_rating!(update_chapters: true)
+    story_chapters = chapters.sort.select { |chapter| chapter.category == "chapter" }
+    if update_chapters
+      searcher = LocationSearcher::SpacebattlesSearcher.new
+      story_chapters.each { |chapter| searcher.update_chapter_likes!(chapter) }
+    end
+    self.average_chapter_likes = story_chapters.sum(&:likes) / story_chapters.size.min(1)
+    save! if has_changes_to_save?
+    self
+  end
+
+  def rating
+    average_chapter_likes * const.location_rating_normalizer
+  end
+
 end

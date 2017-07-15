@@ -1,23 +1,63 @@
 def up
-
-  drop_table :old_stories
-
   change_table "stories", force: :cascade do |t|
-    t.string "status", default: "ongoing", null: false
+    t.remove :likes
+    t.float :rating, null: false, default: 0, precision: 2
   end
 
   change_table "fanfiction_stories", force: :cascade do |t|
-    t.string "status", default: "ongoing", null: false
+    t.integer :favorites, null: false, default: 0
+    t.remove :likes
+  end
+
+  change_table "fanfiction_story_chapters", force: :cascade do |t|
+    t.remove "likes"
+  end
+
+  change_table "spacebattles_stories", force: :cascade do |t|
+    t.remove :likes
+    t.float :average_chapter_likes, null: false, default: 0, precision: 2
+  end
+
+  change_table "sufficientvelocity_stories", force: :cascade do |t|
+    t.remove :likes
+    t.float :average_chapter_likes, null: false, default: 0, precision: 2
   end
 end
 
 def down
-  create_table("old_stories")
   change_table "stories", force: :cascade do |t|
-    t.remove "status"
+    t.integer :likes
+    t.remove :rating
   end
+
   change_table "fanfiction_stories", force: :cascade do |t|
-    t.remove "status"
+    t.remove :favorites
+    t.integer :likes
+  end
+
+  change_table "fanfiction_story_chapters", force: :cascade do |t|
+    t.integer "likes"
+  end
+
+  change_table "spacebattles_stories", force: :cascade do |t|
+    t.integer :likes
+    t.remove :average_chapter_likes
+  end
+
+  change_table "sufficientvelocity_stories", force: :cascade do |t|
+    t.integer :likes
+    t.remove :average_chapter_likes
+  end
+end
+
+def migration_script
+  SpacebattlesStoryChapter.find_each do |chapter|
+    new_location_path = "/#{chapter.location_path}" if !chapter.location_path.starts_with?("/")
+    chapter.update_columns(location_path: new_location_path) if new_location_path
+  end
+  SufficientvelocityStoryChapter.find_each do |chapter|
+    new_location_path = "/#{chapter.location_path}" if !chapter.location_path.starts_with?("/")
+    chapter.update_columns(location_path: new_location_path) if new_location_path
   end
 end
 

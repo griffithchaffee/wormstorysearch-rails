@@ -16,6 +16,20 @@ module LocationSearcher
       end
     end
 
+    def update_story_favorites!(story)
+      crawler.get("#{story.location_path}", {}, log_level: Logger::INFO)
+      story_html = crawler.html
+      # parse favorites
+      details_html = story_html.css("#profile_top")
+      return story if details_html.blank?
+      favorites = details_html.text.match(/Favs: ([0-9,]+)/)
+      if favorites
+        story.favorites = favorites[1].remove(/\D/).to_i
+        story.save! if story.has_changes_to_save?
+      end
+      story
+    end
+
     def update_stories!(initial_options = {})
       # crawl "User Fiction" forum
       %w[ /book/Worm/ /Worm-Crossovers/10867/0/ ].each do |stories_path|
@@ -95,6 +109,7 @@ module LocationSearcher
       author            = story_html.css("a[href^='/u/']").text
       description       = main_html.text.remove(details_html.text)
       word_count        = details_html.text.match(/Words: ([0-9,]+)/)[1].remove(/\D/)
+      favorites         = details_html.text.match(/Favs: ([0-9,]+)/)[1].remove(/\D/)
       status            = details_html.text.strip.ends_with?("- Complete") ? "complete" : "ongoing"
       updated_at        = Time.at(details_html.css("span").first["data-xutime"].to_i.nonzero?)
       created_at        = Time.at(details_html.css("span").last["data-xutime"].to_i.nonzero?)
@@ -112,6 +127,7 @@ module LocationSearcher
         crossover: crossover,
         word_count: word_count,
         status: status,
+        favorites: favorites,
         story_active_at: active_at,
         story_created_on: created_at,
         story_updated_at: updated_at,

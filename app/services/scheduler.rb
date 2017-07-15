@@ -6,8 +6,12 @@ class Scheduler
     # often
     const.add(task: "update_stories", every: [1.hour])
     # 5AM UTC = 9PM PST / 12AM EST
-    const.add(task: "clear_stale_sessions", every: [1.day, at: "5:00 am"])
-    const.add(task: "update_story_statuses", every: [1.day, at: "5:05 am"])
+    const.add(task: "clear_stale_sessions",        every: [1.day, at: "5:00 am"])
+    const.add(task: "update_story_statuses",       every: [1.day, at: "5:05 am"])
+    # 9AM UTC = 1AM PST / 4AM EST
+    const.add(task: "update_recent_story_ratings", every: [1.day, at: "9:00 am"])
+    # 10AM UTC = 2AM PST / 5AM EST
+    const.add(task: "update_all_story_ratings",    every: [:thursday, at: "10:00 am"])
   end
 
   class << self
@@ -27,6 +31,18 @@ class Scheduler
     @task = task
     @task_options = task_options.with_indifferent_access
     rescue_block { send(task) }
+  end
+
+  scheduled_task :update_recent_story_ratings do
+    Story.preload_locations_with_chapters.seek(story_updated_at_gteq: 1.month.ago).find_each(batch_size: 50) do |story|
+      story.update_rating!
+    end
+  end
+
+  scheduled_task :update_all_story_ratings do
+    Story.preload_locations_with_chapters.find_each(batch_size: 50) do |story|
+      story.update_rating!
+    end
   end
 
   scheduled_task :clear_stale_sessions do

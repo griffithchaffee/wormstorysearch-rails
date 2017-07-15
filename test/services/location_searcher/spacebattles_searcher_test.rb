@@ -12,17 +12,17 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     spacebattles_story = SpacebattlesStory.first
     assert_equal(
       {
-        "is_locked"=>"false",
-        "story_created_on"=>"2017-06-17",
-        "story_updated_at"=>"2017-06-17 00:00:00 -0700",
-        "likes"=>"0",
-        "word_count"=>"4200",
         "author"=>"Dyngari",
+        "average_chapter_likes"=>"0.0",
         "category"=>"story",
+        "is_locked"=>"false",
         "location_id"=>"thread-536881",
         "location_path"=>"/threads/aggregation-worm-factorio-oc.536881",
         "read_url"=>"https://forums.spacebattles.com/threads/aggregation-worm-factorio-oc.536881",
-        "title"=>"Aggregation [Worm/Factorio][OC]"
+        "story_created_on"=>"2017-06-17",
+        "story_updated_at"=>"2017-06-17 00:00:00 -0700",
+        "title"=>"Aggregation [Worm/Factorio][OC]",
+        "word_count"=>"4200",
       }.sort.to_h,
       spacebattles_story.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
     )
@@ -40,7 +40,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
         "position"=>"1",
         "word_count"=>"390",
         "category"=>"chapter",
-        "location_path"=>"threads/aggregation-worm-factorio-oc.536881/",
+        "location_path"=>"/threads/aggregation-worm-factorio-oc.536881/",
         "title"=>"Prologue"
       }.sort.to_h,
       chapter.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
@@ -60,9 +60,9 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author"=>"Crimson Square",
+        "average_chapter_likes"=>"0.0",
         "category"=>"quest",
         "is_locked"=>"false",
-        "likes"=>"0",
         "location_id"=>"thread-532675",
         "location_path"=>"/threads/reincarnation-of-an-angel-worm-quest.532675",
         "read_url"=>"https://forums.spacebattles.com/threads/reincarnation-of-an-angel-worm-quest.532675",
@@ -85,7 +85,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
         "chapter_created_on"=>"2017-06-05",
         "chapter_updated_at"=>"2017-06-05 00:00:00 -0700",
         "likes"=>"0",
-        "location_path"=>"threads/reincarnation-of-an-angel-worm-quest.532675/",
+        "location_path"=>"/threads/reincarnation-of-an-angel-worm-quest.532675/",
         "position"=>"1",
         "title"=>"Character Creation - 1.1",
         "word_count"=>"1000"
