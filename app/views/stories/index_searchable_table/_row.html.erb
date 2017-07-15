@@ -24,6 +24,10 @@
     <% end %>
   <% end %>
 
+  <%= cp.td_tag(class: "rating") do %>
+    <%= story.rating %>
+  <% end %>
+
   <%= cp.td_tag(class: "word_count") do %>
     <%= story.word_count.to_human_size %>
   <% end %>

@@ -8,6 +8,10 @@
     <%= render_partial(:story_filter) %>
   <% end %>
 
+  <%= cp.td_tag(class: "rating") do %>
+    <%= cp.rating_filter %>
+  <% end %>
+
   <%= cp.td_tag(class: "word_count") do %>
     <%= cp.word_count_filter %>
   <% end %>

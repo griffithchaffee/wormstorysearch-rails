@@ -17,7 +17,6 @@ class Story < ApplicationRecord
 
   generate_column_scopes
 
-  scope :seek_word_count_gteq, -> (word_count) { where_word_count(gteq: word_count.to_s.human_size_to_i) }
   scope :search_story_keywords, -> (words) do
     query = all
     words.to_s.tokenize(/[A-Za-z0-9^$]/).each do |word|
@@ -32,6 +31,26 @@ class Story < ApplicationRecord
           description_matches: word,
         )
       end
+    end
+    query
+  end
+  scope :seek_word_count_filter, -> (word_count_filters) do
+    query = all
+    Rails.logger.fatal word_count_filters
+    word_count_filters.split(/\s|,/).each do |word_count_filter|
+      filter = word_count_filter.starts_with?("<") ? :lteq : :gteq
+      word_count = word_count_filter.remove(/[^0-9km]/).human_size_to_i
+      query = query.where_word_count(filter => word_count) if word_count > 0
+    end
+    query
+  end
+  scope :seek_rating_filter, -> (rating_filters) do
+    query = all
+    Rails.logger.fatal rating_filters
+    rating_filters.split(/\s|,/).each do |rating_filter|
+      filter = rating_filter.starts_with?("<") ? :lteq : :gteq
+      rating = rating_filter.remove(/[^0-9.]/).to_f
+      query = query.where_rating(filter => rating) if rating.between?(0, 100)
     end
     query
   end

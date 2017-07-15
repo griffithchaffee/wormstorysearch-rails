@@ -24,13 +24,15 @@ class StoriesPresenter < ApplicationPresenter
   # link_to
   define_extension(:span_tag, :edit_link, content: "")
   # filters
-  define_extension(:text_field_tag, :story_filter,      :story_keywords, placeholder: "Title, Crossover, Author, or Description")
-  define_extension(:text_field_tag, :word_count_filter, :word_count_gteq, placeholder: "Words")
+  define_extension(:text_field_tag, :story_filter,      :story_keywords,    placeholder: "Title, Crossover, Author, or Description")
+  define_extension(:text_field_tag, :rating_filter,     :rating_filter,     placeholder: "Rating")
+  define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words")
   # sorters
   define_extension(:sorter_link, :story_created_on_sorter, "stories.story_created_on", content: "Created", default_direction: "desc")
   define_extension(:sorter_link, :story_updated_at_sorter, "stories.story_updated_at", content: "Updated", default_direction: "desc")
-  define_extension(:sorter_link, :title_sorter,            "stories.title", content: "Title")
-  define_extension(:sorter_link, :word_count_sorter,       "stories.word_count", content: "Words", default_direction: "desc")
+  define_extension(:sorter_link, :title_sorter,            "stories.title",            content: "Title")
+  define_extension(:sorter_link, :rating_sorter,           "stories.rating",           content: "Rating", default_direction: "desc")
+  define_extension(:sorter_link, :word_count_sorter,       "stories.word_count",       content: "Words", default_direction: "desc")
 
   # html
   def index_link(*hashes, &content_block)
@@ -114,8 +116,11 @@ class StoriesPresenter < ApplicationPresenter
         content += li_tag { b_tag(content: "Keywords Filter") }
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
         content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
+        content += li_tag { b_tag(content: "Rating Filter") }
+        content += li_tag(style: sub_li_style) { %Q[Normalized out of 100 ] }
+        content += li_tag(style: sub_li_style) { %Q[Advanced: 50, >50, <50 ] }
         content += li_tag { b_tag(content: "Words Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Shorthand: 10k ] }
+        content += li_tag(style: sub_li_style) { %Q[Advanced: 10k, >10k, <10k ] }
       end
       icon("info", title: popover_title, class: "icon-md", data: { toggle: "popover", placement: "top auto", trigger: "hover", content: popover_content, html: "true" })
     end
