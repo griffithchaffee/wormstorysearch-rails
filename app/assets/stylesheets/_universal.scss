@@ -30,3 +30,7 @@ pre {
   max-width: 100%;
   ul { padding-left: 15px; }
 }
+
+.tooltip-text-left + .tooltip > .tooltip-inner {
+  text-align: left;
+}

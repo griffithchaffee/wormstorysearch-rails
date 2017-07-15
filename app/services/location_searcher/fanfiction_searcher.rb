@@ -22,9 +22,9 @@ module LocationSearcher
       # parse favorites
       details_html = story_html.css("#profile_top")
       return story if details_html.blank?
-      favorites = details_html.text.match(/Favs: ([0-9,]+)/)
-      if favorites
-        story.favorites = favorites[1].remove(/\D/).to_i
+      favorites_match = details_html.text.match(/Favs: ([0-9,]+)/)
+      if favorites_match
+        story.favorites = favorites_match[1].remove(/\D/).to_i
         story.save! if story.has_changes_to_save?
       end
       story
@@ -99,9 +99,10 @@ module LocationSearcher
 
     def parse_story_html(story_html)
       # html selections
-      title_html = story_html.css("a.stitle").first
-      main_html = story_html.css("div")
-      details_html = main_html > "div"
+      title_html      = story_html.css("a.stitle").first
+      main_html       = story_html.css("div")
+      details_html    = main_html > "div"
+      favorites_match = details_html.text.match(/Favs: ([0-9,]+)/)
       # parse attributes
       title             = title_html.text
       location_path     = title_html[:href]
@@ -109,7 +110,7 @@ module LocationSearcher
       author            = story_html.css("a[href^='/u/']").text
       description       = main_html.text.remove(details_html.text)
       word_count        = details_html.text.match(/Words: ([0-9,]+)/)[1].remove(/\D/)
-      favorites         = details_html.text.match(/Favs: ([0-9,]+)/)[1].remove(/\D/)
+      favorites         = favorites_match ? favorites_match[1].to_s.remove(/\D/).to_i : 0
       status            = details_html.text.strip.ends_with?("- Complete") ? "complete" : "ongoing"
       updated_at        = Time.at(details_html.css("span").first["data-xutime"].to_i.nonzero?)
       created_at        = Time.at(details_html.css("span").last["data-xutime"].to_i.nonzero?)

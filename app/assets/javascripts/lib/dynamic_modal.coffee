@@ -8,9 +8,11 @@ $(document).on "click", "a.dynamic-modal", (evt) ->
     type: "GET",
     headers: { "x-view-layout": "modal" }
   }).done (response, status, evt) ->
+    # trigger normal bootstrap remote loading event
     $response = $(response)
     $.each ["header", "body", "footer"], (i, section) ->
       $modal.find(".modal-#{section}").replaceWith($response.find(".modal-#{section}"))
+    $(document).trigger("loaded.bs.modal")
 
 # save original html for reset after close
 $(document).on "show.bs.modal", "#dynamic-modal", (evt) ->

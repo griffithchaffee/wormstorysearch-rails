@@ -7,11 +7,11 @@
   <% end %>
 
   <%= cp.td_tag(class: "story_created_on") do %>
-    <%= story.story_created_on.to_full_human_s %>
+    <%= story.story_created_on.to_brief_human_s %>
   <% end %>
 
   <%= cp.td_tag(class: "story_updated_at") do %>
-    <%= story.story_updated_at.to_full_human_s %>
+    <%= story.story_updated_at.to_brief_human_s %>
   <% end %>
 
   <%= cp.td_tag(class: "title") do %>
@@ -22,7 +22,11 @@
     <%= story.author %>
   <% end %>
 
+  <%= cp.td_tag(class: "rating") do %>
+    <%= cp.location_rating(story) %>
+  <% end %>
+
   <%= cp.td_tag(class: "word_count") do %>
-    <%= story.word_count.to_human_size %>
+    <%= story.word_count.to_human_size(precision: 0) %>
   <% end %>
 <% end %>

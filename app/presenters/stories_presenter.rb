@@ -5,7 +5,7 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:label, :title_label,       :title,  content: "Title")
   define_extension(:label, :author_label,      :author, content: "Author")
   define_extension(:label, :status_label,      :description, content: "Status")
-  define_extension(:label, :crossover_label,   :crossover, content: "Crossover")
+  define_extension(:label, :crossover_label,   :crossover, content: "Crossover/Information")
   define_extension(:label, :description_label, :description, content: "Description")
   # text_field
   define_extension(:text_field, :title_field,     :title, placeholder: "Messages from an Angel")
@@ -117,13 +117,47 @@ class StoriesPresenter < ApplicationPresenter
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
         content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
         content += li_tag { b_tag(content: "Rating Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Normalized out of 100 ] }
-        content += li_tag(style: sub_li_style) { %Q[Advanced: 50, >50, <50 ] }
+        content += li_tag(style: sub_li_style) { %Q[Normalized out of 100 (hover for details)] }
+        content += li_tag(style: sub_li_style) { %Q[Filter: >50 or <50 (default is >)] }
         content += li_tag { b_tag(content: "Words Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Advanced: 10k, >10k, <10k ] }
+        content += li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] }
       end
       icon("info", title: popover_title, class: "icon-md", data: { toggle: "popover", placement: "top auto", trigger: "hover", content: popover_content, html: "true" })
     end
+  end
+
+  def location_rating(location)
+    content = "#{location.rating.to_i_or_round(precision: 1)} ".html_safe
+    location_rating, title =
+      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction ])
+      when "spacebattles"       then [location.average_chapter_likes.to_i, "Likes/Chapter"]
+      when "sufficientvelocity" then [location.average_chapter_likes.to_i, "Likes/Chapter"]
+      when "fanfiction"         then [location.favorites,                  "Favorites"]
+      end
+    content += em_tag(content: "(#{location_rating})", title: title, data: { toggle: "tooltip", trigger: "hover" })
+    span_tag(content: content, style: "white-space: nowrap;")
+  end
+
+  def rating_details(*hashes)
+    story = extract_record(*hashes)
+    location_ratings = story.locations.map do |location|
+      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction ])
+      when "spacebattles"
+        "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.average_chapter_likes.to_i} likes/chapter)"
+      when "sufficientvelocity"
+        "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.average_chapter_likes.to_i} likes/chapter)"
+      when "fanfiction"
+        "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.favorites} favorites)"
+      end
+    end
+    location_ratings_content = location_ratings.map { |content| span_tag(content: content.strip, style: "white-space: nowrap; text-align: left;") }.join(br_tag)
+    span_tag(
+      *hashes,
+      content: story.rating.to_i_or_round(precision: 1),
+      title: location_ratings_content,
+      add_class: "tooltip-text-left",
+      merge_data: { toggle: "tooltip", trigger: "hover", html: true }
+    )
   end
 
 end

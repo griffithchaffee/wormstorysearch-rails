@@ -41,7 +41,7 @@ class FanfictionStory < ApplicationRecord
   end
 
   def rating
-    favorites * const.location_rating_normalizer
+    (favorites * const.location_rating_normalizer).round(2)
   end
 
 end

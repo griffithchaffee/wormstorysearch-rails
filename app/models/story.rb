@@ -36,7 +36,6 @@ class Story < ApplicationRecord
   end
   scope :seek_word_count_filter, -> (word_count_filters) do
     query = all
-    Rails.logger.fatal word_count_filters
     word_count_filters.split(/\s|,/).each do |word_count_filter|
       filter = word_count_filter.starts_with?("<") ? :lteq : :gteq
       word_count = word_count_filter.remove(/[^0-9km]/).human_size_to_i
@@ -46,7 +45,6 @@ class Story < ApplicationRecord
   end
   scope :seek_rating_filter, -> (rating_filters) do
     query = all
-    Rails.logger.fatal rating_filters
     rating_filters.split(/\s|,/).each do |rating_filter|
       filter = rating_filter.starts_with?("<") ? :lteq : :gteq
       rating = rating_filter.remove(/[^0-9.]/).to_f
