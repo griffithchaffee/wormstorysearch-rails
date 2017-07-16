@@ -135,7 +135,7 @@ module LocationStoryConcern
   end
 
   def highly_rated?
-    rating > const.location_rating_average * Story.const.rating_deviations
+    send(const.location_rating_column) > const.location_rating_average * Story.const.rating_deviations
   end
 
   def rating
