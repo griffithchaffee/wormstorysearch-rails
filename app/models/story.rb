@@ -3,6 +3,8 @@ class Story < ApplicationRecord
   class_constant(:dead_status_duration, 1.year)
   class_constant(:categories, SpacebattlesStory.const.categories)
   class_constant(:location_models, [SpacebattlesStory, SufficientvelocityStory, FanfictionStory])
+  class_constant(:rating_trim_percent, 0.1)
+  class_constant(:rating_deviations, 3)
 
   class_constant_builder(:statuses, %w[ status label ]) do |new_const|
     new_const.add(status: "complete", label: "Complete")
@@ -104,6 +106,10 @@ class Story < ApplicationRecord
     story_created_on >= 1.week.ago
   end
 
+  def highly_rated?
+    locations.any?(&:highly_rated?)
+  end
+
   def category_label
     const.categories.fetch(category).label
   end
@@ -175,17 +181,30 @@ class Story < ApplicationRecord
       ).update_all(status: "dead")
     end
 
-    def rating_normalizers
-      {
-        spacebattles:       "average_chapter_likes",
-        sufficientvelocity: "average_chapter_likes",
-        fanfiction:         "favorites",
-      }.map do |location_slug, location_column|
+    def rating_averages(trim_percent: const.rating_trim_percent, deviations: const.rating_deviations)
+      # caluclation is trimmed mean:
+      # - remove highest/lowest trim_percent - https://www.easycalculation.com/statistics/learn-trimmed-mean.php
+      # - calculate standard deviation average of remaining
+      const.location_models.map do |location|
+        location_slug = location.const.location_slug
+        rating_column = location.const.location_rating_column
         model = const.location_models.find { |location_model| location_model.const.location_slug == location_slug.to_s }
-        query = model.unscoped.seek("#{location_column}_not_eq" => 0).reorder(nil)
-        query = query.select("STDDEV_SAMP(#{location_column}) AS trimmean")
-        trimmean = connection.execute(query.to_sql).first.fetch("trimmean").to_f
-        [location_slug, (100 / trimmean).round(4)]
+        # trimmed mean
+        query = model.unscoped.seek("#{rating_column}_not_eq" => 0).order(rating_column)
+        ratings = query.pluck(rating_column)
+        trim_size = trim_percent * ratings.size
+        trimmed_ratings = ratings[trim_size..-trim_size]
+        min_rating, max_rating = trimmed_ratings.minmax
+        # build trim floor/ceiling
+        query = model.unscoped.seek("#{rating_column}_gteq" => min_rating, "#{rating_column}_lteq" => max_rating).reorder(nil)
+        standard_deviation = query.select("STDDEV_SAMP(#{rating_column}) AS standard_deviation").first.attributes.fetch("standard_deviation").to_f
+        average            = query.select("AVG(#{rating_column}) AS average").first.attributes.fetch("average").to_f
+        floor   = average - (standard_deviation / deviations)
+        ceiling = average + (standard_deviation * deviations)
+        # trimmed average
+        trimmed_query = model.unscoped.seek("#{rating_column}_gteq" => floor, "#{rating_column}_lteq" => ceiling).reorder(nil)
+        trimmed_average = trimmed_query.select("AVG(#{rating_column}) AS average").first.attributes.fetch("average").to_f
+        [location_slug, trimmed_average.round(4)]
       end.to_h.with_indifferent_access
     end
 

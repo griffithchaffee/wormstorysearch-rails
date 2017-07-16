@@ -94,7 +94,7 @@ class StoriesPresenter < ApplicationPresenter
   end
   define_extension(:modal_edit_link, :modal_edit_link_btn, add_class: "btn btn-default")
 
-  def status_class(*hashes)
+  def row_alert_class(*hashes)
     story = extract_record(*hashes)
     story.recently_created? ? "info" : ""
   end
@@ -150,8 +150,9 @@ class StoriesPresenter < ApplicationPresenter
         "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.favorites} favorites)"
       end
     end
-    location_ratings_content = location_ratings.map { |content| span_tag(content: content.strip, style: "white-space: nowrap; text-align: left;") }.join(br_tag)
-    span_tag(
+    location_ratings.unshift("Highly Rated!") if story.highly_rated?
+    location_ratings_content = location_ratings.map { |content| span_tag(content: content.strip, style: "white-space: nowrap;") }.join(br_tag)
+    send(story.highly_rated? ? :strong_tag : :span_tag,
       *hashes,
       content: story.rating.to_i,
       title: location_ratings_content,

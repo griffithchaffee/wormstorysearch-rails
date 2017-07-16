@@ -9,7 +9,7 @@ class Logger::ApplicationFormatter < ActiveSupport::Logger::SimpleFormatter
     CASE ILIKE WHEN NULL THEN ELSE LOWER UPPER END CONCAT
   ]
   # partial spaced word
-  SQL_WORDS << %w[ AND ASC DESC FROM LIMIT OFFSET ON ORDER RETURNING SET SQL VALUES WHERE SUM STDDEV_SAMP ].map { |word| " #{word}" }
+  SQL_WORDS << %w[ AND ASC DESC FROM LIMIT OFFSET ON ORDER RETURNING SET SQL VALUES WHERE SUM STDDEV_SAMP AVG ].map { |word| " #{word}" }
   # fully spaced word
   SQL_WORDS << %w[ AS OR IN NOT ].map { |word| " #{word} " }
   SQL_REGEXES = SQL_WORDS.map { |group| Regexp.new "(#{group.join('|')})" }

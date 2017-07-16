@@ -134,6 +134,18 @@ module LocationStoryConcern
     nil
   end
 
+  def highly_rated?
+    rating > const.location_rating_average * Story.const.rating_deviations
+  end
+
+  def rating
+    # convert location rating too normalized rating
+    (
+      send(const.location_rating_column) *
+      (100 / const.location_rating_average.to_f)
+    ).round(2)
+  end
+
   def <=>(other)
     sorter = -> (record) do
       [record.story_updated_at, record.story_created_on, -record.id]

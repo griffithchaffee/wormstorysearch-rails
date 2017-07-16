@@ -26,8 +26,4 @@ class SpacebattlesStory < ApplicationRecord
     self
   end
 
-  def rating
-    (average_chapter_likes * const.location_rating_normalizer).round(2)
-  end
-
 end

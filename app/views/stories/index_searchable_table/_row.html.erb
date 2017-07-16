@@ -1,5 +1,5 @@
 <% story = record %>
-<%= cp.tr_tag(id: cp.record_to_namespace(story), class: cp.status_class) do %>
+<%= cp.tr_tag(id: cp.record_to_namespace(story), class: cp.row_alert_class) do %>
   <%= cp.td_tag(class: "details") do %>
     <%= cp.recently_created_icon %>
     <% link_options = { content: "", add_class: "text-default" } %>
