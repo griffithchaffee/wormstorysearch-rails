@@ -34,14 +34,15 @@ class Scheduler
   end
 
   scheduled_task :update_recent_story_ratings do
-    Story.preload_locations_with_chapters.seek(story_updated_at_gteq: 1.month.ago).find_each(batch_size: 50) do |story|
-      story.update_rating!
+    duration = task_options.fetch(:duration) { 1.month }
+    Story.preload_locations_with_chapters.seek(story_updated_at_gteq: duration.ago).find_each(batch_size: 50) do |story|
+      story.update_rating!(update_locations: true)
     end
   end
 
   scheduled_task :update_all_story_ratings do
     Story.preload_locations_with_chapters.find_each(batch_size: 50) do |story|
-      story.update_rating!
+      story.update_rating!(update_locations: true)
     end
   end
 

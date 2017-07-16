@@ -117,8 +117,8 @@ class StoriesPresenter < ApplicationPresenter
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
         content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
         content += li_tag { b_tag(content: "Rating Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Normalized out of 100 (hover for details)] }
-        content += li_tag(style: sub_li_style) { %Q[Filter: >50 or <50 (default is >)] }
+        content += li_tag(style: sub_li_style) { %Q[Normalized (hover for details)] }
+        content += li_tag(style: sub_li_style) { %Q[Filter: >500 or <500 (default is >)] }
         content += li_tag { b_tag(content: "Words Filter") }
         content += li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] }
       end
@@ -153,7 +153,7 @@ class StoriesPresenter < ApplicationPresenter
     location_ratings_content = location_ratings.map { |content| span_tag(content: content.strip, style: "white-space: nowrap; text-align: left;") }.join(br_tag)
     span_tag(
       *hashes,
-      content: story.rating.to_i_or_round(precision: 1),
+      content: story.rating.to_i,
       title: location_ratings_content,
       add_class: "tooltip-text-left",
       merge_data: { toggle: "tooltip", trigger: "hover", html: true }

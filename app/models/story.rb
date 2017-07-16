@@ -48,7 +48,7 @@ class Story < ApplicationRecord
     rating_filters.split(/\s|,/).each do |rating_filter|
       filter = rating_filter.starts_with?("<") ? :lteq : :gteq
       rating = rating_filter.remove(/[^0-9.]/).to_f
-      query = query.where_rating(filter => rating) if rating.between?(0, 100)
+      query = query.where_rating(filter => rating) if rating > 0
     end
     query
   end
@@ -144,7 +144,7 @@ class Story < ApplicationRecord
     self
   end
 
-  def update_rating!(update_locations: true)
+  def update_rating!(update_locations: false)
     new_rating = locations.map do |location|
       location.update_rating! if update_locations
       location.rating
@@ -176,18 +176,17 @@ class Story < ApplicationRecord
     end
 
     def rating_normalizers
-      spacebattles_query       = SpacebattlesStory.seek(average_chapter_likes_not_eq: 0);
-      sufficientvelocity_query = SufficientvelocityStory.seek(average_chapter_likes_not_eq: 0);
-      fanfiction_query         = FanfictionStory.seek(favorites_not_eq: 0);
-      spacebattles_likes_sum, spacebattles_likes_count             = spacebattles_query.sum(:average_chapter_likes), spacebattles_query.count
-      sufficientvelocity_likes_sum, sufficientvelocity_likes_count = sufficientvelocity_query.sum(:average_chapter_likes), sufficientvelocity_query.count
-      fanfiction_favs_sum, fanfiction_favs_count                   = fanfiction_query.sum(:favorites), fanfiction_query.count
-      rating_divider = 10
       {
-        spacebattles:       rating_divider / (spacebattles_likes_sum.to_f / spacebattles_likes_count),
-        sufficientvelocity: rating_divider / (sufficientvelocity_likes_sum.to_f / sufficientvelocity_likes_count),
-        fanfiction:         rating_divider / (fanfiction_favs_sum.to_f / fanfiction_favs_count),
-      }.transform_values { |value| value.round(4) }.with_indifferent_access
+        spacebattles:       "average_chapter_likes",
+        sufficientvelocity: "average_chapter_likes",
+        fanfiction:         "favorites",
+      }.map do |location_slug, location_column|
+        model = const.location_models.find { |location_model| location_model.const.location_slug == location_slug.to_s }
+        query = model.unscoped.seek("#{location_column}_not_eq" => 0).reorder(nil)
+        query = query.select("STDDEV_SAMP(#{location_column}) AS trimmean")
+        trimmean = connection.execute(query.to_sql).first.fetch("trimmean").to_f
+        [location_slug, (100 / trimmean).round(4)]
+      end.to_h.with_indifferent_access
     end
 
     def preload_locations
