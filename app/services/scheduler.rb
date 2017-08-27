@@ -9,9 +9,9 @@ class Scheduler
     const.add(task: "clear_stale_sessions",        every: [1.day, at: "5:00 am"])
     const.add(task: "update_story_statuses",       every: [1.day, at: "5:05 am"])
     # 9AM UTC = 1AM PST / 4AM EST
-    const.add(task: "update_recent_story_ratings", every: [1.day, at: "9:00 am"])
+    #const.add(task: "update_recent_story_ratings", every: [1.day, at: "9:00 am"])
     # 10AM UTC = 2AM PST / 5AM EST
-    const.add(task: "update_all_story_ratings",    every: [:thursday, at: "10:00 am"])
+    #const.add(task: "update_all_story_ratings",    every: [:thursday, at: "10:00 am"])
   end
 
   class << self
@@ -32,7 +32,7 @@ class Scheduler
     @task_options = task_options.with_indifferent_access
     rescue_block { send(task) }
   end
-
+=begin
   scheduled_task :update_recent_story_ratings do
     duration = task_options.fetch(:duration) { 1.month }
     Story.preload_locations_with_chapters.seek(story_updated_at_gteq: duration.ago).find_each(batch_size: 50) do |story|
@@ -45,7 +45,7 @@ class Scheduler
       story.update_rating!(update_locations: true)
     end
   end
-
+=end
   scheduled_task :clear_stale_sessions do
     IdentitySession.seek(updated_at_lteq: 1.months.ago.utc).delete_all
     SessionActionData.seek(updated_at_lteq: 1.month.ago.utc).delete_all
