@@ -14,7 +14,7 @@ class SpacebattlesStory < ApplicationRecord
   def read_url!
     chapters.size == 0 ? location_url : "#{location_url}/threadmarks"
   end
-
+=begin
   def update_rating!(update_chapters: true)
     story_chapters = chapters.sort.select { |chapter| chapter.category == "chapter" }
     if update_chapters
@@ -25,5 +25,5 @@ class SpacebattlesStory < ApplicationRecord
     save! if has_changes_to_save?
     self
   end
-
+=end
 end

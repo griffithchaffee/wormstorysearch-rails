@@ -149,7 +149,7 @@ class Story < ApplicationRecord
     save! if has_changes_to_save?
     self
   end
-
+=begin
   def update_rating!(update_locations: false)
     new_rating = locations.map do |location|
       location.update_rating! if update_locations
@@ -159,7 +159,7 @@ class Story < ApplicationRecord
     save! if has_changes_to_save?
     self
   end
-
+=end
   class << self
     # remove stories without any locations
     def reset_archived_state!

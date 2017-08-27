@@ -33,11 +33,11 @@ class FanfictionStory < ApplicationRecord
   def read_url!
     location_url
   end
-
+=begin
   def update_rating!
     searcher = LocationSearcher::FanfictionSearcher.new
     searcher.update_story_favorites!(self)
     self
   end
-
+=end
 end
