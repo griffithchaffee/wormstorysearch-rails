@@ -28,6 +28,9 @@ module LocationSearcher
         if crawler.response.status == 303
           Rails.logger.info { "Logged in as #{config.location_username}".green }
         else
+          subject = "#{config.location_label} Login Failed"
+          body = crawler.response.headers.reverse_merge("status" => crawler.response.status).map { |k,v| "#{k.ljust(20)} => #{v}" }.join("\n")
+          DynamicMailer.email(subject: subject, body: body).deliver_now
           Rails.logger.warn { "Login failed for #{config.location_username}".yellow }
         end
       else
