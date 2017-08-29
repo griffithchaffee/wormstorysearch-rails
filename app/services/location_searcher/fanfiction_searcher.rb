@@ -1,6 +1,6 @@
 module LocationSearcher
   class FanfictionSearcher < UniversalSearcher
-    attr_reader :config, :crawler, :search_options, :story_model
+    attr_reader :config, :search_options, :story_model
 
     def initialize
       @story_model = FanfictionStory

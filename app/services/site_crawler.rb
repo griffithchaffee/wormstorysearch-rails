@@ -1,5 +1,5 @@
 class SiteCrawler
-  attr_reader :responses, :site_url, :cookie_jar
+  attr_reader :responses, :site_url, :cookie_jar, :default_headers
   attr_writer :logger
 
   def initialize(site_url, options = {})
@@ -7,6 +7,7 @@ class SiteCrawler
     @site_url = site_url
     @cookie_jar = options[:cookie_jar] || HTTP::CookieJar.new
     load_cookies(options[:cookies]) if options[:cookies]
+    @default_headers = {}
     @responses = []
   end
 
@@ -48,7 +49,7 @@ class SiteCrawler
   def get(path, params = {}, options = {}, &block)
     prepare_request
     options = options.with_indifferent_access.reverse_merge redirect_limit: 5
-    headers = options.delete(:headers).to_h.with_indifferent_access
+    headers = options.delete(:headers).to_h.with_indifferent_access.reverse_merge(default_headers)
     logger.silence(options[:log_level] || logger.level) do
       responses.push site.get(path, params, headers, &block)
     end
@@ -65,7 +66,7 @@ class SiteCrawler
   def post(path, params = {}, options = {}, &block)
     prepare_request
     options = options.with_indifferent_access
-    headers = options.delete(:headers).to_h.with_indifferent_access
+    headers = options.delete(:headers).to_h.with_indifferent_access.reverse_merge(default_headers)
     logger.silence(options[:log_level] || logger.level) do
       if options[:json] == true
         headers["Content-Type"] ||= "application/json"

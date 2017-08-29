@@ -1,11 +1,10 @@
 module LocationSearcher
   class SpacebattlesSearcher < UniversalSearcher
-    attr_reader :config, :crawler, :search_options, :story_model
+    attr_reader :config, :search_options, :story_model
 
     def initialize
       @story_model = SpacebattlesStory
       @config = story_model.const
-      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def search!(active_after, search_options = {})

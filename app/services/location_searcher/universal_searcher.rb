@@ -1,6 +1,13 @@
 module LocationSearcher
   class UniversalSearcher
 
+    def crawler
+      return @crawler if @crawler
+      @crawler = SiteCrawler.new(config.location_host)
+      @crawler.default_headers["User-Agent"] = "Worm Story Search (+http://wormstorysearch.com; hometurfpublic@gmail.com)"
+      @crawler
+    end
+
     def build_story(story_attributes, options = {})
       options = options.with_indifferent_access
       on_create_only_attributes = options.fetch(:on_create_only) { [] }
