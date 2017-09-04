@@ -19,22 +19,24 @@ class Story < ApplicationRecord
 
   generate_column_scopes
 
-  scope :search_story_keywords, -> (words) do
-    query = all
-    words.to_s.tokenize(/[A-Za-z0-9^$]/).each do |word|
-      # special starts with search
-      if word.starts_with?("^") || word.ends_with?("$")
-        query = query.seek_or(title_matches: word)
-      else
-        query = query.seek_or(
-          title_matches: word,
-          author_matches: word,
-          crossover_matches: word,
-          description_matches: word,
-        )
+  scope :search_story_keywords, -> (keywords) do
+    queries = []
+    keywords.to_s.split("|").each do |words|
+      words.to_s.tokenize(/[A-Za-z0-9^$]/).each do |word|
+        # special starts with search
+        if word.starts_with?("^") || word.ends_with?("$")
+          queries << unscoped.seek_or(title_matches: word)
+        else
+          queries << unscoped.seek_or(
+            title_matches: word,
+            author_matches: word,
+            crossover_matches: word,
+            description_matches: word,
+          )
+        end
       end
     end
-    query
+    all.seek_or { queries }
   end
   scope :seek_word_count_filter, -> (word_count_filters) do
     query = all

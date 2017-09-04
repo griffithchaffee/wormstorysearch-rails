@@ -116,9 +116,11 @@ class StoriesPresenter < ApplicationPresenter
         content += li_tag { b_tag(content: "Keywords Filter") }
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
         content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
+        content += li_tag(style: sub_li_style) { %Q[OR Match: | ] + example_span.call(%Q[fire|pyro]) }
         content += li_tag { b_tag(content: "Rating Filter") }
         content += li_tag(style: sub_li_style) { %Q[Normalized (hover for details)] }
         content += li_tag(style: sub_li_style) { %Q[Filter: >500 or <500 (default is >)] }
+        content += li_tag(style: sub_li_style) { b_tag(content: "Note:") + %Q[ Ratings updated on 08/15/2017] }
         content += li_tag { b_tag(content: "Words Filter") }
         content += li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] }
       end
