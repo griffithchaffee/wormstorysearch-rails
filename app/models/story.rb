@@ -21,19 +21,25 @@ class Story < ApplicationRecord
 
   scope :search_story_keywords, -> (keywords) do
     queries = []
+    searcher = -> (value) do
+      # special starts with search
+      if value.starts_with?("^") || value.ends_with?("$")
+        queries << unscoped.seek(title_matches: value)
+      else
+        queries << unscoped.seek_or(
+          title_matches: value,
+          author_matches: value,
+          crossover_matches: value,
+          description_matches: value,
+        )
+      end
+    end
     keywords.to_s.split("|").each do |words|
-      words.to_s.tokenize(/[A-Za-z0-9^$]/).each do |word|
-        # special starts with search
-        if word.starts_with?("^") || word.ends_with?("$")
-          queries << unscoped.seek_or(title_matches: word)
-        else
-          queries << unscoped.seek_or(
-            title_matches: word,
-            author_matches: word,
-            crossover_matches: word,
-            description_matches: word,
-          )
-        end
+      words.strip!
+      if words.starts_with?("~")
+        words.tokenize(/[A-Za-z0-9$^]/).each(&searcher)
+      else
+        searcher.call(words.remove(/"/))
       end
     end
     all.seek_or { queries }

@@ -114,8 +114,9 @@ class StoriesPresenter < ApplicationPresenter
         sub_li_style = "margin-left: 10px;"
         example_span = -> (content) { span_tag(style: "", content: "(Ex: #{content})") }
         content += li_tag { b_tag(content: "Keywords Filter") }
+        content += li_tag(style: sub_li_style) { %Q[Default search is exact match ] }
+        content += li_tag(style: sub_li_style) { %Q[Fuzzy Match: ~ ] + example_span.call("~fire pyro") }
         content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
-        content += li_tag(style: sub_li_style) { %Q[Exact Match: "Quotes" ] + example_span.call(%Q["To Reign"]) }
         content += li_tag(style: sub_li_style) { %Q[OR Match: | ] + example_span.call(%Q[fire|pyro]) }
         content += li_tag { b_tag(content: "Rating Filter") }
         content += li_tag(style: sub_li_style) { %Q[Normalized (hover for details)] }
