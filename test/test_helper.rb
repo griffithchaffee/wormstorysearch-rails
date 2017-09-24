@@ -9,5 +9,9 @@ require_relative "lib/application_test_concern"
 require_relative "lib/application_test_case"
 require_relative "lib/application_record_test_case"
 require_relative "lib/application_controller_test_case"
+require_relative "lib/application_integration_test_case"
 require_relative "lib/minitest_pretty_reporter"
 Minitest::Reporters.use!(Minitest::Reporters::SuiteReporter.new)
+
+# prepare database
+DatabaseCleaner.clean_with(:truncation)

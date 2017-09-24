@@ -39,4 +39,10 @@ group :development, :test do
   gem "minitest-reporters"
   gem "pry-rails"
   gem "byebug"
+  gem "database_cleaner"
+  # system tests
+  #gem "capybara", "~> 2.14"
+  #gem "selenium-webdriver", "~> 3.4"
+  # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-Qt-and-compiling-capybara-webkit
+  #gem "capybara-webkit" # dnf install qt5-qtwebkit-devel
 end

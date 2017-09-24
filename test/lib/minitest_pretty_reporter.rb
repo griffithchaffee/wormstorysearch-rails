@@ -172,7 +172,7 @@ module Minitest
         end
 
         def average_suite_time
-          completed_suite_count = 1 if completed_suite_count.to_i < 1
+          self.completed_suite_count = 1 if completed_suite_count.to_i < 1
           Time.at(elapsed_time.to_f / completed_suite_count).gmtime
         end
 

@@ -3,7 +3,7 @@ Dir["#{Rails.root}/lib/ruby/*.rb"].each { |file| require file }
 # load services
 Dir["#{Rails.root}/lib/services/*.rb"].each { |file| require file }
 # load rails extensions
-Dir["#{Rails.root}/lib/rails/extensions/*.rb"].each { |file| require file }
+Dir["#{Rails.root}/lib/rails/extensions/**/*.rb"].each { |file| require file }
 
 # settings
 Rails.application.define_singleton_method(:settings) do

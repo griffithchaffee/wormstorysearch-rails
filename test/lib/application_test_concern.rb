@@ -2,12 +2,20 @@ module ApplicationTestConcern
   extend ActiveSupport::Concern
 
   included do
+    # use DatabaseCleaner
+    self.use_transactional_tests = false
+    class_attribute :database_cleaning_strategy
+    self.database_cleaning_strategy = :truncation
+
     setup do
+      DatabaseCleaner.strategy = database_cleaning_strategy
+      DatabaseCleaner.start
       clear_mail_queue
     end
 
     teardown do
       assert_mail_queue(0, "auto verify no mail_queue") if !@asserted_mail_queue
+      DatabaseCleaner.clean
     end
   end
 
@@ -17,21 +25,6 @@ module ApplicationTestConcern
     else
       assert_equal(expected, actual, message)
     end
-  end
-
-  def assert_hash_change(original_hash, update_hash, new_hash, expected_changes = [])
-    update_hash.each do |key, value|
-      assert_not_equal(original_hash[key], value, "#{key}: original value must be different from update value")
-      if key.in?(expected_changes)
-        assert_equal(new_hash[key].inspect, update_hash[key].inspect, "#{key}: should change")
-      else
-        assert_equal(new_hash[key].inspect, original_hash[key].inspect, "#{key}: should not change")
-      end
-    end
-  end
-
-  def assert_no_hash_change(*params)
-    assert_hash_change(*params)
   end
 
   def clear_mail_queue
@@ -48,10 +41,12 @@ module ApplicationTestConcern
     assert_equal(size, mail_queue.size, error_message)
   end
 
-  def assert_mail(mail_or_key, values)
+  def assert_mail(mail_or_position, values)
     @asserted_mail_queue = true
-    mail = mail_queue[mail_or_key] if mail_or_key.is_a?(Numeric)
-    assert_not_nil(mail, "mail_queue[#{mail_or_key}] is blank")
+    mail = mail_or_position.is_a?(Integer) ? mail_queue[mail_or_position] : mail_or_position
+    if !mail.is_a?(Mail::Message)
+      raise ArgumentError, "assert_mail must be provided an email or a queue position: #{mail_or_position.inspect}"
+    end
     values = values.with_indifferent_access.reverse_merge!(
       from:     "noreply@wormstorysearch.com",
       reply_to: "noreply@wormstorysearch.com",
