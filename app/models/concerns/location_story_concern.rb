@@ -148,7 +148,7 @@ module LocationStoryConcern
 
   def <=>(other)
     sorter = -> (record) do
-      [record.story_updated_at, record.story_created_on, -record.id]
+      [-record.story_updated_at.to_i, -record.story_created_on.to_i, -record.id]
     end
     sorter.call(self) <=> sorter.call(other)
   end
