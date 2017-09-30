@@ -1,64 +1,50 @@
 def up
-  change_table "stories", force: :cascade do |t|
-    t.remove :likes
-    t.float :rating, null: false, default: 0, precision: 2
+  change_table "spacebattles_stories" do |t|
+    t.integer :highest_chapter_likes, null: false, default: 0
   end
 
-  change_table "fanfiction_stories", force: :cascade do |t|
-    t.integer :favorites, null: false, default: 0
-    t.remove :likes
+  change_table "spacebattles_story_chapters" do |t|
+    t.datetime :likes_updated_at
   end
 
-  change_table "fanfiction_story_chapters", force: :cascade do |t|
-    t.remove "likes"
+  change_table "sufficientvelocity_stories" do |t|
+    t.integer :highest_chapter_likes, null: false, default: 0
   end
 
-  change_table "spacebattles_stories", force: :cascade do |t|
-    t.remove :likes
-    t.float :average_chapter_likes, null: false, default: 0, precision: 2
+  change_table "sufficientvelocity_story_chapters" do |t|
+    t.datetime :likes_updated_at
   end
 
-  change_table "sufficientvelocity_stories", force: :cascade do |t|
-    t.remove :likes
-    t.float :average_chapter_likes, null: false, default: 0, precision: 2
+  change_table "fanfiction_stories" do |t|
+    t.datetime :favorites_updated_at
   end
 end
 
 def down
-  change_table "stories", force: :cascade do |t|
-    t.integer :likes
-    t.remove :rating
+  change_table "spacebattles_stories" do |t|
+    t.remove :highest_chapter_likes
   end
 
-  change_table "fanfiction_stories", force: :cascade do |t|
-    t.remove :favorites
-    t.integer :likes
+  change_table "spacebattles_story_chapters" do |t|
+    t.remove :likes_updated_at
   end
 
-  change_table "fanfiction_story_chapters", force: :cascade do |t|
-    t.integer "likes"
+  change_table "sufficientvelocity_stories" do |t|
+    t.remove :highest_chapter_likes
   end
 
-  change_table "spacebattles_stories", force: :cascade do |t|
-    t.integer :likes
-    t.remove :average_chapter_likes
+  change_table "sufficientvelocity_story_chapters" do |t|
+    t.remove :likes_updated_at
   end
 
-  change_table "sufficientvelocity_stories", force: :cascade do |t|
-    t.integer :likes
-    t.remove :average_chapter_likes
+  change_table "fanfiction_stories" do |t|
+    t.remove :favorites_updated_at
   end
 end
 
 def migration_script
-  SpacebattlesStoryChapter.find_each do |chapter|
-    new_location_path = "/#{chapter.location_path}" if !chapter.location_path.starts_with?("/")
-    chapter.update_columns(location_path: new_location_path) if new_location_path
-  end
-  SufficientvelocityStoryChapter.find_each do |chapter|
-    new_location_path = "/#{chapter.location_path}" if !chapter.location_path.starts_with?("/")
-    chapter.update_columns(location_path: new_location_path) if new_location_path
-  end
+  SpacebattlesStoryChapter.where_likes(not_eq: 0).update_all(likes_updated_at: Time.parse("2017-08-15"))
+  SufficientvelocityStoryChapter.where_likes(not_eq: 0).update_all(likes_updated_at: Time.parse("2017-08-15"))
 end
 
 

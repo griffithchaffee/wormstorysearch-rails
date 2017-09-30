@@ -17,7 +17,8 @@ module LocationSearcher
     end
 
     def update_story_favorites!(story)
-      crawler.get("#{story.location_path}", {}, log_level: Logger::INFO)
+      crawler.get(story.location_path, {}, log_level: Logger::INFO)
+      verify_response_status!(url: story.location_path)
       story_html = crawler.html
       # parse favorites
       details_html = story_html.css("#profile_top")
@@ -25,8 +26,9 @@ module LocationSearcher
       favorites_match = details_html.text.match(/Favs: ([0-9,]+)/)
       if favorites_match
         story.favorites = favorites_match[1].remove(/\D/).to_i
-        story.save! if story.has_changes_to_save?
       end
+      story.favorites_updated_at = Time.zone.now
+      story.save! if story.has_changes_to_save?
       story
     end
 

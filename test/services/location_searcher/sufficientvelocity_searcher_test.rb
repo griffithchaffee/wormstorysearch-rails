@@ -14,6 +14,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
       {
         "author"=>"UnwelcomeStorm",
         "average_chapter_likes"=>"0.0",
+        "highest_chapter_likes"=>"0",
         "category"=>"story",
         "is_locked"=>"false",
         "location_id"=>"thread-31091",
@@ -37,6 +38,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
         "category"=>"chapter",
         "chapter_created_on"=>"2016-08-11",
         "chapter_updated_at"=>"2016-08-11 00:00:00 -0700",
+        "likes_updated_at"=>"",
         "likes"=>"0",
         "location_path"=>"/threads/constellations-worm-okami.31091/",
         "position"=>"1",
@@ -61,6 +63,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
       {
         "author"=>"NIV3K",
         "average_chapter_likes"=>"0.0",
+        "highest_chapter_likes"=>"0",
         "category"=>"quest",
         "is_locked"=>"false",
         "location_id"=>"thread-39656",
@@ -84,6 +87,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
         "category"=>"chapter",
         "chapter_created_on"=>"2017-06-28",
         "chapter_updated_at"=>"2017-06-28 06:00:17 -0700",
+        "likes_updated_at"=>"",
         "likes"=>"0",
         "location_path"=>"/threads/life-and-times-of-a-teenage-vampire-worm-v-tr-quest.39656/",
         "position"=>"1",

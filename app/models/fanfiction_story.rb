@@ -15,6 +15,12 @@ class FanfictionStory < ApplicationRecord
   # associations/scopes/validations/callbacks/macros
   validates_in_list(:status, const.statuses.map(&:status))
 
+  before_validation do
+    if will_save_change_to_favorites? && favorites > 0
+      self.favorites_updated_at = Time.zone.now
+    end
+  end
+
   after_create do
     if story && story.is_unlocked?
       # overwrite crossover
@@ -33,11 +39,13 @@ class FanfictionStory < ApplicationRecord
   def read_url!
     location_url
   end
-=begin
+
   def update_rating!
     searcher = LocationSearcher::FanfictionSearcher.new
+    run_at = Time.zone.now
     searcher.update_story_favorites!(self)
+    self.favorites_updated_at = run_at if favorites_updated_at
     self
   end
-=end
+
 end

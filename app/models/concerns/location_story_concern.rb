@@ -33,7 +33,7 @@ module LocationStoryConcern
       if saved_changes? && story
         story.sync_with_active_location!
       end
-      if saved_change_to_attribute(:story_id)
+      if saved_change_to_story_id?
         Story.seek(id_in: saved_change_to_story_id.compact).each(&:sync_with_active_location!)
       end
     end

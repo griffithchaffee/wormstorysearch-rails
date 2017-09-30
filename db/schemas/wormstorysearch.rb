@@ -9,6 +9,7 @@ def change
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
     t.datetime "created_at", null: false
+    t.datetime "favorites_updated_at"
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_fanfiction_stories_on_story_id"
@@ -71,6 +72,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_spacebattles_stories_on_story_id"
+    t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false
@@ -86,6 +88,7 @@ def change
     t.date "chapter_created_on", null: false
     t.datetime "chapter_updated_at", null: false
     t.datetime "created_at", null: false
+    t.datetime "likes_updated_at"
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_spacebattles_story_chapters_on_story_id"
     t.integer "likes", default: 0, null: false
@@ -124,6 +127,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_sufficientvelocity_stories_on_story_id"
+    t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author", null: false
     t.string "category", default: "story", null: false
@@ -139,6 +143,7 @@ def change
     t.date "chapter_created_on", null: false
     t.datetime "chapter_updated_at", null: false
     t.datetime "created_at", null: false
+    t.datetime "likes_updated_at"
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_sufficientvelocity_story_chapters_on_story_id"
     t.integer "likes", default: 0, null: false

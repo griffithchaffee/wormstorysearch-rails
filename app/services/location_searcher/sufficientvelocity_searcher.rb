@@ -41,6 +41,7 @@ module LocationSearcher
 
     def update_chapter_likes!(chapter)
       crawler.get(chapter.read_url, {}, log_level: Logger::INFO, follow_redirects: true)
+      verify_response_status!(url: chapter.read_url)
       page_html = crawler.html
       # no messages
       return if page_html.css("li.message").size == 0
@@ -53,6 +54,7 @@ module LocationSearcher
       likes = likes_html.css("li").map { |li| li.text.remove(/\D/).to_i }.sum # sum of all like types
       # set likes
       chapter.likes = likes
+      chapter.likes_updated_at = Time.zone.now
       chapter.save! if chapter.has_changes_to_save?
       chapter
     end

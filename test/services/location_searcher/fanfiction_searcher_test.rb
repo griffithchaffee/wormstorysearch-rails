@@ -17,6 +17,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
         "crossover"=>"",
         "description"=>"Part 1 of the Bird Series. Taylor triggers and is sent to an insane asylum.",
         "favorites"=>"154",
+        "favorites_updated_at"=>fanfiction_story.attributes["favorites_updated_at"].to_s.presence,
         "is_locked"=>"false",
         "location_id"=>"12337359",
         "location_path"=>"/s/12337359/1/Cage",
@@ -67,6 +68,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
         "description"=>
          "Leviathan has destroyed Brockton Bay, and Taylor Hebert has lost everything she had. Now, as a teenage refugee in Chicago, she is trying to rebuild a life for herself as a vigilante. However, everything in Chicago is not as it seems, and parahuman supervillains fight side by side with vampires. And that hero guy, Myrddin? He claims he's actually a wizard called Harry Dresden.",
         "favorites"=>"221",
+        "favorites_updated_at"=>fanfiction_story.attributes["favorites_updated_at"].to_s.presence,
         "is_locked"=>"false",
         "location_id"=>"12347484",
         "location_path"=>"/s/12347484/1/Of-Wasps-and-Wizards",

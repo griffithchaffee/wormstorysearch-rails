@@ -13,6 +13,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author"=>"Dyngari",
+        "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"story",
         "is_locked"=>"false",
@@ -36,6 +37,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
       {
         "chapter_created_on"=>"2017-06-17",
         "chapter_updated_at"=>"2017-06-17 00:00:00 -0700",
+        "likes_updated_at"=>"",
         "likes"=>"0",
         "position"=>"1",
         "word_count"=>"390",
@@ -60,6 +62,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author"=>"Crimson Square",
+        "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"quest",
         "is_locked"=>"false",
@@ -84,6 +87,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
         "category"=>"chapter",
         "chapter_created_on"=>"2017-06-05",
         "chapter_updated_at"=>"2017-06-05 00:00:00 -0700",
+        "likes_updated_at"=>"",
         "likes"=>"0",
         "location_path"=>"/threads/reincarnation-of-an-angel-worm-quest.532675/",
         "position"=>"1",

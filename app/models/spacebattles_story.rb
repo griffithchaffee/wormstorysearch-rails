@@ -14,16 +14,23 @@ class SpacebattlesStory < ApplicationRecord
   def read_url!
     chapters.size == 0 ? location_url : "#{location_url}/threadmarks"
   end
-=begin
-  def update_rating!(update_chapters: true)
-    story_chapters = chapters.sort.select { |chapter| chapter.category == "chapter" }
+
+  def update_rating!(update_chapters: false)
+    # mass update chapters
     if update_chapters
-      searcher = LocationSearcher::SpacebattlesSearcher.new
-      story_chapters.each { |chapter| searcher.update_chapter_likes!(chapter) }
+      chapters.sort.each(&:update_rating!)
     end
-    self.average_chapter_likes = story_chapters.sum(&:likes) / story_chapters.size.min(1)
+    # only select chapters that have been rated and at least a week old
+    rated_chapters = chapters.select do |chapter|
+      chapter.category == "chapter" &&
+      chapter.likes > 0 &&
+      chapter.chapter_created_on <= 3.days.ago
+    end
+    # update cached ratings
+    self.average_chapter_likes = rated_chapters.sum(&:likes).to_i / rated_chapters.size.min(1)
+    self.highest_chapter_likes = rated_chapters.map(&:likes).max.to_i
     save! if has_changes_to_save?
     self
   end
-=end
+
 end

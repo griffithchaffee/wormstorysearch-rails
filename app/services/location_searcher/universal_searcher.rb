@@ -41,10 +41,19 @@ module LocationSearcher
       is_worm_story
     end
 
+    def verify_response_status!(url:, status: 200)
+      if !crawler.response.status.in?(Array(status))
+        raise InvalidResponse, "#{url} response status was #{crawler.response.status}"
+      end
+    end
+
     class << self
       def search!(*params)
         new.search!(*params)
       end
+    end
+
+    class InvalidResponse < StandardError
     end
 
   end
