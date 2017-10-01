@@ -46,11 +46,8 @@ class FanfictionStory < ApplicationRecord
     location_url
   end
 
-  def update_rating!
-    searcher = LocationSearcher::FanfictionSearcher.new
-    run_at = Time.zone.now
+  def update_rating!(searcher: LocationSearcher::FanfictionSearcher.new)
     searcher.update_story_favorites!(self)
-    self.favorites_updated_at = run_at if favorites_updated_at
     self
   end
 

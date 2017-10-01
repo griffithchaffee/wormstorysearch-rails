@@ -21,8 +21,7 @@ class SufficientvelocityStoryChapter < ApplicationRecord
     "#{SufficientvelocityStory.const.location_host}#{location_path}"
   end
 
-  def update_rating!
-    searcher = LocationSearcher::SpacebattlesSearcher.new
+  def update_rating!(searcher: LocationSearcher::SufficientvelocitySearcher.new)
     searcher.update_chapter_likes!(self)
     self
   end

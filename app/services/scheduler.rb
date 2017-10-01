@@ -38,19 +38,24 @@ class Scheduler
   end
 
   scheduled_task :update_ratings do
+    spacebattles_searcher       = LocationSearcher::SufficientvelocitySearcher.new
+    spacebattles_searcher.login!
+    sufficientvelocity_searcher = LocationSearcher::SufficientvelocitySearcher.new
+    sufficientvelocity_searcher.login!
+    fanfictionsearcher          = LocationSearcher::FanfictionSearcher.new
     50.times do |i|
       # spacebattles
       SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
-        .first.update_rating!
+        .first.update_rating!(searcher: spacebattles_searcher)
       # sufficientvelocity
       SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
-        .first.update_rating!
+        .first.update_rating!(searcher: sufficientvelocity_searcher)
       # fanfiction
       FanfictionStory.seek(story_created_on_lteq: 3.days.ago)
         .order_favorites_updated_at(:asc, :first).order_story_updated_at(:desc)
-        .first.update_rating!
+        .first.update_rating!(searcher: fanfictionsearcher)
     end
   end
 
