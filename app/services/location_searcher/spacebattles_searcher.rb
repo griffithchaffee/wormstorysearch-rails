@@ -7,6 +7,14 @@ module LocationSearcher
       @config = story_model.const
     end
 
+    def is_authentication?(check_authentication)
+      (@authentication || "unknown") == check_authentication.to_s.verify_in!(%w[ authenticated unauthenticated unknown ])
+    end
+
+    def set_authentication(new_authentication)
+      @authentication = new_authentication.to_s.verify_in!(%w[ authenticated unauthenticated unknown ])
+    end
+
     def search!(active_after, search_options = {})
       @search_options = search_options.with_indifferent_access
       active_after = active_after.ago if active_after.is_a?(ActiveSupport::Duration)
@@ -26,8 +34,10 @@ module LocationSearcher
           { follow_redirects: false, log_level: Logger::INFO }
         )
         if crawler.response.status == 303
+          set_authentication(:authenticated)
           Rails.logger.info { "Logged in as #{config.location_username}".green }
         else
+          set_authentication(:unauthenticated)
           subject = "#{config.location_label} Login Failed"
           body = crawler.response.headers.reverse_merge("status" => crawler.response.status).map { |k,v| "#{k.ljust(20)} => #{v}" }.join("\n")
           DynamicMailer.email(subject: subject, body: body).deliver_now
@@ -40,20 +50,26 @@ module LocationSearcher
 
     def update_chapter_likes!(chapter)
       crawler.get(chapter.read_url, {}, log_level: Logger::INFO, follow_redirects: true)
+      # unable to view chapter
+      if crawler.response.status == 403 && is_authentication?(:authenticated)
+        chapter.update!(likes_updated_at: Time.zone.now)
+        return chapter
+      end
       verify_response_status!(url: chapter.read_url)
       page_html = crawler.html
       # no messages
-      return if page_html.css("li.message").size == 0
-      # find chapter id (by url or first post)
-      # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
-      location_id = chapter.location_path.split("#").last if chapter.location_path.include?("#post-")
-      location_id ||= page_html.css("li.message").first[:id]
-      # parse likes
-      likes_html       = page_html.css("#likes-#{location_id}")
-      individual_likes = likes_html.css("a.username").size
-      combined_likes   = likes_html.css("a.OverlayTrigger").text.to_s.remove(/\D/).to_i
-      # set likes
-      chapter.likes = individual_likes + combined_likes
+      if page_html.css("li.message").size != 0
+        # find chapter id (by url or first post)
+        # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
+        location_id = chapter.location_path.split("#").last if chapter.location_path.include?("#post-")
+        location_id ||= page_html.css("li.message").first[:id]
+        # parse likes
+        likes_html       = page_html.css("#likes-#{location_id}")
+        individual_likes = likes_html.css("a.username").size
+        combined_likes   = likes_html.css("a.OverlayTrigger").text.to_s.remove(/\D/).to_i
+        # set likes
+        chapter.likes = individual_likes + combined_likes
+      end
       chapter.likes_updated_at = Time.zone.now
       chapter.save! if chapter.has_changes_to_save?
       chapter
