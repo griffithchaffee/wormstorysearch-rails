@@ -1,5 +1,13 @@
 class Story::Test < ApplicationRecord::TestCase
 
+  testing "location stories association inverse_of relationship" do
+    story = FactoryGirl.create(:story)
+    Story.const.location_models.each do |location_model|
+      location_story = FactoryGirl.create(location_model.singular_slug, story: story)
+      assert_equal(true, story.reload.send(location_model.plural_slug).load.first.story.equal?(story))
+    end
+  end
+
   testing "title description crossover normalization" do
     story = FactoryGirl.create(:story)
     %w[ title description crossover ].each do |attribute|

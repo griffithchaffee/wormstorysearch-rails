@@ -2,6 +2,12 @@ module LocationStoryConcern::TestConcern
   extend ActiveSupport::Concern
 
   included do
+    testing "chapters inverse_of story" do
+      story = FactoryGirl.create(factory)
+      chapter = FactoryGirl.create("#{factory}_chapter", story: story)
+      assert_equal(true, story.reload.chapters.load.first.story.equal?(story))
+    end
+
     testing "title description crossover normalization" do
       story = FactoryGirl.create(factory)
       %w[ title description crossover ].each do |attribute|

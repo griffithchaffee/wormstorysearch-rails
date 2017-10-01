@@ -9,6 +9,11 @@ module LocationStoryChapterConcern
     end
 
     # associations/scopes/validations/callbacks/macros
+    belongs_to :story, class_name: name.remove("Chapter")
+
+    generate_column_scopes
+
+    validates_presence_of_required_columns
     validates_in_list(:category, const.categories.map(&:category))
     validate do
       # remove 1 day from created_on due to time-zone differences

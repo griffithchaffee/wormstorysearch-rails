@@ -9,6 +9,11 @@ class SufficientvelocityStory < ApplicationRecord
   end
 
   # associations/scopes/validations/callbacks/macros
+  after_save do
+    if saved_change_to_average_chapter_likes?
+      Story.preload_locations.find(story_id).update_rating!
+    end
+  end
 
   # public/private/protected/classes
   def read_url!

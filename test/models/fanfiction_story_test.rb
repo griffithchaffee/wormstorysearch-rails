@@ -13,4 +13,13 @@ class FanfictionStory::Test < ApplicationRecord::TestCase
     assert_equal(story.location_url, story.reload.read_url)
   end
 
+  testing "update_rating!" do
+    location_story = FactoryGirl.create(factory)
+    story = location_story.story
+    # after_save update story rating
+    location_story.update!(favorites: 30)
+    # story rating should be updated
+    assert_equal(location_story.rating, story.reload.rating)
+  end
+
 end

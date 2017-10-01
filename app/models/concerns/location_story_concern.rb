@@ -9,8 +9,8 @@ module LocationStoryConcern
     end
 
     # associations/scopes/validations/callbacks/macros
-    belongs_to :story
-    has_many :chapters, dependent: :destroy, foreign_key: :story_id, class_name: "#{name}Chapter"
+    belongs_to :story, inverse_of: name.underscore.pluralize.to_sym
+    has_many :chapters, dependent: :destroy, foreign_key: :story_id, class_name: "#{name}Chapter", inverse_of: :story
 
     generate_column_scopes
     scope :seek_word_count_gteq, -> (word_count) { where_word_count(gteq: word_count.to_s.human_size_to_i) }
@@ -60,7 +60,7 @@ module LocationStoryConcern
   end
 
   def recently_created?
-    story_created_on >= 1.week.ago
+    story_created_on >= 10.days.ago
   end
 
   def location_url

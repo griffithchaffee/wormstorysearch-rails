@@ -26,27 +26,19 @@ class ApplicationRecord < ApplicationDatabase
     !has_errors?
   end
 
-  delegate *%w[ table_name class_name class_slug controller_slug controller ], to: :class
+  delegate *%w[ table_name singular_slug plural_slug ], to: :class
 
-  module ClassMethods
-    def class_name
-      name
-    end
-
-    def class_slug
-      class_name.slugify
-    end
-
-    def controller_slug
-      class_slug.pluralize
-    end
-
-    def controller
-      "#{controller_slug}_controller".classify.constantize
-    end
-
+  class << self
     def none?
       !exists?
+    end
+
+    def singular_slug
+      name.underscore
+    end
+
+    def plural_slug
+      singular_slug.pluralize
     end
   end
 end

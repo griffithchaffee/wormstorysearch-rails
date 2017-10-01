@@ -35,6 +35,12 @@ class FanfictionStory < ApplicationRecord
     end
   end
 
+  after_save do
+    if saved_change_to_favorites?
+      Story.preload_locations.find(story_id).update_rating!
+    end
+  end
+
   # public/private/protected/classes
   def read_url!
     location_url

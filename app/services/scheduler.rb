@@ -38,7 +38,7 @@ class Scheduler
   end
 
   scheduled_task :update_ratings do
-    1.times do |i|
+    50.times do |i|
       # spacebattles
       SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)

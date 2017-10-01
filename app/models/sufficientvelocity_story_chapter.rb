@@ -4,11 +4,6 @@ class SufficientvelocityStoryChapter < ApplicationRecord
   include LocationStoryChapterConcern
 
   # associations/scopes/validations/callbacks/macros
-  belongs_to :story, class_name: "SufficientvelocityStory"
-
-  generate_column_scopes
-
-  validates_presence_of_required_columns
   before_validation do
     if likes_changed? && likes > 0
       self.likes_updated_at = Time.zone.now
