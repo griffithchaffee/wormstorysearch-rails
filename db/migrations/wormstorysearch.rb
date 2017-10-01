@@ -43,8 +43,9 @@ def down
 end
 
 def migration_script
-  SpacebattlesStoryChapter.where_likes(not_eq: 0).update_all(likes_updated_at: Time.parse("2017-08-15"))
-  SufficientvelocityStoryChapter.where_likes(not_eq: 0).update_all(likes_updated_at: Time.parse("2017-08-15"))
+  SpacebattlesStoryChapter.seek(likes_not_eq: 0, likes_updated_at_eq: nil).update_all(likes_updated_at: DateTime.parse("2017-08-15"))
+  SufficientvelocityStoryChapter.seek(likes_not_eq: 0, likes_updated_at_eq: nil).update_all(likes_updated_at: DateTime.parse("2017-08-15"))
+  FanfictionStory.seek(favorites_not_eq: 0, favorites_updated_at_eq: nil).update_all(favorites_updated_at: DateTime.parse("2017-08-15"))
 end
 
 

@@ -26,17 +26,8 @@ module SeekConcern
       if column.type.in?(%i[ date datetime ])
         %w[ gteq lteq eq not_eq ].each do |operator|
           scope "seek_#{column.name}_#{operator}", -> (value) do
-            begin
-              if value =~ /\d+/
-                value = Time.at(value.to_i)
-              else
-                value = column.type == :date ? Date.parse(value.to_param) : DateTime.parse(value.to_param)
-              end
-              send("where_#{column.name}", operator => value)
-            rescue StandardError => e
-              Rails.logger.fatal { "#{e.class} #{e.message}" }
-              all
-            end
+            value = Time.at(value.to_i) if value =~ /\A\d+\z/
+            send("where_#{column.name}", operator => value)
           end
         end
       end
