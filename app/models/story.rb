@@ -1,6 +1,6 @@
 class Story < ApplicationRecord
   # modules/constants
-  class_constant(:dead_status_duration, 1.year)
+  class_constant(:dead_status_duration, 8.months)
   class_constant(:categories, SpacebattlesStory.const.categories)
   class_constant(:location_models, [SpacebattlesStory, SufficientvelocityStory, FanfictionStory])
   class_constant(:rating_trim_percent, 0.1)
@@ -156,6 +156,16 @@ class Story < ApplicationRecord
     end
     save! if has_changes_to_save?
     self
+  end
+
+  def reset_to_active_location!
+    if active_location
+      self.title       = active_location.title
+      self.author      = active_location.author
+      self.description = locations.find { |location| location.const.location_slug == "fanfiction" }.try(:description)
+      self.crossover   = active_location.parse_crossover_from_title
+    end
+    sync_with_active_location!
   end
 
   def update_rating!(update_locations: false)
