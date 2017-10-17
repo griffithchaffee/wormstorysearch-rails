@@ -2,6 +2,12 @@ module LocationStoryConcern
   extend ActiveSupport::Concern
 
   included do
+    # load settings
+    class_constant(:location_slug, table_name.remove("_stories"))
+    Rails.application.settings.locations[const.location_slug].to_h.each do |key, value|
+      class_constant("location_#{key}", value)
+    end
+
     # modules/constants
     class_constant_builder(:categories, %w[ category label ]) do |new_const|
       new_const.add(category: "story", label: "Story")
@@ -10,6 +16,7 @@ module LocationStoryConcern
 
     # associations/scopes/validations/callbacks/macros
     belongs_to :story, inverse_of: name.underscore.pluralize.to_sym
+    has_one :author, primary_key: :author_name, foreign_key: "#{const.location_slug}_name", class_name: "StoryAuthor"
     has_many :chapters, dependent: :destroy, foreign_key: :story_id, class_name: "#{name}Chapter", inverse_of: :story
 
     generate_column_scopes
@@ -36,6 +43,10 @@ module LocationStoryConcern
       if saved_change_to_story_id?
         Story.seek(id_in: saved_change_to_story_id.compact).each(&:sync_with_active_location!)
       end
+      # ensure author record exists
+      if saved_change_to_author_name?
+        author!
+      end
     end
 
     after_destroy do
@@ -47,7 +58,8 @@ module LocationStoryConcern
     # transient story_active_at used in searchers
     attr_accessor :story_active_at
 
-    (%w[ title crossover description ] & column_names).each do |column|
+    # override accessors to cleanup values
+    (%w[ title crossover description author_name ] & column_names).each do |column|
       define_method("#{column}=") do |value|
         self[column] = value.to_s.normalize.presence
       end
@@ -84,30 +96,70 @@ module LocationStoryConcern
     !is_locked?
   end
 
-  def story!(options = {})
-    options = options.with_indifferent_access.assert_valid_keys(*%w[ search create ])
+  def author!
+    return nil if !author_name?
+    return author if reload_author
+    # already an author on an alternate location
+    alternate_location_authors = StoryAuthor.seek(location_name_eq: author_name)
+    if alternate_location_authors.count == 1
+      alternate_location_author = alternate_location_authors.first
+      alternate_location_author.update!("#{const.location_slug}_name" => author_name)
+      alternate_location_author
+    else
+      StoryAuthor.create!("#{const.location_slug}_name" => author_name)
+    end
+    reload_author
+  end
+
+  def story!(return_associated_story: true, find_existing_story: true, create_new_story: true)
     # already set
-    return story if is_locked? || story
-    # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
-    parsed_title = Story.new(title: title).title
-    normalize_author = -> (name) { name.downcase.remove(/[^a-z0-9]/) }
+    return story if story && return_associated_story
     # find existing story
-    if options[:search] != false
-      query = Story.where(category: category)
-      [title, parsed_title].each do |search_title|
-        search = query.seek(title_ieq: search_title)
-        return search.first if search.count == 1
-        search = query.seek(title_matches: search_title).select { |result| normalize_author.call(result.author) == normalize_author.call(author) }
-        return search.first if search.count == 1
+    if find_existing_story
+      author_stories = Story.seek(
+        "author.#{const.location_slug}_name_eq" => author_name,
+        "category_eq" => category
+      )
+      [title, parse_title].each do |search_title|
+        same_title_stories     = author_stories.seek(title_ieq: search_title)
+        matching_title_stories = author_stories.seek(title_matches: search_title)
+        if same_title_stories.count == 1
+          return same_title_stories.first
+        elsif matching_title_stories.count == 1
+          return matching_title_stories.first
+        end
       end
     end
-    # create story by title
+    # build story
     new_story = Story.new(attributes.slice(*Story.column_names).except(*%w[ id created_at updated_at ]))
+    # fanfiction has crossover attribute
     if !"crossover".in?(self.class.column_names)
       new_story.crossover = parse_crossover_from_title
     end
-    new_story.save! if options[:create] != false
+    new_story.author = author!
+    new_story.title = parse_title
+    new_story.save! if create_new_story
     new_story
+  end
+
+  # "Well Traveled [Worm](Planeswalker Taylor)" => "Well Traveled"
+  def parse_title(local_title = title)
+    local_title.to_s
+      .gsub("’", "'")
+      .gsub(/—|~|–|-+/, "-")
+      .gsub(/\|/, "/")
+      .gsub(/;/, ":") # two different types of semicolons
+      .gsub(/;/, ":")
+      .remove(/[^-A-Za-z0-9 .':{}()\[\]?,!&*+_\/]/) # non ascii
+      .remove(/\(.*?\)/).remove(/\[.*?\]/).remove(/\{.*?\}/) # crossover
+      .remove(/[(){}"\[\]]/)  # stray parenthesis and brackets
+      .gsub(/ *:+ */, ": ")   # normalize colons
+      .gsub(/ +,+ */, ", ")   # normalize commas
+      .gsub(/ +\.+ */, ". ")  # normalize periods
+      .gsub(/(-+ +)+/, " - ") # normalize dashes
+      .gsub(/([^A-Z.])\.{1}\z/, "\\1") # trailing periods except for ... and Y.Z.
+      .normalize.remove(/\A[^A-Za-z0-9]+|[^A-Za-z0-9.!'?]+\z/) # remove weird starting/ending characters
+      .normalize.presence # cleanup
   end
 
   def parse_crossover_from_title(local_title = title)

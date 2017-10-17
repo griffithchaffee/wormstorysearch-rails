@@ -13,12 +13,12 @@ class Story < ApplicationRecord
   end
 
   # associations/scopes/validations/callbacks/macros
+  belongs_to :author, class_name: "StoryAuthor"
   const.location_models.each do |location_model|
     has_many "#{location_model.const.location_slug}_stories".to_sym, inverse_of: :story
   end
 
   generate_column_scopes
-
   scope :search_story_keywords, -> (keywords) do
     queries = []
     searcher = -> (value) do
@@ -74,36 +74,16 @@ class Story < ApplicationRecord
     end
   end
 
+  # override accessors to cleanup values
+  (%w[ title crossover description ]).each do |column|
+    define_method("#{column}=") do |value|
+      self[column] = value.to_s.normalize.presence
+    end
+  end
+
   # public/private/protected/classes
   def crossover_title
     crossover? ? "#{title} [#{crossover}]" : title
-  end
-
-  def title=(new_title)
-    self[:title] = new_title.to_s
-      .gsub("’", "'")
-      .gsub(/—|~|–|-+/, "-")
-      .gsub(/\|/, "/")
-      .gsub(/;/, ":")
-      .gsub(/;/, ":")
-      .remove(/[^-A-Za-z0-9 .':{}()\[\]?,!&*+_\/]/) # non ascii
-      .remove(/\(.*?\)/).remove(/\[.*?\]/).remove(/\{.*?\}/) # crossover
-      .remove(/[(){}"\[\]]/)  # stray parenthesis and brackets
-      .gsub(/ *:+ */, ": ")   # normalize colons
-      .gsub(/ +,+ */, ", ")   # normalize commas
-      .gsub(/ +\.+ */, ". ")  # normalize periods
-      .gsub(/(-+ +)+/, " - ") # normalize dashes
-      .gsub(/([^A-Z.])\.{1}\z/, "\\1") # trailing periods except for ... and Y.Z.
-      .normalize.remove(/\A[^A-Za-z0-9]+|[^A-Za-z0-9.!'?]+\z/) # remove weird starting/ending characters
-      .normalize.presence # cleanup
-  end
-
-  def description=(new_description)
-    self[:description] = new_description.to_s.normalize.presence
-  end
-
-  def crossover=(new_crossover)
-    self[:crossover] = new_crossover.to_s.normalize.presence
   end
 
   def word_count=(new_word_count)

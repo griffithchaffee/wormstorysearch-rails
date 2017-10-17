@@ -14,6 +14,10 @@ class String
     scan(regex).join("_").underscore
   end
 
+  def slugify_for_comparison
+    slugify.remove("_")
+  end
+
   def normalize
     strip.squeeze(" ")
   end

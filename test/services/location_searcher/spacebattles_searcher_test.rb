@@ -12,7 +12,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     spacebattles_story = SpacebattlesStory.first
     assert_equal(
       {
-        "author"=>"Dyngari",
+        "author_name"=>"Dyngari",
         "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"story",
@@ -61,7 +61,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     spacebattles_story = SpacebattlesStory.first
     assert_equal(
       {
-        "author"=>"Crimson Square",
+        "author_name"=>"Crimson Square",
         "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"quest",

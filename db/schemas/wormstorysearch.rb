@@ -15,7 +15,7 @@ def change
     t.index ["story_id"], name: "index_fanfiction_stories_on_story_id"
     t.integer "favorites", default: 0, null: false
     t.integer "word_count", default: 0, null: false
-    t.string "author", null: false
+    t.string "author_name", null: false
     t.string "category", default: "story", null: false
     t.string "crossover"
     t.string "location_id", null: false
@@ -74,7 +74,7 @@ def change
     t.index ["story_id"], name: "index_spacebattles_stories_on_story_id"
     t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
-    t.string "author", null: false
+    t.string "author_name", null: false
     t.string "category", default: "story", null: false
     t.string "location_id", null: false
     t.string "location_path", null: false
@@ -101,6 +101,7 @@ def change
 
 
   create_table "stories", force: :cascade do |t|
+    t.bigint "author_id"
     t.boolean "is_archived", default: false, null: false
     t.boolean "is_locked", default: false, null: false
     t.date "story_created_on", null: false
@@ -108,13 +109,23 @@ def change
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
     t.float "rating", default: 0.0, null: false
+    t.index ["author_id"], name: "index_stories_on_author_id"
     t.integer "word_count", default: 0, null: false
-    t.string "author", null: false
     t.string "category", default: "story", null: false
     t.string "crossover"
     t.string "description"
     t.string "status", default: "ongoing", null: false
     t.string "title", null: false
+  end
+
+
+  create_table "story_authors", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "fanfiction_name"
+    t.string "name", null: false
+    t.string "spacebattles_name"
+    t.string "sufficientvelocity_name"
   end
 
 
@@ -129,7 +140,7 @@ def change
     t.index ["story_id"], name: "index_sufficientvelocity_stories_on_story_id"
     t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
-    t.string "author", null: false
+    t.string "author_name", null: false
     t.string "category", default: "story", null: false
     t.string "location_id", null: false
     t.string "location_path", null: false

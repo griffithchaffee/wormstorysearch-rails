@@ -3,10 +3,6 @@ class FanfictionStory < ApplicationRecord
   include LocationStoryConcern
 
   # load settings
-  class_constant(:location_slug, "fanfiction")
-  Rails.application.settings.locations[const.location_slug].to_h.each do |key, value|
-    class_constant("location_#{key}", value)
-  end
   class_constant_builder(:statuses, %w[ status label ]) do |new_const|
     new_const.add(status: "ongoing",  label: "Ongoing")
     new_const.add(status: "complete", label: "Complete")

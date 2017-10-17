@@ -128,7 +128,7 @@ module LocationSearcher
         title: title,
         location_id: location_story_id,
         location_path: location_path,
-        author: author,
+        author_name: author,
         description: description,
         crossover: crossover,
         word_count: word_count,

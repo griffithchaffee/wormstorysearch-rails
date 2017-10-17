@@ -1,51 +1,63 @@
 def up
-  change_table "spacebattles_stories" do |t|
-    t.integer :highest_chapter_likes, null: false, default: 0
+  change_table :spacebattles_stories do |t|
+    t.rename :author, :author_name
   end
 
-  change_table "spacebattles_story_chapters" do |t|
-    t.datetime :likes_updated_at
+  change_table :sufficientvelocity_stories do |t|
+    t.rename :author, :author_name
   end
 
-  change_table "sufficientvelocity_stories" do |t|
-    t.integer :highest_chapter_likes, null: false, default: 0
+  change_table :fanfiction_stories do |t|
+    t.rename :author, :author_name
   end
 
-  change_table "sufficientvelocity_story_chapters" do |t|
-    t.datetime :likes_updated_at
+  change_table :stories do |t|
+    t.remove :author
+    t.belongs_to :author, index: true
   end
 
-  change_table "fanfiction_stories" do |t|
-    t.datetime :favorites_updated_at
+  create_table "story_authors" do |t|
+    t.string :name, null: false
+    t.string :spacebattles_name
+    t.string :sufficientvelocity_name
+    t.string :fanfiction_name
+    t.timestamps(null: false)
   end
 end
 
 def down
-  change_table "spacebattles_stories" do |t|
-    t.remove :highest_chapter_likes
+  change_table :spacebattles_stories do |t|
+    t.rename :author_name, :author
   end
 
-  change_table "spacebattles_story_chapters" do |t|
-    t.remove :likes_updated_at
+  change_table :sufficientvelocity_stories do |t|
+    t.rename :author_name, :author
   end
 
-  change_table "sufficientvelocity_stories" do |t|
-    t.remove :highest_chapter_likes
+  change_table :fanfiction_stories do |t|
+    t.rename :author_name, :author
   end
 
-  change_table "sufficientvelocity_story_chapters" do |t|
-    t.remove :likes_updated_at
+  change_table :stories do |t|
+    t.string :author
+    t.remove :author_id
   end
 
-  change_table "fanfiction_stories" do |t|
-    t.remove :favorites_updated_at
-  end
+  drop_table :story_authors
 end
 
 def migration_script
-  SpacebattlesStoryChapter.seek(likes_not_eq: 0, likes_updated_at_eq: nil).update_all(likes_updated_at: DateTime.parse("2017-08-15"))
-  SufficientvelocityStoryChapter.seek(likes_not_eq: 0, likes_updated_at_eq: nil).update_all(likes_updated_at: DateTime.parse("2017-08-15"))
-  FanfictionStory.seek(favorites_not_eq: 0, favorites_updated_at_eq: nil).update_all(favorites_updated_at: DateTime.parse("2017-08-15"))
+  Story.location_models.each do |location_model|
+  location_model.all.each do |story|
+    story.author_name = story.author_name
+    begin
+      story.save!
+    rescue StandardError => error
+      puts error.inspect
+      puts story.inspect
+      raise error
+    end
+  end
 end
 
 

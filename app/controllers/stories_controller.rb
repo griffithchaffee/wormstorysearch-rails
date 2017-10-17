@@ -7,15 +7,11 @@ class StoriesController < ApplicationController
   end
 
   def update
-    if @story.is_locked?
-      flash.info("#{@story.title} has been locked can no longer be updated")
+    @story.assign_attributes(permitted_action_story_params)
+    if @story.save
+      flash.notice("Successfully updated: #{@story.crossover_title}")
     else
-      @story.assign_attributes(permitted_action_story_params)
-      if @story.save
-        flash.notice("Successfully updated: #{@story.title} by #{@story.author}")
-      else
-        flash.alert("There was a problem while trying to update #{@story.title}:\n#{@story.errors.full_messages.join("\n")}")
-      end
+      flash.alert("There was a problem while trying to update #{@story.crossover_title}:\n#{@story.errors.full_messages.join("\n")}")
     end
     redirect_to(stories_path)
   end
@@ -38,7 +34,7 @@ private
   end
 
   def permit_story_params
-    permit = %w[ title author crossover description status ]
+    permit = %w[ title author_id crossover description status ]
     permit += %w[ is_locked is_archived ] if is_admin?
     permit
   end

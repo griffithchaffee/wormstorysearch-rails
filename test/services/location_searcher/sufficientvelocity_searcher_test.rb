@@ -12,7 +12,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
     sufficientvelocity_story = SufficientvelocityStory.first
     assert_equal(
       {
-        "author"=>"UnwelcomeStorm",
+        "author_name"=>"UnwelcomeStorm",
         "average_chapter_likes"=>"0.0",
         "highest_chapter_likes"=>"0",
         "category"=>"story",
@@ -61,7 +61,7 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
     sufficientvelocity_story = SufficientvelocityStory.first
     assert_equal(
       {
-        "author"=>"NIV3K",
+        "author_name"=>"NIV3K",
         "average_chapter_likes"=>"0.0",
         "highest_chapter_likes"=>"0",
         "category"=>"quest",

@@ -12,7 +12,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
     fanfiction_story = FanfictionStory.first
     assert_equal(
       {
-        "author"=>"Racheakt",
+        "author_name"=>"Racheakt",
         "category"=>"story",
         "crossover"=>"",
         "description"=>"Part 1 of the Bird Series. Taylor triggers and is sent to an insane asylum.",
@@ -62,7 +62,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
     fanfiction_story = FanfictionStory.first
     assert_equal(
       {
-        "author"=>"Rhydeble",
+        "author_name"=>"Rhydeble",
         "category"=>"story",
         "crossover"=>"Dresden Files & Worm",
         "description"=>

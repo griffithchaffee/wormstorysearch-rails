@@ -2,12 +2,6 @@ class SufficientvelocityStory < ApplicationRecord
   # modules/constants
   include LocationStoryConcern
 
-  # load settings
-  class_constant(:location_slug, "sufficientvelocity")
-  Rails.application.settings.locations[const.location_slug].to_h.each do |key, value|
-    class_constant("location_#{key}", value)
-  end
-
   # associations/scopes/validations/callbacks/macros
   after_save do
     if saved_change_to_average_chapter_likes?

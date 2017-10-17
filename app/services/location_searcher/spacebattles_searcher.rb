@@ -184,7 +184,7 @@ module LocationSearcher
         title:            title,
         location_id:      location_id,
         location_path:    location_path,
-        author:           author,
+        author_name:      author,
         word_count:       word_count,
         story_active_at:  active_at,
         story_created_on: created_at,

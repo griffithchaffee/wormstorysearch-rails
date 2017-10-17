@@ -81,30 +81,39 @@ module LocationStoryConcern::TestConcern
 
     testing "story!" do
       location_story = FactoryGirl.create(factory, story: nil, title: "Well Traveled [Worm](Planeswalker Taylor)")
-      # creates story
+      assert_nil(location_story.story)
+      # creates story with attributes
       story = location_story.story!
-      assert_equal(true, story.saved?)
-      assert_equal("Well Traveled", story.title, story.inspect)
+      assert_equal([Story.first, location_story.author_name], [story, story.author.name])
+      assert_equal("Well Traveled", story.title)
       if location_story.try(:crossover)
-        assert_equal(location_story.crossover, story.crossover, story.inspect)
+        assert_equal(location_story.crossover, story.crossover)
       else
-        assert_equal("Planeswalker", story.crossover, story.inspect)
+        assert_equal("Planeswalker", story.crossover)
       end
-      # finds existing story
+      # story unset
+      assert_nil(location_story.story)
+      # finds existing matching story
       assert_equal(story, location_story.story!)
+      # returns associated story if present
+      location_story.update!(story: story)
+      assert_equal(true, location_story.story.equal?(location_story.story!))
       # no existing story
-      story.update!(title: "abc 123", author: "SOMEONE")
-      location_story.story = nil
-      assert_equal(true, location_story.story!(create: false).unsaved?)
+      story.update!(title: "abc 123")
+      assert_equal(true, location_story.story!(return_associated_story: false, create_new_story: false).unsaved?)
       # exact title match
-      location_story.update!(title: "abc 123")
-      assert_equal(story, location_story.story!)
-      # partial title match
-      location_story.update!(title: "abc")
-      assert_equal(true, location_story.story!(create: false).unsaved?)
-      # partial title match and author
-      location_story.update!(title: "ABC", author: "someone")
-      assert_equal(story, location_story.story!)
+      location_story.update!(title: "ABC 123")
+      assert_equal(story, location_story.story!(return_associated_story: false))
+      # parse_title fuzzy match
+      location_story.update!(title: "ABC [Worm] (Crossover)")
+      assert_equal(story, location_story.story!(return_associated_story: false))
+      # author must match
+      story.author.update!("#{location_story.const.location_slug}_name" => "NEW")
+      assert_equal(true, location_story.story!(return_associated_story: false, create_new_story: false).unsaved?)
+      location_story.update!(author_name: "NEW")
+      assert_equal(story, location_story.story!(return_associated_story: false))
+      # make sure find_existing_story works
+      assert_equal(true, location_story.story!(return_associated_story: false, find_existing_story: false, create_new_story: false).unsaved?)
     end
   end
 end
