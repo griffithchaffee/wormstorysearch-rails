@@ -15,9 +15,3 @@ Toolbox.timer = (time, func) ->
 # determine if browser is touch device
 Toolbox.isTouchDevice = ->
   "ontouchstart" of window or navigator.maxTouchPoints
-
-# UTC offset
-Toolbox.getTimeZoneOffset = ->
-  # get UTC Offset
-  exactOffset = new Date().getTimezoneOffset()
-  hourOffset = -(exactOffset / 60)
