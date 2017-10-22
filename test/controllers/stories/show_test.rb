@@ -7,7 +7,7 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:show, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
+      story.author.name,
       story.title,
       story.description,
       story.crossover,
@@ -24,7 +24,7 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:show, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
+      story.author.name,
       story.title,
       story.description,
       story.crossover,
@@ -41,7 +41,7 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:show, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
+      story.author.name,
       story.title,
       story.description,
       story.crossover,

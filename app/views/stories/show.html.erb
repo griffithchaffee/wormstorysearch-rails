@@ -16,7 +16,7 @@
 
 <%= cp.div_tag do %>
   <%= cp.b_tag(content: "Author:") %>
-  <%= @story.author %>
+  <%= @story.author.name %>
 <% end %>
 
 <% if @story.crossover? %>

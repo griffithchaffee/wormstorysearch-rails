@@ -47,14 +47,16 @@ def down
 end
 
 def migration_script
-  Story.location_models.each do |location_model|
-    location_model.all.each do |story|
-      story.author_name = story.author_name
+  Story.const.location_models.each do |location_model|
+    location_model.all.each do |location_story|
       begin
-        story.save!
+        location_story.author!
       rescue StandardError => error
-        puts error.inspect
-        puts story.inspect
+        puts "
+          location_story: #{location_story.inspect}
+          #{errors.class}: #{error.messsage}
+          #{error.backtrace.join("\n")}
+        ".strip
         raise error
       end
     end

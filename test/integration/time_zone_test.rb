@@ -16,7 +16,7 @@ class TimeZoneIntegrationTest < ApplicationIntegrationTestCase
 
     # setup browser time
     time_zone_offset = -2
-    cookies["browser.identity"] = { "time_zone_offset" => time_zone_offset }.to_json
+    cookies["browser.identity"] = { "time_zone_offset" => time_zone_offset * -60 }.to_json
     get "/stories"
     assert_response_ok
     assert_in_response_body([
@@ -28,7 +28,7 @@ class TimeZoneIntegrationTest < ApplicationIntegrationTestCase
     assert_mail_queue(0)
 
     # invalid time_zone_offset
-    time_zone_offset = -50
+    time_zone_offset = 1380
     cookies["browser.identity"] = { "time_zone_offset" => time_zone_offset }.to_json
     get "/stories"
     assert_response_ok
@@ -36,7 +36,7 @@ class TimeZoneIntegrationTest < ApplicationIntegrationTestCase
       story.crossover_title,
       rails_time.to_full_human_s
     ])
-    assert_mail(0, subject: "ApplicationTimeZone ArgumentError: Invalid Timezone: Etc/GMT+50")
+    assert_mail(0, subject: "ApplicationTimeZone ArgumentError: Invalid Timezone: Etc/GMT+23")
   end
 
 end

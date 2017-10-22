@@ -6,13 +6,11 @@ class StoriesController::Test < ApplicationController::TestCase
     @story = FactoryGirl.create(:story)
     @original_attributes = {
       title: "ORIG_TITLE",
-      author: "ORIG_AUTHOR",
       crossover: "ORIG_CROSS",
       description: "ORIG_DESC",
     }
     @new_attributes = {
       title: "NEW_TITLE",
-      author: "NEW_AUTHOR",
       crossover: "NEW_CROSS",
       description: "NEW_DESC",
     }

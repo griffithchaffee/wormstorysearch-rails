@@ -7,7 +7,6 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:edit, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
       story.title,
       story.description,
       story.crossover,
@@ -23,7 +22,6 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:edit, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
       story.title,
       story.description,
       story.crossover,
@@ -39,7 +37,6 @@ class StoriesController::Test < ApplicationController::TestCase
     get(:edit, params: { id: story.id })
     assert_response_ok
     assert_in_response_body([
-      story.author,
       story.title,
       story.description,
       story.crossover,
