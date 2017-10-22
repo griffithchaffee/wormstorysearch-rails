@@ -1,0 +1,15 @@
+<%= cp.tr_tag(class: "sorters") do %>
+  <%= cp.td_tag(class: "actions") do %>
+    Actions
+  <% end %>
+
+  <%= cp.td_tag(class: "name") do %>
+    <%= cp.name_sorter %>
+  <% end %>
+
+  <% Story.const.location_models.each do |location_model| %>
+    <%= cp.td_tag(class: "#{location_model.const.location_slug}_name") do %>
+      <%= location_model.const.location_label %> Name
+    <% end %>
+  <% end %>
+<% end %>

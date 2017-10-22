@@ -47,10 +47,14 @@ def down
 end
 
 def migration_script
-  Story.const.location_models.each do |location_model|
+  Rails.logger.level = Logger::INFO
+  Story.const.location_models.preload(:story).each do |location_model|
     location_model.all.each do |location_story|
       begin
+        location_story.author_name = location_story.author_name # normalize
+        location_story.save!
         location_story.author!
+        location_story.story.author_name
       rescue StandardError => error
         puts "
           location_story: #{location_story.inspect}

@@ -3,6 +3,11 @@ class ApplicationController::TestCase < ActionController::TestCase
 
   teardown do
     assert_flash if !@asserted_flash
+    assert_equal(@request.env["HTTP_X_VIEW_LAYOUT"] || "application", @controller.view_layout, "view_layout")
+  end
+
+  def set_view_layout(new_view_layout)
+    @request.env["HTTP_X_VIEW_LAYOUT"] = new_view_layout.to_s
   end
 
   def assert_flash(expected_flash = {})
@@ -13,17 +18,22 @@ class ApplicationController::TestCase < ActionController::TestCase
     end
   end
 
-  def assert_response_ok(options = {})
-    options = options.with_indifferent_access
-    assert_response(200, "#{options[:message]} flash=#{flash.inspect}".strip)
-    assert_flash(options[:flash].to_h)
+  def assert_response_admin_only(message: nil, flash: nil)
+    error_message = "#{message} flash=#{self.flash.inspect}".strip
+    assert_response(302, error_message)
+    assert_redirected_to(stories_path, error_message)
+    assert_flash(flash.to_h.merge(info: 1))
   end
 
-  def assert_response_redirect(path, options = {})
-    options = options.with_indifferent_access
-    error_message = "#{options[:message]} flash=#{flash.inspect}".strip
+  def assert_response_ok(message: nil, flash: nil)
+    assert_response(200, "#{message} flash=#{self.flash.inspect}".strip)
+    assert_flash(flash.to_h)
+  end
+
+  def assert_response_redirect(path, message: nil, flash: nil)
+    error_message = "#{message} flash=#{self.flash.inspect}".strip
     assert_response(302, error_message)
-    assert_flash(options[:flash].to_h)
+    assert_flash(flash.to_h)
     assert_redirected_to(path, error_message)
   end
 

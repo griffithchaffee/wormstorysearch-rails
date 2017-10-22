@@ -1,19 +1,13 @@
 // searchable-table
 #stories-searchable-table-container {
   min-height: 550px;
-  border: 0px;
 }
 
 #stories-searchable-table {
-  border: 1px solid $table-border-color;
-  td { border: 1px solid $table-border-color; }
-}
-
-table.searchable {
   tbody.filters {
-    td.details    { width: 1px;  max-width: 1px;  min-width: 1px; }
-    td.rating     { width: 85px;  min-width: 85px;  max-width: 85px; }
-    td.word_count { width: 85px;  min-width: 85px;  max-width: 85px; }
+    td.details    { width: 1px;  min-width: 1px;  max-width: 1px;  }
+    td.rating     { width: 85px; min-width: 85px; max-width: 85px; }
+    td.word_count { width: 85px; min-width: 85px; max-width: 85px; }
   }
   tbody.sorters {
     td.details {
@@ -25,11 +19,16 @@ table.searchable {
     }
   }
   tbody.rows {
-    td.details a { text-decoration: none; }
-    td.story_updated_at { white-space: nowrap; }
+    td.details a {
+      text-decoration: none;
+    }
+    td.story_updated_at {
+      white-space: nowrap;
+    }
   }
 }
 
+// story_filter
 div.story_filter {
   // expand over multiple colspan
   width: 100%;

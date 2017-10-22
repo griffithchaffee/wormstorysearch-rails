@@ -39,8 +39,8 @@ class String
 
   def verify_in!(list, options = {})
     options = options.with_indifferent_access
-    list = Array(list).flatten
-    if self.in?(list)
+    list = Array(list).flatten.map(&:to_s)
+    if in?(list)
       self
     elsif list.size == 1
       raise ArgumentError, "#{inspect} expected to be #{list.first} #{options[:message]}".strip

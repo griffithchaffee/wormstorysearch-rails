@@ -7,8 +7,9 @@
 @import "universal";
 @import "tables";
 
-// controllers
-<% %w[ stories ].each do |controller_name| %>
+// controller specific
+<% Dir["#{File.dirname(__FILE__)}/controllers/*.scss"].each do |controller_scss_path| %>
+  <% controller_name = File.basename(controller_scss_path).split(".").first.remove(/\A_/) %>
   body.<%= controller_name %> {
     @import "controllers/<%= controller_name %>";
   }

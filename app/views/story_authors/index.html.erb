@@ -1,0 +1,6 @@
+<%= cp.page_title(
+  content:  "Authors",
+  sub_text: "(#{@story_authors.raw_count} Authors)",
+) %>
+
+<%= render_partial("searchable_table", collection: @story_authors) %>

@@ -20,27 +20,14 @@ class StoriesController::Test < ApplicationController::TestCase
   testing "#{action}" do
     update_setup
     patch(:update, params: { "id" => @story.id, story: @new_attributes })
-    assert_response_redirect(stories_path, flash: { notice: 1 })
+    assert_response_admin_only
     # update changes
-    @new_attributes.each do |key, value|
-      assert_equal(value, @story.reload.send(key))
-    end
-  end
-
-  testing "#{action} when locked" do
-    update_setup
-    @story.update!(is_locked: true)
-    # request
-    patch(:update, params: { "id" => @story.id, story: @new_attributes.merge(is_locked: false, is_archived: false) })
-    assert_response_redirect(stories_path, flash: { info: 1 })
-    # no changes
     @original_attributes.each do |key, value|
       assert_equal(value, @story.reload.send(key))
     end
-    assert_equal([true, false], [@story.is_locked, @story.is_archived])
   end
 
-  testing "#{action} when admin" do
+  testing "#{action} as admin" do
     update_setup
     become_admin
     # request

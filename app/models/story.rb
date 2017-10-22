@@ -28,9 +28,9 @@ class Story < ApplicationRecord
       else
         queries << unscoped.seek_or(
           title_matches: value,
-          author_matches: value,
           crossover_matches: value,
           description_matches: value,
+          "author.any_name_matches" => value,
         )
       end
     end
@@ -84,6 +84,15 @@ class Story < ApplicationRecord
   # public/private/protected/classes
   def crossover_title
     crossover? ? "#{title} [#{crossover}]" : title
+  end
+
+  def author_name
+    if author
+      author.name
+    elsif active_location
+      update!(author: active_location.author!)
+      author.name
+    end
   end
 
   def word_count=(new_word_count)

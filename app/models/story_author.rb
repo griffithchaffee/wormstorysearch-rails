@@ -11,18 +11,33 @@ class StoryAuthor < ApplicationRecord
   scope :where_for_location_story, -> (location_story) do
     where("#{location_story.const.location_slug}_name" => location_story.author_name)
   end
+  scope :seek_any_name_matches, -> (name) do
+    break none if name.blank?
+    seek_or(
+      name_matches:                    name,
+      spacebattles_name_matches:       name,
+      sufficientvelocity_name_matches: name,
+      fanfiction_name_matches:         name,
+    )
+  end
   scope :seek_location_name_eq, -> (name) do
     break none if name.blank?
     seek_or(
       spacebattles_name_eq:       name,
       sufficientvelocity_name_eq: name,
-      fanfiction_name_eq:         name
+      fanfiction_name_eq:         name,
     )
   end
 
   validates_presence_of_required_columns
   Story.const.location_models.each do |location_model|
-    validates "#{location_model.const.location_slug}_name", uniqueness: true, if: "#{location_model.const.location_slug}_name?".to_sym
+    validates(
+      "#{location_model.const.location_slug}_name",
+      uniqueness: {
+        if: "#{location_model.const.location_slug}_name?".to_sym,
+        message: -> (story_author, params) { "#{params[:value].inspect} has already been taken" }
+      }
+    )
   end
 
   before_validation do

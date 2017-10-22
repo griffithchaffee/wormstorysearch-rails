@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root to: "stories#index"
 
   resources :stories, only: %w[ index show edit update ]
+  resources :story_authors, only: %w[ index edit update destroy ]
 
   controller :static do
     get  "/contact", action: "contact", as: "contact"

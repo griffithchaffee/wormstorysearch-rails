@@ -1,0 +1,11 @@
+<%= cp.form_group_div do %>
+  <%= cp.name_label %>
+  <%= cp.name_field %>
+<% end %>
+
+<% Story.const.location_models.each do |location_model| %>
+  <%= cp.form_group_div do %>
+    <%= cp.send("#{location_model.const.location_slug}_name_label") %>
+    <%= cp.send("#{location_model.const.location_slug}_name_field") %>
+  <% end %>
+<% end %>

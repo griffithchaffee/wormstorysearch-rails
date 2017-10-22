@@ -1,25 +1,5 @@
 class StoriesController < ApplicationController
 
-  def show
-  end
-
-  def edit
-  end
-
-  def update
-    if @story.is_locked? && !is_admin?
-      flash.info("#{@story.crossover_title} has been locked can no longer be updated")
-    else
-      @story.assign_attributes(permitted_action_story_params)
-      if @story.save
-        flash.notice("Successfully updated: #{@story.crossover_title}")
-      else
-        flash.alert("There was a problem while trying to update #{@story.crossover_title}:\n#{@story.errors.full_messages.join("\n")}")
-      end
-    end
-    redirect_to(stories_path)
-  end
-
   def index
     # preload chapters because read_url requires them
     @stories = Story.preload_locations
@@ -28,9 +8,26 @@ class StoriesController < ApplicationController
       .paginate(permitted_action_pagination_params(save: true).to_unsafe_h, limit: 15)
   end
 
+  def show
+  end
+
+  def edit
+  end
+
+  def update
+    @story.assign_attributes(permitted_action_story_params)
+    if @story.save
+      flash.notice("Successfully updated: #{@story.crossover_title}")
+    else
+      flash.alert("There was a problem while trying to update #{@story.crossover_title}:\n#{@story.errors.full_messages.join("\n")}")
+    end
+    redirect_to(stories_path)
+  end
+
 private
 
   generate_permitted_record_params
+  before_action :admin_only_action, only: %w[ edit update ]
   before_action :set_story, only: %w[ show edit update ]
 
   def set_story

@@ -14,7 +14,7 @@
 
   <%= cp.td_tag(class: "title") do %>
     <%= cp.tab_link(story.read_url, content: story.crossover_title) %>
-    by <%= story.author.name %>
+    by <%= story.author_name %>
     <%= cp.br_tag %>
 
     <% story.locations.each do |location| %>
