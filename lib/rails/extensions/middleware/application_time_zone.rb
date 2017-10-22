@@ -18,13 +18,14 @@ module Rails.application.class::Middleware
         if cookie.key?(@cookie_key)
           # determine time_zone from offset
           time_zone_offset = cookie[@cookie_key].to_i
-          time_zone_offset =
-            if time_zone_offset > 0
-              "-#{time_zone_offset}"
-            elsif time_zone_offset < 0
-              "+#{-time_zone_offset}"
+          time_zone_hour_offset = time_zone_offset / 60
+          time_zone_hour_offset =
+            if time_zone_hour_offset < 0
+              "#{time_zone_hour_offset}"
+            elsif time_zone_hour_offset > 0
+              "+#{time_zone_hour_offset}"
             end
-          time_zone = Time.find_zone!("Etc/GMT#{time_zone_offset}").name
+          time_zone = Time.find_zone!("Etc/GMT#{time_zone_hour_offset}").name
         end
       rescue StandardError => error
         begin
