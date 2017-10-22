@@ -48,14 +48,15 @@ end
 
 def migration_script
   Story.location_models.each do |location_model|
-  location_model.all.each do |story|
-    story.author_name = story.author_name
-    begin
-      story.save!
-    rescue StandardError => error
-      puts error.inspect
-      puts story.inspect
-      raise error
+    location_model.all.each do |story|
+      story.author_name = story.author_name
+      begin
+        story.save!
+      rescue StandardError => error
+        puts error.inspect
+        puts story.inspect
+        raise error
+      end
     end
   end
 end
