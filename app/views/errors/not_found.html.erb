@@ -1,0 +1,6 @@
+<%= cp.page_title(content: "Page Not Found", sub_header: "The page #{request.env["REQUEST_URI"].inspect} does not exist") %>
+
+<p>It looks as though you are trying to visit a page that no longer exists.</p>
+<p>This commonly happens with an out-of-date bookmark or link in our system.</p>
+
+<%= render_partial(:default_actions) %>

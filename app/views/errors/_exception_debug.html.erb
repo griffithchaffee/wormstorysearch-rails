@@ -1,0 +1,15 @@
+<% if exception.present? && is_admin? %>
+<%= cp.section_header(content: "Development Debug") %>
+
+<%= cp.pre_tag do %>
+STATUS: <%= exception_status_code %>
+RESCUE: <%= exception_rescue_action %>
+
+Exception: [<%= exception.class %>] <%= exception.message %>
+<% if original_exception %>
+Original: [<%= original_exception.class %>] <%= original_exception.message %>
+<% end %>
+
+<%= exception.backtrace.join("\n") %>
+<% end %>
+<% end %>

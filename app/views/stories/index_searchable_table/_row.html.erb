@@ -1,0 +1,31 @@
+<% story = record %>
+<%= cp.tr_tag(id: cp.record_to_namespace(story), class: cp.row_alert_class) do %>
+  <%= cp.td_tag(class: "story_updated_at") do %>
+    <%= cp.moment_span(story.story_updated_at, :calendar_full, add_class: "hidden-sm hidden-xs") %>
+    <%= cp.moment_span(story.story_updated_at, :calendar_brief, add_class: "hidden-md hidden-lg") %>
+  <% end %>
+
+  <%= cp.td_tag(class: "title") do %>
+    <%= cp.tab_link(story.read_url, content: story.crossover_title) %>
+    by <%= story.author_name %> on
+    <% story.locations.each do |location| %>
+      <%= cp.tab_link(location.read_url, style: "text-decoration: none;") do %>
+        <%= cp.label_span("primary", content: location.const.location_abbreviation) %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= cp.td_tag(class: "rating") do %>
+    <%= cp.rating_details %>
+  <% end %>
+
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= story.word_count.to_human_size(pretty: true) %>
+  <% end %>
+
+  <%= cp.td_tag(class: "details") do %>
+    <%= cp.recently_created_icon %>
+    <%= cp.modal_show_link(content: "", add_class: "text-default") %>
+    <%= cp.modal_edit_link(content: "", add_class: "text-default") %>
+  <% end %>
+<% end %>

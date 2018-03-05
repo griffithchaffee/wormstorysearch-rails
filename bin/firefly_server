@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# set rails_root
+pushd `dirname $0` > /dev/null
+RAILS_ROOT="`pwd -P`/.."
+popd > /dev/null
+
+# options
+START_SERVER="puma -C $RAILS_ROOT/config/puma.rb $@"
+PID_FILE="$RAILS_ROOT/tmp/pids/puma.pid"
+
+while :; do
+  # cleanup pid file
+  rm -f "$PID_FILE"
+  # start server
+  printf "Starting Server: \e[32m$START_SERVER\e[0m\n"
+  SECONDS=0
+  FIREFLY=true $START_SERVER
+  duration=$SECONDS
+  # sleep between restart attempts
+  if [[ $duration -lt 5 ]]; then
+    printf "\e[33mWaiting 5 seconds between restart attempts\e[0m\n"
+    sleep 5
+  fi
+done

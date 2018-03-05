@@ -1,0 +1,43 @@
+<%= cp.form_group_div do %>
+  <%= cp.title_label %>
+  <%= cp.title_field %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.author_label %>
+  <%= cp.author_select %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.status_label %>
+  <%= cp.status_select %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.crossover_label %>
+  <%= cp.crossover_field %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.description_label %>
+  <%= cp.description_field %>
+<% end %>
+
+<%= cp.form_group_div do %>
+  <%= cp.check_box_div_label(style: "margin: 0px;") do %>
+    <%= cp.is_nsfw_check_box %>
+    <%= cp.is_nsfw_check_box_text %>
+  <% end %>
+
+  <%= cp.check_box_div_label(style: "margin: 0px;") do %>
+    <%= cp.is_archived_check_box %>
+    <%= cp.is_archived_check_box_text %>
+  <% end %>
+<% end %>
+
+<%= cp.legend_tag(content: "Actions") %>
+
+<%= cp.form_group_div do %>
+  <%= cp.merge_with_story_label %>
+  <%= cp.merge_with_story_select %>
+<% end %>

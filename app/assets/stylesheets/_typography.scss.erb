@@ -1,0 +1,42 @@
+<% font_awesome_version = "4.7.0" %>
+@font-face {
+  font-family: "FontAwesome Icons";
+  src: asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.eot?v=<%= font_awesome_version %>");
+  src: asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.eot?#iefix&v=<%= font_awesome_version %>") format("embedded-opentype"),
+  asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.woff2?v=<%= font_awesome_version %>") format("woff2"),
+  asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.woff?v=<%= font_awesome_version %>") format("woff"),
+  asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.ttf?v=<%= font_awesome_version %>") format("truetype"),
+  asset-url("font-awesome-v<%= font_awesome_version %>/fontawesome-webfont.svg?v=<%= font_awesome_version %>#fontawesomeregular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+// https://typekit.com/fonts/museo-sans
+
+@font-face {
+  font-family: "Museo Sans 500 Regular";
+  src: asset-url("museosans/museosans_500-webfont.eot");
+  src: asset-url("museosans/museosans_500-webfont.eot?#iefix") format("embedded-opentype"),
+  asset-url("museosans/museosans_500-webfont.woff") format("woff"),
+  asset-url("museosans/museosans_500-webfont.ttf") format("truetype"),
+  asset-url("museosans/museosans_500-webfont.svg#museo_sans_500regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Museo Sans 500 Italic";
+  src: asset-url("museosans/museosans_500_italic-webfont.eot");
+  src: asset-url("museosans/museosans_500_italic-webfont.eot?#iefix") format("embedded-opentype"),
+  asset-url("museosans/museosans_500_italic-webfont.woff") format("woff"),
+  asset-url("museosans/museosans_500_italic-webfont.ttf") format("truetype"),
+  asset-url("museosans/museosans_500_italic-webfont.svg#museo_sans_500italic") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+// default to Museo Sans with bootstrap fallback
+body {
+  font-family: "Museo Sans 500 Regular", inherit;
+}

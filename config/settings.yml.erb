@@ -1,0 +1,45 @@
+---
+version: 1.10.0
+domain: wormstorysearch.com
+admin_ip: <%= ENV["ADMIN_IP"] %>
+<%= "request_count: 0" if Rails.env.development? %>
+stories:
+  # used in Story.location_rating_multipliers which is not currently in use
+  rating_trim_percent:  0.1 # trim bottom and top 10%
+  average_story_rating: 100
+  highly_rated_threshold: 500
+locations:
+  spacebattles:
+    username: <%= ENV["SB_USERNAME"] %>
+    password: <%= ENV["SB_PASSWORD"] %>
+    label: SpaceBattles
+    abbreviation: SB
+    host: https://forums.spacebattles.com
+    max_story_pages: 200
+    max_quest_pages: 400
+    rating_column: highest_chapter_likes
+    rating_multiplier: 1.0
+  sufficientvelocity:
+    username: <%= ENV["SV_USERNAME"] %>
+    password: <%= ENV["SV_PASSWORD"] %>
+    label: SufficientVelocity
+    abbreviation: SV
+    host: https://forums.sufficientvelocity.com
+    max_story_pages: 300
+    max_quest_pages: 400
+    rating_column: highest_chapter_likes
+    rating_multiplier: 2.0
+  fanfiction:
+    label: FanFiction
+    abbreviation: FF
+    host: https://www.fanfiction.net
+    max_story_pages: 100
+    rating_column: favorites
+    rating_multiplier: 0.6
+  archiveofourown:
+    label: Archive of Our Own
+    abbreviation: AO3
+    host: http://archiveofourown.org
+    max_story_pages: 30
+    rating_column: kudos
+    rating_multiplier: 0.6

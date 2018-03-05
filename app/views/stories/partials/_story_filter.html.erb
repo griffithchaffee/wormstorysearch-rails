@@ -1,0 +1,215 @@
+<%
+  # filters
+  category_filters   = {}.with_indifferent_access
+  status_filters     = {}.with_indifferent_access
+  location_slug_filters  = {}.with_indifferent_access
+  nsfw_filters       = {}.with_indifferent_access
+  archived_filters   = {}.with_indifferent_access
+
+  # filter values
+  Story.const.categories.each do |category|
+    category_filters[category.category] = category.label
+  end
+  Story.const.statuses.each do |status|
+    status_filters[status.status] = status.label
+  end
+  Story.const.location_models.each do |location_model|
+    location_slug_filters[location_model.const.location_slug] = location_model.const.location_label
+  end
+  nsfw_filters["true"] = "Only NSFW"
+  nsfw_filters["any"]  = "Include NSFW"
+  archived_filters["true"] = "Only Archived"
+  archived_filters["any"]  = "Include Archived"
+
+  # filter ids
+  category_filter_key   = "category_eq"
+  status_filter_key     = "status_eq"
+  location_slug_filter_key = "location_slug_in"
+  nsfw_filter_key       = "is_nsfw_eq"
+  archived_filter_key   = "is_archived_eq"
+
+  # active filters
+  active_category_filter   = params[category_filter_key]
+  active_status_filter     = params[status_filter_key]
+  active_location_slug_filter = params[location_slug_filter_key].to_s.split(",").select(&:present?)
+  active_nsfw_filter       = params[nsfw_filter_key]
+  active_archived_filter   = params[archived_filter_key]
+  actively_filtering       = [
+    active_category_filter,
+    active_status_filter,
+    active_location_slug_filter,
+    active_nsfw_filter,
+    active_archived_filter,
+  ].any?(&:present?)
+
+  # helpers
+  get_filter_id = -> (status) { "#{status.slugify}_status_filter" }
+  check_box_onchange_js = -> (filter_key) do
+    cp.event_coffee_script_compile(%Q[
+      value = if $this.prop('checked') then $this.val() else ''
+      $('##{filter_key.slugify}').val(value).change()
+    ])
+  end
+
+  # onchange js
+  location_slug_onchange_js = cp.event_coffee_script_compile(%Q[
+    filter_ids = #{location_slug_filters.keys.map(&get_filter_id)}
+    filter_values = []
+    $.each filter_ids, (i, filter_id) ->
+      $filter = $('#' + filter_id)
+      filter_values.push($filter.val()) if $filter.prop('checked')
+    $('##{location_slug_filter_key.slugify}').val(filter_values.join()).change()
+  ])
+
+%>
+
+
+<%= render_partial(:index_filters_info_modal) %>
+
+<%= cp.div_tag(class: "input-group story_filter") do %>
+  <%= cp.div_tag(class: "input-group-btn") do %>
+    <% click_info_or_ban_icon_js = cp.event_coffee_script_compile("
+      $infoIcon = $this.find('.icon-info')
+      $banIcon = $this.find('.icon-ban')
+      if event.srcElement is this
+        if $banIcon.is(':visible')
+          $banIcon.click()
+        else
+          $infoIcon.click()
+    ") %>
+    <%= cp.button_tag(add_class: "btn btn-default", onclick: click_info_or_ban_icon_js) do %>
+      <%= cp.icon("info", add_class: "search-hide", data: { target: "#filters-info-modal", toggle: "modal" }) %>
+      <%= cp.icon("ban", add_class: "search-reset text-danger") %>
+    <% end %>
+
+    <% dropdown_toggle_params = actively_filtering ? { add_class: "btn-primary", remove_class: "btn-default" } : {} %>
+    <%= cp.dropdown_toggle_btn(dropdown_toggle_params) do %>
+      <%= cp.icon("filter") %> <%= cp.caret_span %>
+    <% end %>
+
+    <%= cp.dropdown_menu_ul do %>
+      <!-- category_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Category") %>
+      <%= cp.hidden_field_tag(category_filter_key) %>
+      <% category_filters.each do |value, label| %>
+        <% is_active = active_category_filter == value %>
+        <%= cp.li_tag(add_class: ("active" if is_active)) do %>
+          <%= cp.a_tag(class: "checkbox") do %>
+            <%= cp.label_tag do %>
+              <%= cp.check_box_tag(
+                nil,
+                value: value,
+                checked: is_active,
+                onchange: check_box_onchange_js.call(category_filter_key)
+              ) %>
+              <%= cp.span_tag(content: label) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- updated_after_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Updated After") %>
+      <%= cp.li_tag(style: "display: inline-block;") do %>
+        <%= cp.div_tag(add_class: "input") do %>
+          <%= cp.updated_after_filter %>
+        <% end %>
+      <% end %>
+
+      <!-- updated_before_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Updated Before") %>
+      <%= cp.li_tag(style: "display: inline-block;") do %>
+        <%= cp.div_tag(add_class: "input") do %>
+          <%= cp.updated_before_filter %>
+        <% end %>
+      <% end %>
+
+      <!-- status_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Status") %>
+      <%= cp.hidden_field_tag(status_filter_key) %>
+      <% status_filters.each do |value, label| %>
+        <% is_active = active_status_filter == value %>
+        <%= cp.li_tag(add_class: ("active" if is_active)) do %>
+          <%= cp.a_tag(class: "checkbox") do %>
+            <%= cp.label_tag do %>
+              <%= cp.check_box_tag(
+                nil,
+                value: value,
+                checked: is_active,
+                onchange: check_box_onchange_js.call(status_filter_key)
+              ) %>
+              <%= cp.span_tag(content: label) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+     <!-- location_slug_filter -->
+     <%= cp.li_tag(class: "dropdown-header", content: "Location") %>
+     <%= cp.hidden_field_tag(location_slug_filter_key) %>
+      <% location_slug_filters.each do |value, label| %>
+        <% is_active = value.in?(active_location_slug_filter) %>
+        <%= cp.li_tag(style: "white-space: nowrap;", add_class: ("active" if is_active)) do %>
+          <%= cp.a_tag(class: "checkbox") do %>
+            <%= cp.label_tag do %>
+              <%= cp.check_box_tag(
+                nil,
+                id: get_filter_id.call(value),
+                add_class: "filter-ignore",
+                value: value,
+                checked: is_active,
+                onchange: location_slug_onchange_js,
+              ) %>
+              <%= cp.span_tag(content: label) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- nsfw_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "NSFW") %>
+      <%= cp.hidden_field_tag(nsfw_filter_key) %>
+      <% nsfw_filters.each do |value, label| %>
+        <% is_active = active_nsfw_filter == value %>
+        <%= cp.li_tag(add_class: ("active" if is_active)) do %>
+          <%= cp.a_tag(class: "checkbox") do %>
+            <%= cp.label_tag do %>
+              <%= cp.check_box_tag(
+                nil,
+                value: value,
+                checked: is_active,
+                onchange: check_box_onchange_js.call(nsfw_filter_key)
+              ) %>
+              <%= cp.span_tag(content: label) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- admin filters -->
+      <% if is_admin? %>
+        <!-- archived_filter -->
+        <%= cp.li_tag(class: "dropdown-header", content: "Archived") %>
+        <%= cp.hidden_field_tag(archived_filter_key) %>
+        <% archived_filters.each do |value, label| %>
+          <% is_active = active_archived_filter == value %>
+          <%= cp.li_tag(add_class: ("active" if is_active)) do %>
+            <%= cp.a_tag(class: "checkbox") do %>
+              <%= cp.label_tag do %>
+                <%= cp.check_box_tag(
+                  nil,
+                  value: value,
+                  checked: is_active,
+                  onchange: check_box_onchange_js.call(archived_filter_key)
+                ) %>
+                <%= cp.span_tag(content: label) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+    <% end %>
+  <% end %>
+  <%= cp.story_filter %>
+<% end %>

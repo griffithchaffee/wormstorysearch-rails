@@ -1,0 +1,24 @@
+<%= cp.page_title(
+  content:  "Contact",
+  sub_text: "Provide feedback, suggestions, or bug reports"
+) %>
+
+<%= cp.form_tag(contact_path) do %>
+  <%= cp.form_group_div do %>
+    <%= cp.reply_to_label %>
+    <%= cp.reply_to_field %>
+    <%= cp.help_span(content: "Leave blank to remain anonymous") %>
+  <% end %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.subject_label %>
+    <%= cp.subject_field %>
+  <% end %>
+
+  <%= cp.form_group_div do %>
+    <%= cp.body_label %>
+    <%= cp.body_field %>
+  <% end %>
+
+  <%= cp.form_submit_div %>
+<% end %>

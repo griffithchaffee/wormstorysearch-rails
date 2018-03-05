@@ -1,0 +1,21 @@
+<%= cp.div_tag(id: "dynamic-modal", class: "modal fade dynamic-modal", role: "dialog") do %>
+  <%= cp.div_tag(class: "modal-dialog modal-lg", role: "document") do %>
+    <%= cp.div_tag(class: "modal-content") do %>
+      <%= cp.div_tag(class: "modal-header") do %>
+        <%= cp.dismiss_action(:modal) %>
+        <%= cp.h4_tag(class: "modal-title", content: "Loading...") %>
+      <% end %>
+
+      <%= cp.div_tag(class: "modal-body") do %>
+        <%= cp.div_tag(class: "modal-body-content") %>
+        <%= cp.div_tag(class: "loading") do %>
+          <%= cp.icon(:refresh, add_class: "icon-spin") %>
+        <% end %>
+      <% end %>
+
+      <%= cp.div_tag(class: "modal-footer") do %>
+        <%= cp.modal_close_btn %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

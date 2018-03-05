@@ -1,0 +1,22 @@
+<%= cp.div_tag(class: "modal") do %>
+  <%= cp.div_tag(class: "modal-header") do %>
+    <%= cp.dismiss_action(:modal) %>
+    <%= cp.h4_tag(class: "modal-title") do %>
+      <%= yield(:title) %>
+    <% end %>
+  <% end %>
+
+  <%= cp.div_tag(class: "modal-body") do %>
+    <%= render_partial("layouts/flash") %>
+    <%= yield %>
+  <% end %>
+
+
+  <%= cp.div_tag(class: "modal-footer") do %>
+    <% if content_for?(:footer) %>
+      <%= yield(:footer) %>
+    <% else %>
+      <%= cp.modal_close_btn %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,32 @@
+<% story = record %>
+<%= cp.tr_tag(id: cp.record_to_namespace(story)) do %>
+  <%= cp.td_tag(class: "location") do %>
+    <%= cp.tab_link(story.read_url, style: "text-decoration: none;") do %>
+      <%= cp.label_span("primary", content: story.const.location_label) %>
+    <% end %>
+  <% end %>
+
+  <%= cp.td_tag(class: "story_created_on") do %>
+    <%= cp.moment_span(story.story_created_on, :calendar_brief) %>
+  <% end %>
+
+  <%= cp.td_tag(class: "story_updated_at") do %>
+    <%= cp.moment_span(story.story_updated_at, :calendar_brief) %>
+  <% end %>
+
+  <%= cp.td_tag(class: "title") do %>
+    <%= story.title %>
+  <% end %>
+
+  <%= cp.td_tag(class: "author") do %>
+    <%= story.author_name %>
+  <% end %>
+
+  <%= cp.td_tag(class: "rating") do %>
+    <%= cp.location_rating(story) %>
+  <% end %>
+
+  <%= cp.td_tag(class: "word_count") do %>
+    <%= story.word_count.to_human_size(precision: 0) %>
+  <% end %>
+<% end %>

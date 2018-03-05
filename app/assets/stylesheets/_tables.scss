@@ -1,0 +1,23 @@
+// allow scrolling of dropdown cut-off at bottom of table
+div.table-responsive {
+  overflow: auto;
+}
+
+table.table {
+  tr > td, th {
+    line-height: 1.2em;
+    vertical-align: middle;
+    a.sorter { white-space: nowrap; }
+    &.reset {
+      icon { padding-top: 4px }
+    }
+  }
+  tr.filters {
+    .btn { height: 34px; }
+    .input-group .dropdown-toggle { border-right-width: 0px; }
+  }
+}
+
+.search-hide {
+  display: none;
+}

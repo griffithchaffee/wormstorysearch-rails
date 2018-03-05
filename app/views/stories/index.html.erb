@@ -1,0 +1,7 @@
+<%= cp.page_title(
+  content:    "Stories",
+  sub_text:   "(#{@stories.raw_count} Stories)",
+  sub_header: cp.span_tag(add_class: "hidden-xs hidden-sm") { "Use filters and sorters to find updates to your favorite stories and quests (updated hourly)." }
+) %>
+
+<%= render_partial("searchable_table", collection: @stories) %>

@@ -1,0 +1,18 @@
+// vendor
+@import "bootstrap-v3.3.7/bootstrap";
+@import "select2-v4.0.4";
+@import "select2-bootstrap-theme-v0.1.0-beta-10";
+
+// application
+@import "typography";
+@import "iconography";
+@import "universal";
+@import "tables";
+
+// controller specific
+<% Dir["#{File.dirname(__FILE__)}/controllers/*.scss"].each do |controller_scss_path| %>
+  <% controller_name = File.basename(controller_scss_path).split(".").first.remove(/\A_/) %>
+  body.<%= controller_name %> {
+    @import "controllers/<%= controller_name %>";
+  }
+<% end %>

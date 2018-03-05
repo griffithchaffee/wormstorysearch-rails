@@ -1,0 +1,56 @@
+<% if view_layout == "modal" %>
+  <%= content_for(:title) do %>
+    <%= @story.title %>
+    <%= cp.small_tag(content: "(#{@story.category_label})") %>
+  <% end %>
+<% else %>
+  <%= cp.page_header_div do %>
+    <%= cp.page_actions_div do %>
+      <%= cp.read_link_btn %>
+      <%= cp.edit_link_btn %>
+    <% end %>
+
+    <%= cp.page_title(content: @story.title, sub_text: "(#{@story.category_label})") %>
+  <% end %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Author:") %>
+  <%= @story.author_name %>
+<% end %>
+
+<% if @story.crossover? %>
+  <%= cp.div_tag do %>
+    <%= cp.b_tag(content: "Crossover:") %>
+    <%= @story.crossover %>
+  <% end %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Words:") %>
+  <%= @story.word_count.to_human_size %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Created:") %>
+  <%= cp.moment_span(@story.story_created_on, :calendar_full) %>
+<% end %>
+
+<%= cp.div_tag do %>
+  <%= cp.b_tag(content: "Updated:") %>
+  <%= cp.moment_span(@story.story_updated_at, :calendar_full) %>
+<% end %>
+
+<% description = @story.description? ? @story.description : "No description... you can add one by editing this story." %>
+<%= cp.pre_tag(add_class: "break pretty", style: "margin-top: 10px", content: description) %>
+
+<% if @story.locations.present? %>
+  <%= render_partial("unsearchable_table", directory: "locations", collection: @story.locations_sorted_by_updated_at) %>
+<% end %>
+
+<% if view_layout == "modal" %>
+  <%= content_for(:footer) do %>
+    <%= cp.read_link_btn %>
+    <%= cp.modal_close_btn %>
+  <% end %>
+<% end %>
