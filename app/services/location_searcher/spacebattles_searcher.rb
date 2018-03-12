@@ -23,6 +23,7 @@ module LocationSearcher
         update_stories!(active_after: active_after)
         update_quests!(active_after: active_after)
       end
+      self
     end
 
     def login!

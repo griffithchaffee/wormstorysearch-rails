@@ -1,8 +1,7 @@
 <%= cp.page_title(
   content:  "Development",
-  sub_text: "Short summary about current and future changes",
+  sub_text: "Short summary about upcoming changes",
 ) %>
-
 
 <%= cp.h2_tag(content: "Planned Features:") %>
 
@@ -15,12 +14,3 @@
     <%= cp.li_tag { "Authenticated users can be notified if a story is updated" } %>
   <% end %>
 <% end %>
-
-<%= cp.h2_tag { "Latest Changes:" } %>
-
-<%= cp.ul_tag(add_class: "dl-horizontal") do %>
-  <%= cp.li_tag { "Added NSFW and location filter" } %>
-  <%= cp.li_tag { "Added AO3 (archiveofourown.org) story crawler" } %>
-  <%= cp.li_tag { "Updated script to pull from SufficientVelocity worm subform" } %>
-<% end %>
-

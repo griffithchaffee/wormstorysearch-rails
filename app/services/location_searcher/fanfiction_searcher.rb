@@ -14,6 +14,7 @@ module LocationSearcher
       Rails.logger.silence(Logger::INFO) do
         update_stories!(active_after: active_after)
       end
+      self
     end
 
     def update_story_favorites!(story)

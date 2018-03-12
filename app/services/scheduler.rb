@@ -4,12 +4,14 @@ class Scheduler
 
   class_constant_builder(:tasks, %w[ task every ]) do |const|
     # often
-    const.add(task: "update_location_stories", every: [:hour])
-    const.add(task: "update_location_ratings", every: [:hour, at: 30])
+    const.add(task: "update_location_stories_hourly", every: [:hour])
+    const.add(task: "update_location_ratings_hourly", every: [:hour, at: 30])
     # 5AM UTC = 10PM PST / 1AM EST
     const.add(task: "clear_stale_sessions",  every: [1.day, at: "5:05 am"])
     const.add(task: "update_story_statuses", every: [1.day, at: "5:10 am"])
     const.add(task: "update_stories",        every: [1.day, at: "5:20 am"])
+    # 8AM UTC = 1AM PST / 4AM EST
+    const.add(task: "update_location_stories_daily",  every: [1.day, at: "8:45 am"])
   end
 
   class << self
@@ -31,7 +33,7 @@ class Scheduler
     rescue_block { send(task) }
   end
 
-  scheduled_task :update_location_stories do
+  scheduled_task :update_location_stories_hourly do
     duration = task_options.fetch(:duration) { 3.hours }
     attempt_block(namespace: :spacebattles) do
       LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
@@ -47,7 +49,23 @@ class Scheduler
     end
   end
 
-  scheduled_task :update_location_ratings do
+  scheduled_task :update_location_stories_daily do
+    duration = task_options.fetch(:duration) { 1.day }
+    attempt_block(namespace: :spacebattles) do
+      LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
+    end
+    attempt_block(namespace: :sufficientvelocity) do
+      LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
+    end
+    attempt_block(namespace: :fanfiction) do
+      LocationSearcher::FanfictionSearcher.search!(duration, task_options)
+    end
+    attempt_block(namespace: :archiveofourown) do
+      LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
+    end
+  end
+
+  scheduled_task :update_location_ratings_hourly do
     spacebattles_searcher       = LocationSearcher::SpacebattlesSearcher.new
     sufficientvelocity_searcher = LocationSearcher::SufficientvelocitySearcher.new
     fanfiction_searcher         = LocationSearcher::FanfictionSearcher.new
