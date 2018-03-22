@@ -95,6 +95,7 @@ class ApplicationController < ActionController::Base
     # permit current search
     # optional complete override: permitted_<action>_data_params
     override_method = "permitted_#{action_name}_search_params"
+    has_active_search = params[:searching].present?
     if respond_to?(override_method, true)
       search_params = send(override_method).merge(override_search_params)
     else
@@ -110,14 +111,16 @@ class ApplicationController < ActionController::Base
         end
       # permit current search
       search_params = params.permit(*permit_params).merge(override_search_params)
+      has_active_search ||= search_params.present?
       # merge previous search if no current search
-      if (options[:save] || options[:pull]) && (params[:searching].to_s != "true" || search_params.blank?)
+      if (options[:save] || options[:pull]) && !has_active_search
         search_params.merge!(session_action_data.search_params.with_strong_access.permit(*permit_params))
       end
     end
     # save new search if changed
     search_params = mutate_session_action_params(search_params)
-    if options[:save] && (params[:searching].to_s == "true" || search_params.present?)
+    has_active_search ||= search_params.present?
+    if options[:save] && has_active_search
       change_session_action_data(session_action_data, search_params: search_params)
       # merge search into params
       params.merge!(search_params)
