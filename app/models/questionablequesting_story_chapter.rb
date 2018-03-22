@@ -25,6 +25,7 @@ class QuestionablequestingStoryChapter < ApplicationRecord
   end
 
   def update_rating!(searcher: LocationSearcher::QuestionablequestingSearcher.new)
+    searcher.login! if !searcher.is_authentication?(:authenticated)
     searcher.update_chapter_likes!(self)
     self
   end

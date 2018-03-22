@@ -12,7 +12,9 @@ class SpacebattlesStory < ApplicationRecord
   def update_rating!(update_chapters: false)
     # mass update chapters
     if update_chapters
-      chapters.sort.each(&:update_rating!)
+      searcher = LocationSearcher::SpacebattlesSearcher.new
+      searcher.login!
+      chapters.sort.each { |chapter| chapter.update_rating!(searcher: searcher) }
     end
     # only select chapters that have been rated and at least a week old
     rated_chapters = chapters.select do |chapter|

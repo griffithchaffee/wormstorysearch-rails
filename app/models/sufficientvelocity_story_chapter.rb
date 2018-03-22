@@ -22,6 +22,7 @@ class SufficientvelocityStoryChapter < ApplicationRecord
   end
 
   def update_rating!(searcher: LocationSearcher::SufficientvelocitySearcher.new)
+    searcher.login! if !searcher.is_authentication?(:authenticated)
     searcher.update_chapter_likes!(self)
     self
   end
