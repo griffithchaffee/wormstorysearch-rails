@@ -11,6 +11,10 @@ require env_file if File.file?(env_file)
 Rails.application.define_singleton_method(:settings) do
   @settings ||= File::Configuration.load_rails_config_file("settings.yml.erb").with_indifferent_access.tap do |settings|
     settings.fetch(:version)
+    settings[:locations].each do |slug, location|
+      location[:slug] = slug.to_s
+      location[:model] = nil
+    end
     settings[:namespace] ||= Rails.application.class.name.remove("::Application").underscore
     settings[:title]     ||= settings[:namespace].titleize
   end.to_deep_struct

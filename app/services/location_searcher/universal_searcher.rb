@@ -48,6 +48,14 @@ module LocationSearcher
       end
     end
 
+    def inspect
+      crawler = self.crawler
+      remove_instance_variable(:@crawler)
+      result = super
+      @crawler = crawler
+      result
+    end
+
     class << self
       def search!(*params)
         new.search!(*params)

@@ -169,11 +169,12 @@ class StoriesPresenter < ApplicationPresenter
   def location_rating(location)
     location_rating = location.rating.to_i
     alternate_ratings =
-      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction archiveofourown ])
-      when "spacebattles"       then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
-      when "sufficientvelocity" then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
-      when "fanfiction"         then ["#{location.favorites} Favs"]
-      when "archiveofourown"    then ["#{location.kudos} Kudos"]
+      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction archiveofourown questionablequesting ])
+      when "spacebattles"        then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
+      when "sufficientvelocity"  then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
+      when "fanfiction"          then ["#{location.favorites} Favs"]
+      when "archiveofourown"     then ["#{location.kudos} Kudos"]
+      when "questionablquesting" then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
       end
     alternate_ratings.map! do |alternate_rating|
       em_tag(content: "(#{alternate_rating})")
@@ -185,7 +186,7 @@ class StoriesPresenter < ApplicationPresenter
   def rating_details(*hashes)
     story = extract_record(*hashes)
     location_ratings = story.locations.map do |location|
-      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction archiveofourown ])
+      case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction archiveofourown questionablequesting ])
       when "spacebattles"
         "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.highest_chapter_likes.to_i} High) (#{location.average_chapter_likes.to_i} Avg)"
       when "sufficientvelocity"
@@ -194,6 +195,8 @@ class StoriesPresenter < ApplicationPresenter
         "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.favorites} Favs)"
       when "archiveofourown"
         "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.kudos} Kudos)"
+      when "questionablequesting"
+        "#{location.const.location_abbreviation}: #{location.rating.to_i} (#{location.highest_chapter_likes.to_i} High) (#{location.average_chapter_likes.to_i} Avg)"
       end
     end
     location_ratings.unshift("Highly Rated!") if story.highly_rated?

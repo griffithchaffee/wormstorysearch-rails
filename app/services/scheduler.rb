@@ -47,6 +47,9 @@ class Scheduler
     attempt_block(namespace: :archiveofourown) do
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
     end
+    attempt_block(namespace: :questionablequesting) do
+      LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+    end
   end
 
   scheduled_task :update_location_stories_daily do
@@ -63,16 +66,21 @@ class Scheduler
     attempt_block(namespace: :archiveofourown) do
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
     end
+    attempt_block(namespace: :questionablequesting) do
+      LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+    end
   end
 
   scheduled_task :update_location_ratings_hourly do
-    spacebattles_searcher       = LocationSearcher::SpacebattlesSearcher.new
-    sufficientvelocity_searcher = LocationSearcher::SufficientvelocitySearcher.new
-    fanfiction_searcher         = LocationSearcher::FanfictionSearcher.new
-    archiveofourown_searcher    = LocationSearcher::ArchiveofourownSearcher.new
+    spacebattles_searcher         = LocationSearcher::SpacebattlesSearcher.new
+    sufficientvelocity_searcher   = LocationSearcher::SufficientvelocitySearcher.new
+    fanfiction_searcher           = LocationSearcher::FanfictionSearcher.new
+    archiveofourown_searcher      = LocationSearcher::ArchiveofourownSearcher.new
+    questionablequesting_searcher = LocationSearcher::QuestionablequestingSearcher.new
     # setup searchers
     attempt_block(namespace: :spacebattles) { spacebattles_searcher.login! }
     attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
+    attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
     # update ratings
     50.times do |i|
       # spacebattles
@@ -98,6 +106,12 @@ class Scheduler
         .order_kudos_updated_at(:asc, :first).order_story_updated_at(:desc).first
       attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
         archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
+      end
+      # questionablequesting
+      questionablequesting_chapter = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
+        .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc).first
+      attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
+        questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
       end
       # throttle
       sleep 3

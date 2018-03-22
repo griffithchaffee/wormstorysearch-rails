@@ -5,10 +5,10 @@ class Story < ApplicationRecord
   Rails.application.settings.stories.to_h.each do |const_slug, value|
     class_constant(const_slug, value)
   end
-  class_constant(
-    :location_models,
-    [SpacebattlesStory, SufficientvelocityStory, FanfictionStory, ArchiveofourownStory]
-  )
+  Rails.application.settings.locations.each do |location|
+    location.model = "#{location.slug.capitalize}Story".constantize
+  end
+  class_constant(:location_models, Rails.application.settings.locations.map(&:model))
 
   class_constant_builder(:statuses, %w[ status label ]) do |new_const|
     new_const.add(status: "complete", label: "Complete")

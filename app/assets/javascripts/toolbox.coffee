@@ -1,10 +1,15 @@
 Toolbox = {}
 @Toolbox = Toolbox
 
-# simplify event cancellation
-Toolbox.cancelEvent = (evt) ->
+# stop event but let it bubble
+Toolbox.stopEvent = (evt) ->
   $evt = $.Event(evt)
   $evt.preventDefault()
+  $evt
+
+# stop event and bubble
+Toolbox.cancelEvent = (evt) ->
+  $evt = Toolbox.stopEvent(evt)
   $evt.stopImmediatePropagation()
   $evt
 

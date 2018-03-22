@@ -9,7 +9,7 @@
 <% empty_search      = collection.size == 0 %>
 <% empty_message   ||= "No results..." %>
 
-<%= form_tag(form_path, class: "searchable #{locals[:form_class]}", id: form_id, method: :get) do %>
+<%= form_tag(form_path, class: "searchable #{locals[:form_class]}", id: form_id, method: :get, enforce_utf8: false) do %>
   <%= cp.div_tag(add_class: "table-responsive", id: container_id) do %>
     <%= cp.table_tag(id: table_id, class: "table table-bordered table-hover searchable #{table_classes}".strip) do %>
       <% {
@@ -104,7 +104,9 @@
   <% end %>
 
   <% if locals[:sorters] != false %>
-    <%= hidden_field_tag(:sort, params[:sort]) %>
-    <%= hidden_field_tag(:direction, params[:direction]) %>
+    <%= hidden_field_tag(:sort, params[:sort], class: "filter-blankify") %>
+    <%= hidden_field_tag(:direction, params[:direction], class: "filter-blankify") %>
   <% end %>
+
+  <%= hidden_field_tag(:searching, "true") %>
 <% end %>

@@ -43,3 +43,13 @@ locations:
     max_story_pages: 30
     rating_column: kudos
     rating_multiplier: 0.6
+  questionablequesting:
+    username: <%= ENV["QQ_USERNAME"] %>
+    password: <%= ENV["QQ_PASSWORD"] %>
+    label: QuestionableQuesting
+    abbreviation: QQ
+    host: https://forum.questionablequesting.com
+    max_story_pages: 200
+    max_quest_pages: 200
+    rating_column: highest_chapter_likes
+    rating_multiplier: 1.0
