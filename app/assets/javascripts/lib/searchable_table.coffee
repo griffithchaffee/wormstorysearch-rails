@@ -72,9 +72,9 @@ searchableTableBind = ->
   $radios.not(".filter-reset-ignore").each (i, radio) ->
     if $(radio).prop("checked") then setSearchingStatus(true)
   # build helpful tooltip for text fields if first search
-  if window.location.search is ""
-    $inputs.tooltip({ placement: "top", title: "Press enter to apply", trigger: "focus", container: "body" })
+  #if window.location.search is ""
+    #$inputs.tooltip({ placement: "top left", title: "Press enter to apply", trigger: "focus", container: "body" })
     # remove help tooltip after displaying
-    $inputs.blur -> $inputs.tooltip("destroy")
+    #$inputs.blur -> $inputs.tooltip("destroy")
 
 $(document).on "page:change", searchableTableBind
