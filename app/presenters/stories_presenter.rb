@@ -170,11 +170,11 @@ class StoriesPresenter < ApplicationPresenter
     location_rating = location.rating.to_i
     alternate_ratings =
       case location.const.location_slug.verify_in!(%w[ spacebattles sufficientvelocity fanfiction archiveofourown questionablequesting ])
-      when "spacebattles"        then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
-      when "sufficientvelocity"  then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
-      when "fanfiction"          then ["#{location.favorites} Favs"]
-      when "archiveofourown"     then ["#{location.kudos} Kudos"]
-      when "questionablquesting" then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
+      when "spacebattles"         then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
+      when "sufficientvelocity"   then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
+      when "fanfiction"           then ["#{location.favorites} Favs"]
+      when "archiveofourown"      then ["#{location.kudos} Kudos"]
+      when "questionablequesting" then ["#{location.highest_chapter_likes.to_i} High", "#{location.average_chapter_likes.to_i} Avg"]
       end
     alternate_ratings.map! do |alternate_rating|
       em_tag(content: "(#{alternate_rating})")
