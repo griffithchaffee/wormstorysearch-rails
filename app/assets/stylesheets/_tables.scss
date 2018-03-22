@@ -1,6 +1,6 @@
 // allow scrolling of dropdown cut-off at bottom of table
 div.table-responsive {
-  overflow: visible;
+  overflow: auto;
 }
 
 table.table {
