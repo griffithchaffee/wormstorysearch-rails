@@ -71,7 +71,8 @@
     <% click_info_or_ban_icon_js = cp.event_coffee_script_compile("
       $infoIcon = $this.find('.icon-info')
       $banIcon = $this.find('.icon-ban')
-      if event.srcElement is this
+      target = event.target or event.srcElement
+      if target is this
         if $banIcon.is(':visible')
           $banIcon.click()
         else
