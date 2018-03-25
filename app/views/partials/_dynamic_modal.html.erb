@@ -1,4 +1,4 @@
-<%= cp.div_tag(id: "dynamic-modal", class: "modal fade dynamic-modal", role: "dialog", "aria-labelledby" => "dynamic-modal-header") do %>
+<%= cp.div_tag(id: "dynamic-modal", class: "modal fade dynamic-modal", role: "dialog", "aria-labelledby" => "dynamic-modal-header", tabindex: "-1" ) do %>
   <%= cp.div_tag(class: "modal-dialog modal-lg", role: "document") do %>
     <%= cp.div_tag(class: "modal-content") do %>
       <%= cp.div_tag(class: "modal-header") do %>

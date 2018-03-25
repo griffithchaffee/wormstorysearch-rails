@@ -72,8 +72,8 @@
       <%= cp.icon("ban", add_class: "text-danger") %>
     <% end %>
 
-    <%= cp.button_tag(id: "filters-info-modal-toggle", add_class: "btn btn-default search-hide", "aria-label" => "Show Filtering Information Modal", "aria-haspopup" => "true", "aria-expanded" => "false") do %>
-      <%= cp.icon("info", add_class: "search-hide", data: { target: "#filters-info-modal", toggle: "modal" }) %>
+    <%= cp.button_tag(id: "filters-info-modal-toggle", add_class: "btn btn-default search-hide", "aria-label" => "Show Filtering Information Modal", data: { target: "#filters-info-modal", toggle: "modal" }) do %>
+      <%= cp.icon("info") %>
     <% end %>
 
     <% dropdown_toggle_params = actively_filtering ? { add_class: "btn-primary", remove_class: "btn-default" } : {} %>
