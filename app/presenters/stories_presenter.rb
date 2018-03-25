@@ -129,6 +129,7 @@ class StoriesPresenter < ApplicationPresenter
       icon(
         "calendar-plus",
         title: "Created #{moment_span(story.story_created_on, :calendar_full)}",
+        "aria-label" => "New story created on #{story.story_created_on.to_calendar_full_s}",
         data: { toggle: "tooltip", placement: "top auto", trigger: "hover", content: tooltip_content, html: "true" }
       )
     end

@@ -72,7 +72,7 @@ class ApplicationPresenter < ActionPresenter::Base
   end
 
   def dynamic_modal_link(path, *hashes, &content_block)
-    title = get(:title, *hashes)
+    title = extract(:title, *hashes)
     link_to(path, *hashes, title: title, "aria-label" => "#{title} modal toggle", add_class: "dynamic-modal", &content_block)
   end
 
