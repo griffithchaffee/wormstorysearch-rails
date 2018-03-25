@@ -4,6 +4,7 @@ div.table-responsive {
 }
 
 table.table {
+  tr > th { font-weight: normal; }
   tr > td, th {
     line-height: 1.2em;
     vertical-align: middle;

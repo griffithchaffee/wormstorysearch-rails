@@ -1,9 +1,9 @@
-<%= cp.div_tag(id: "dynamic-modal", class: "modal fade dynamic-modal", role: "dialog") do %>
+<%= cp.div_tag(id: "dynamic-modal", class: "modal fade dynamic-modal", role: "dialog", "aria-labelledby" => "dynamic-modal-header") do %>
   <%= cp.div_tag(class: "modal-dialog modal-lg", role: "document") do %>
     <%= cp.div_tag(class: "modal-content") do %>
       <%= cp.div_tag(class: "modal-header") do %>
         <%= cp.dismiss_action(:modal) %>
-        <%= cp.h4_tag(class: "modal-title", content: "Loading...") %>
+        <%= cp.h4_tag(class: "modal-title", id: "dynamic-modal-header", content: "Loading...") %>
       <% end %>
 
       <%= cp.div_tag(class: "modal-body") do %>

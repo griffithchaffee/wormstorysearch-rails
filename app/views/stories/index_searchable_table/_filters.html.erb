@@ -1,16 +1,16 @@
 <%= cp.tr_tag(class: "filters") do %>
-  <%= cp.td_tag(class: "story", colspan: "2") do %>
+  <%= cp.th_tag(class: "story", colspan: "2") do %>
     <%= render_partial(:story_filter) %>
   <% end %>
 
-  <%= cp.td_tag(class: "rating") do %>
+  <%= cp.th_tag(class: "rating") do %>
     <%= cp.rating_filter %>
   <% end %>
 
-  <%= cp.td_tag(class: "word_count") do %>
+  <%= cp.th_tag(class: "word_count") do %>
     <%= cp.word_count_filter %>
   <% end %>
 
-  <%= cp.td_tag(class: "details") do %>
+  <%= cp.th_tag(class: "details") do %>
   <% end %>
 <% end %>

@@ -25,22 +25,22 @@ class StoriesPresenter < ApplicationPresenter
   # link_to
   define_extension(:span_tag, :edit_link, content: "")
   # filters
-  define_extension(:text_field_tag, :story_filter,      :story_keywords,    placeholder: "Title, Crossover, Author, or Description")
-  define_extension(:text_field_tag, :rating_filter,     :rating_filter,     placeholder: "Rating")
+  define_extension(:text_field_tag, :story_filter, :story_keywords, placeholder: "Title, Crossover, Author, or Description")
+  define_extension(:text_field_tag, :rating_filter, :rating_filter, placeholder: "Rating")
   define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words")
   define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)")
   define_extension(:text_field_tag, :updated_before_filter, :updated_before_filter, placeholder: "MM/DD(/YY)")
   # sorters
   define_extension(:sorter_link, :story_created_on_sorter, "stories.story_created_on", content: "Created", default_direction: "desc")
-  define_extension(:sorter_link, :title_sorter,            "stories.title",            content: "Title")
-  define_extension(:sorter_link, :rating_sorter,           "stories.rating",           content: "Rating", default_direction: "desc")
-  define_extension(:sorter_link, :word_count_sorter,       "stories.word_count",       content: "Words", default_direction: "desc")
+  define_extension(:sorter_link, :title_sorter, "stories.title", content: "Title")
+  define_extension(:sorter_link, :rating_sorter, "stories.rating", content: "Rating", default_direction: "desc")
+  define_extension(:sorter_link, :word_count_sorter,"stories.word_count", content: "Words", default_direction: "desc")
 
   # custom fields
   def story_updated_at_sorter
     sorter_link("stories.story_updated_at", default_direction: "desc") do
       span_tag(add_class: "hidden-sm hidden-xs") { "Updated" } +
-      span_tag(add_class: "hidden-md hidden-lg", title: "Updated") { icon("calendar") }
+      span_tag(add_class: "hidden-md hidden-lg", title: "Updated", "aria-label" => "Updated") { icon("calendar") }
     end
   end
 

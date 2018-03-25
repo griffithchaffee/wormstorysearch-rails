@@ -68,27 +68,20 @@
 
 <%= cp.div_tag(class: "input-group story_filter") do %>
   <%= cp.div_tag(class: "input-group-btn") do %>
-    <% click_info_or_ban_icon_js = cp.event_coffee_script_compile("
-      $infoIcon = $this.find('.icon-info')
-      $banIcon = $this.find('.icon-ban')
-      target = event.target or event.srcElement
-      if target is this
-        if $banIcon.is(':visible')
-          $banIcon.click()
-        else
-          $infoIcon.click()
-    ") %>
-    <%= cp.button_tag(add_class: "btn btn-default", onclick: click_info_or_ban_icon_js) do %>
+    <%= cp.button_tag(add_class: "btn btn-default search-reset", "aria-label" => "Reset Filters") do %>
+      <%= cp.icon("ban", add_class: "text-danger") %>
+    <% end %>
+
+    <%= cp.button_tag(id: "filters-info-modal-toggle", add_class: "btn btn-default search-hide", "aria-label" => "Show Filtering Information Modal", "aria-haspopup" => "true", "aria-expanded" => "false") do %>
       <%= cp.icon("info", add_class: "search-hide", data: { target: "#filters-info-modal", toggle: "modal" }) %>
-      <%= cp.icon("ban", add_class: "search-reset text-danger") %>
     <% end %>
 
     <% dropdown_toggle_params = actively_filtering ? { add_class: "btn-primary", remove_class: "btn-default" } : {} %>
-    <%= cp.dropdown_toggle_btn(dropdown_toggle_params) do %>
+    <%= cp.dropdown_toggle_btn(dropdown_toggle_params.merge(id: "advanced-filters-dropdown-toggle", "aria-label" => "Advanced Filters")) do %>
       <%= cp.icon("filter") %> <%= cp.caret_span %>
     <% end %>
 
-    <%= cp.dropdown_menu_ul do %>
+    <%= cp.dropdown_menu_ul("aria-labelledby" => "advanced-filters-dropdown-toggle") do %>
       <!-- category_filter -->
       <%= cp.li_tag(class: "dropdown-header", content: "Category") %>
       <%= cp.hidden_field_tag(category_filter_key) %>

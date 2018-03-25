@@ -23,7 +23,7 @@ class ApplicationPresenter < ActionPresenter::Base
   end
 
   def icon(icon, *hashes, &content_block)
-    span_tag(*hashes, add_class: "icon icon-#{icon}", &content_block)
+    span_tag(*hashes, add_class: "icon icon-#{icon}", "aria-label" => "#{icon.to_s.titleize} Icon", &content_block)
   end
 
   def page_title(*hashes, &content_block)
@@ -72,7 +72,8 @@ class ApplicationPresenter < ActionPresenter::Base
   end
 
   def dynamic_modal_link(path, *hashes, &content_block)
-    link_to(path, *hashes, add_class: "dynamic-modal", &content_block)
+    title = get(:title, *hashes)
+    link_to(path, *hashes, title: title, "aria-label" => "#{title} modal toggle", add_class: "dynamic-modal", &content_block)
   end
 
   def icon_content(*hashes, &content_block)
@@ -89,6 +90,11 @@ class ApplicationPresenter < ActionPresenter::Base
       merge_data: { moment: { type: key, unix: time.to_i, format: format.to_s } },
       content: time.send("to_#{format}_s")
     )
+  end
+
+  alias_method(:original_dropdown_toggle_btn, :dropdown_toggle_btn)
+  def dropdown_toggle_btn(*hashes, &content_block)
+    original_dropdown_toggle_btn(*hashes, "aria-haspopup" => "true", "aria-expanded" => "false", &content_block)
   end
 
 end

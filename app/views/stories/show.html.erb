@@ -41,8 +41,11 @@
   <%= cp.moment_span(@story.story_updated_at, :calendar_full) %>
 <% end %>
 
-<% description = @story.description? ? @story.description : "No description... you can add one by editing this story." %>
-<%= cp.pre_tag(add_class: "break pretty", style: "margin-top: 10px", content: description) %>
+<%= cp.pre_tag(
+  add_class: "break pretty",
+  style: "margin-top: 10px",
+  content: @story.description? ? @story.description : "No description..."
+) %>
 
 <% if @story.locations.present? %>
   <%= render_partial("unsearchable_table", directory: "locations", collection: @story.locations_sorted_by_updated_at) %>
