@@ -32,15 +32,4 @@ $(document).on "hidden.bs.modal", "#dynamic-modal", (evt) ->
   if $modal.data("original.bs.modal")
     $.each $modal.data("original.bs.modal"), (section, html) ->
       $modal.find(".modal-#{section}").replaceWith(html)
-
-# universal modal callbacks
-$(document).on "click", "[data-toggle=modal]", (evt) ->
-  $triggerElement = $(@)
-  $modal = $($triggerElement.data("target"))
-  $modal.data("$triggerElement", $triggerElement)
-
-# universal modal callbacks
-$(document).on "hidden.bs.modal", (evt) ->
-  $modal = $(@)
-  # put focus back on original element
   $modal.data("$triggerElement")?.focus()
