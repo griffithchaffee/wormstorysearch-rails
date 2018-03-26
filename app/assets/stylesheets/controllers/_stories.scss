@@ -9,24 +9,24 @@
       border-bottom-left-radius: 4px;
       border-top-left-radius: 4px;
     }
-    th.details    { width: 1px;  min-width: 1px;  max-width: 1px;  }
-    th.rating     { width: 85px; min-width: 85px; max-width: 85px; }
-    th.word_count { width: 85px; min-width: 85px; max-width: 85px; }
+    .details    { width: 1px;  min-width: 1px;  max-width: 1px;  }
+    .rating     { width: 85px; min-width: 85px; max-width: 85px; }
+    .word_count { width: 85px; min-width: 85px; max-width: 85px; }
   }
   tbody.sorters {
-    th.details {
+    .details {
       text-align: center;
     }
-    th.story_updated_at {
+    .story_updated_at {
       width: 1px; min-width: 1px;
       @media (max-width: $screen-sm-max) { text-align: center; }
     }
   }
   tbody.rows {
-    td.details a {
+    .details a {
       text-decoration: none;
     }
-    td.story_updated_at {
+    .story_updated_at {
       white-space: nowrap;
     }
   }

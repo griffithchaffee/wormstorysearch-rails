@@ -24,8 +24,8 @@
   <% end %>
 
   <%= cp.td_tag(class: "details") do %>
-    <%= cp.recently_created_icon %>
-    <%= cp.modal_show_link(content: "", add_class: "text-default") %>
-    <%= cp.modal_edit_link(content: "", add_class: "text-default") %>
+    <%= cp.created_icon %>
+    <%= cp.modal_show_link(content: "", add_class: "text-default", "aria-label" => "Story Details") %>
+    <%= cp.modal_edit_link(content: "", add_class: "text-default", "aria-label" => "Edit Story") %>
   <% end %>
 <% end %>

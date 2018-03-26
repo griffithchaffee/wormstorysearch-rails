@@ -23,7 +23,7 @@ class ApplicationPresenter < ActionPresenter::Base
   end
 
   def icon(icon, *hashes, &content_block)
-    span_tag(*hashes, add_class: "icon icon-#{icon}", "aria-label" => "#{icon.to_s.titleize} Icon", &content_block)
+    span_tag(*hashes, add_class: "icon icon-#{icon}", &content_block)
   end
 
   def page_title(*hashes, &content_block)
@@ -72,8 +72,7 @@ class ApplicationPresenter < ActionPresenter::Base
   end
 
   def dynamic_modal_link(path, *hashes, &content_block)
-    title = extract(:title, *hashes)
-    link_to(path, *hashes, title: title, "aria-label" => "#{title} modal toggle", add_class: "dynamic-modal", &content_block)
+    link_to(path, *hashes, add_class: "dynamic-modal", &content_block)
   end
 
   def icon_content(*hashes, &content_block)

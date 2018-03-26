@@ -1,9 +1,9 @@
-<%= cp.div_tag(id: "filters-info-modal", class: "modal fade", role: "dialog", "aria-labelledby" => "filters-info-modal-header", tabindex: "-1") do %>
+<%= cp.div_tag(id: "filters-info-modal", class: "modal fade", role: "dialog", tabindex: "-1") do %>
   <%= cp.div_tag(class: "modal-dialog", role: "document") do %>
     <%= cp.div_tag(class: "modal-content") do %>
       <%= cp.div_tag(class: "modal-header") do %>
         <%= cp.dismiss_action(:modal) %>
-        <%= cp.h4_tag(id: "filters-info-modal-header", class: "modal-title", content: "Advanced Filtering Information") %>
+        <%= cp.h4_tag(class: "modal-title", content: "Advanced Filtering Information") %>
       <% end %>
 
       <%= cp.div_tag(class: "modal-body") do %>

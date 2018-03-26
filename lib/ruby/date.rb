@@ -2,21 +2,23 @@
   klass.send(:define_method, "is_date?") { self.class == Date }
   klass.send(:define_method, "is_time?") { self.class.in?([Time, DateTime]) }
   # duplicate logic in app/assets/javascripts/lib/time.coffee
-  klass.send(:define_method, "to_calendar_brief_s") do
+  klass.send(:define_method, "to_calendar_brief_s") do |full_month: false|
+    strfmonth = full_month ? "%B" : "#{strfmonth}"
     if today?
       is_date? ? "Today" : strftime("%-l:%M %p")
     else
-      strftime(year == Date.today.year ? "%b %-d" : "%b %-d, %Y")
+      strftime(year == Date.today.year ? "#{strfmonth} %-d" : "#{strfmonth} %-d, %Y")
     end
   end
   # duplicate logic in app/assets/javascripts/lib/time.coffee
-  klass.send(:define_method, "to_calendar_full_s") do
+  klass.send(:define_method, "to_calendar_full_s") do |full_month: false|
+    strfmonth = full_month ? "%B" : "#{strfmonth}"
     if today?
       is_date? ? "Today" : "Today at #{strftime("%-l:%M %p")}"
     elsif year == Date.today.year
-      is_date? ? strftime("%b %-d") : "#{strftime("%b %-d")} at #{strftime("%-l:%M %p")}"
+      is_date? ? strftime("#{strfmonth} %-d") : "#{strftime("#{strfmonth} %-d")} at #{strftime("%-l:%M %p")}"
     else
-      is_date? ? strftime("%b %-d, %Y") : "#{strftime("%b %-d, %Y")} at #{strftime("%-l:%M %p")}"
+      is_date? ? strftime("#{strfmonth} %-d, %Y") : "#{strftime("#{strfmonth} %-d, %Y")} at #{strftime("%-l:%M %p")}"
     end
   end
   # custom formatters

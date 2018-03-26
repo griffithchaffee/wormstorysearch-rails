@@ -25,11 +25,11 @@ class StoriesPresenter < ApplicationPresenter
   # link_to
   define_extension(:span_tag, :edit_link, content: "")
   # filters
-  define_extension(:text_field_tag, :story_filter, :story_keywords, placeholder: "Title, Crossover, Author, or Description")
-  define_extension(:text_field_tag, :rating_filter, :rating_filter, placeholder: "Rating")
-  define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words")
-  define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)")
-  define_extension(:text_field_tag, :updated_before_filter, :updated_before_filter, placeholder: "MM/DD(/YY)")
+  define_extension(:text_field_tag, :story_filter, :story_keywords, placeholder: "Title, Crossover, Author, or Description", "aria-label" => "Search")
+  define_extension(:text_field_tag, :rating_filter, :rating_filter, placeholder: "Rating", "aria-label" => "Rating")
+  define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words", "aria-label" => "Word Count")
+  define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated After")
+  define_extension(:text_field_tag, :updated_before_filter, :updated_before_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated Before")
   # sorters
   define_extension(:sorter_link, :story_created_on_sorter, "stories.story_created_on", content: "Created", default_direction: "desc")
   define_extension(:sorter_link, :title_sorter, "stories.title", content: "Title")
@@ -122,17 +122,15 @@ class StoriesPresenter < ApplicationPresenter
     story.recently_created? ? "info" : ""
   end
 
-  def recently_created_icon(*hashes, &content_block)
+  def created_icon(*hashes, &content_block)
     story = extract_record(*hashes)
-    if story.recently_created?
-      tooltip_content = "Created #{moment_span(story.story_created_on, :calendar_full)}".html_safe
-      icon(
-        "calendar-plus",
-        title: "Created #{moment_span(story.story_created_on, :calendar_full)}",
-        "aria-label" => "New story created on #{story.story_created_on.to_calendar_full_s}",
-        data: { toggle: "tooltip", placement: "top auto", trigger: "hover", content: tooltip_content, html: "true" }
-      )
-    end
+    tooltip_content = "Created #{moment_span(story.story_created_on, :calendar_full)}".html_safe
+    icon(
+      "calendar-plus",
+      title: "Created #{moment_span(story.story_created_on, :calendar_full)}",
+      "aria-label" => story.story_created_on.to_calendar_full_s(full_month: true),
+      data: { toggle: "tooltip", placement: "top auto", trigger: "hover", content: tooltip_content, html: "true" }
+    )
   end
 
   def filters_info_icon
