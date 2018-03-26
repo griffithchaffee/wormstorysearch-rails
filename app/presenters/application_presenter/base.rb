@@ -27,15 +27,20 @@ class ApplicationPresenter < ActionPresenter::Base
     end
     # build sorter
     sorter_link_path = current_query_path(sort: new_sort, direction: new_direction)
+    content = "".html_safe
+    content << extract_content(*hashes, &content_block)
     link_to(sorter_link_path, *hashes, add_class: add_classes.join(" ")) do
-      content = "".html_safe
-      content << extract_content(*hashes, &content_block)
       # switching direction on active_sort
       if active_sort == new_sort
         # ascend means to move "up" so chevron-up
         content + " " +
-        icon(active_direction =~ /desc/i ? "chevron-down" : "chevron-up", add_class: "hidden-sm hidden-xs") +
-        icon(active_direction =~ /desc/i ? "chevron-down" : "chevron-up", add_class: "hidden-md hidden-lg icon-sm")
+        if active_direction =~ /desc/i
+          icon("chevron-down", add_class: "hidden-sm hidden-xs", "aria-label" => "Sorted Descending") +
+          icon("chevron-down", add_class: "hidden-md hidden-lg icon-sm", "aria-label" => "Sorted Descending")
+        else
+          icon("chevron-up", add_class: "hidden-sm hidden-xs", "aria-label" => "Sorted Ascending") +
+          icon("chevron-up", add_class: "hidden-md hidden-lg icon-sm", "aria-label" => "Sorted Ascending")
+        end
       else
         content
       end
