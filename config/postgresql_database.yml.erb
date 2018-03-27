@@ -5,27 +5,20 @@ defaults: &defaults
   connect_timeout: 3
   pool: 5 # max number of possible simultaneous database connections per process
   timeout: 3000
+  host: <%= ENV["DATABASE_HOST"] %>
+  username: <%= ENV["DATABASE_USERNAME"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  namespace: wormstorysearch
+
 
 production:
   <<: *defaults
-  username: hometurf_rw
-  password: 1uE5zrPlI1UHxHvqIloe
-  host: hometurf.cnirborxx69q.us-east-1.rds.amazonaws.com
   database: wormstorysearch
-  namespace: wormstorysearch
 
 development:
   <<: *defaults
-  username: finalforms
-  password: finalforms
-  host: localhost
   database: wormstorysearch_development
-  namespace: wormstorysearch
 
 test:
   <<: *defaults
-  username: finalforms
-  password: finalforms
-  host: localhost
   database: wormstorysearch_test
-  namespace: wormstorysearch

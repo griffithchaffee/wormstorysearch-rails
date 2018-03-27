@@ -1,8 +1,7 @@
 class ApplicationMailer < ActionMailer::Base
   default(
-    to: "wormstorysearch@gmail.com",
-    from: "noreply@#{Rails.application.settings.domain}",
-    reply_to: "noreply@#{Rails.application.settings.domain}",
+    from: ENV["GMAIL_FROM"],
+    reply_to: ENV["GMAIL_FROM"],
   )
   layout("mailer")
 end
