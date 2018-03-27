@@ -4,32 +4,10 @@ cd "`dirname $0`/.."
 rails_root="`pwd`"
 version=`grep "^version: [0-9.]*$" "$rails_root/config/settings.yml.erb" | cut -d" " -f2`
 
-commands="
+echo "
 git add -A
 git commit -m \"v$version\"
 git push
 git tag -a -m \"v$version\" v$version
 git push origin \"v$version\"
 "
-
-if [[ "$1" = "push" ]]; then
-  `$commands`
-else
-  echo "$commands"
-fi
-
-##!/usr/bin/env ruby
-#APP_PATH = File.expand_path("../config/application", __dir__)
-#require_relative "../config/boot"
-#require_relative "../config/application"
-#
-#
-##if [ -z $version ]; then printf "#\e[31m git-release must be provided \$version \e[0m\n"; return 0; fi
-#version = Rails.application.settings.version
-#puts %Q[
-#git add -A
-#git commit -m "v#{version}"
-#git push
-#git tag -a -m "v#{version}" v#{version}
-#git push origin "v#{version}"
-#]
