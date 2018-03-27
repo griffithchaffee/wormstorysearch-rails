@@ -4,36 +4,41 @@ cd "`dirname $0`/.."
 rails_root="`pwd`"
 version=v`grep "^version: [0-9.]*$" "$rails_root/config/settings.yml.erb" | cut -d" " -f2`
 migrate="${migrate:-false}"
-git="griffithchaffee/wormstorysearch-rails"
-
-ssh_cmd="ssh -i ~/.ssh/hometurf-ec2-ssh.key -o 'IdentitiesOnly yes' root@wormstorysearch.com"
-
 deploy_path="/srv/rails-$version"
 deploy_path_symlink="/srv/rails"
 
 # setup code
+echo
+printf "#\e[34m setup \e[0m\n"
 cat <<TEXT
-
-$ssh_cmd
+ssh -i ~/.ssh/wormstorysearch.key -o 'IdentitiesOnly yes' root@wormstorysearch.com
 rm -rf $deploy_path
 git clone -b $version git@github.com:griffithchaffee/wormstorysearch-rails $deploy_path
 cd $deploy_path
-RAILS_ENV=production bundle install
-RAILS_ENV=production rake assets:precompile
+
 TEXT
 
-# migrate
-if [ "$migrate" == "true" ]; then
-  echo "RAILS_ENV=production rake database:migrate"
-fi
-
-# complete
+# environment
+printf "#\e[34m environment \e[0m\n"
 cat <<TEXT
-
 cat > $deploy_path/config/env.rb <<"EOF"
 `cat $rails_root/config/env.rb`
 EOF
 
+TEXT
+
+# migrate
+if [ "$migrate" == "true" ]; then
+  printf "#\e[34m migrate \e[0m\n"
+  echo "RAILS_ENV=production rake database:migrate"
+  echo
+fi
+
+# deploy
+printf "#\e[34m deploy \e[0m\n"
+cat <<TEXT
+RAILS_ENV=production bundle install
+RAILS_ENV=production rake assets:precompile
 RAILS_ENV=production rake schedule:install
 ln -fsT $deploy_path $deploy_path_symlink
 systemctl restart nginx.service unicorn-production.service monit.service
