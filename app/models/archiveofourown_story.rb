@@ -36,7 +36,7 @@ class ArchiveofourownStory < ApplicationRecord
 
   # public/private/protected/classes
   def read_url!
-    location_url
+    chapters.size.in?([0, 1]) ? location_url : "#{location_url}/navigate"
   end
 
   def update_rating!(searcher: LocationSearcher::ArchiveofourownSearcher.new)

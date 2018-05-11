@@ -4,6 +4,16 @@ Rails.application.configure do
   config.eager_load = true
   config.cache_classes = true
   config.active_record.belongs_to_required_by_default = false
+  # development options
+  if Rails.env.development?
+    # prevent output buffering
+    $stdin.sync = true
+    $stdout.sync = true
+    $stderr.sync = true
+    # never cache views
+    config.action_view.cache_template_loading = false
+  end
+
 
   # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
   # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.

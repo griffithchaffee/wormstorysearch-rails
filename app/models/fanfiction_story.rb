@@ -33,7 +33,7 @@ class FanfictionStory < ApplicationRecord
 
   # public/private/protected/classes
   def read_url!
-    location_url
+    chapters.present? ? chapters.sort.last.location_url : location_url
   end
 
   def update_rating!(searcher: LocationSearcher::FanfictionSearcher.new)

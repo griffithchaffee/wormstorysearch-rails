@@ -65,6 +65,10 @@ module LocationStoryChapterConcern
     "omake".in?(title.slugify.split("_")) ? "omake" : "chapter"
   end
 
+  def location_url
+    "#{story.const.location_host}#{location_path}"
+  end
+
   def <=>(other)
     position <=> other.position
   end
