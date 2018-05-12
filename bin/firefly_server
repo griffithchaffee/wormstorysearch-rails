@@ -1,77 +1,21 @@
 #!/usr/bin/env ruby
-require "listen"
-require "colored"
+require "bundler/setup"
+require "firefly_server"
 
-# setup
-rails_root = File.expand_path("../..",  __FILE__)
-# listen setup
-listen_watched_directories = %w[ app lib config vendor db/schemas bin ]
-listen_skipped_directories = %w[ app/views app/emails ]
-# rails server setup
-start_server_command = "rails server -p 8080 -b 0.0.0.0"
-stop_server_command  = 'pkill -INT -f "puma"'
-server_pid_file = "#{rails_root}/tmp/pids/server.pid"
-failed_restart_sleep = 3
 
-# listen configuration
-Listen.logger = Logger.new(STDOUT)
-Listen.logger.level = Logger::WARN
-listen_watched_paths = listen_watched_directories.map { |directory| "#{rails_root}/#{directory}" }
-listen_skipped_paths = listen_skipped_directories.map { |directory| "#{rails_root}/#{directory}" }
-listen_watched_paths.each { |watched_path| puts "Watching: #{watched_path.green}" }
-listen_skipped_paths.each { |skipped_path| puts "Skipping: #{skipped_path.yellow}" }
-# start listening
-listener = Listen.to(*listen_watched_paths) do |modified, added, removed|
-  skipped = []
-  [modified, added, removed].each do |files|
-    files.reject! do |file|
-      listen_skipped_paths.any? do |skipped_path|
-        skipped << file if file.start_with?(skipped_path)
-      end
-    end
+server = FireflyServer.new.configure do |config|
+  rails_root = File.expand_path("../..",  __FILE__)
+  # file watcher
+  config.watch_paths = %w[ app lib config vendor db/schemas bin ].map do |rails_dir|
+    "#{rails_root}/#{rails_dir}"
   end
-  puts "Skipped: #{skipped.map(&:green).join(", ")}"    if skipped.any?
-  puts "Modified: #{modified.map(&:yellow).join(", ")}" if modified.any?
-  puts "Added: #{added.map(&:yellow).join(", ")}"       if added.any?
-  puts "Removed: #{removed.map(&:yellow).join(", ")}"   if removed.any?
-  if modified.any? || added.any? || removed.any?
-    puts "Killing Server: #{stop_server_command.green}"
-    %x(#{stop_server_command})
+  config.ignore_paths = %w[ app/views app/emails ].map do |rails_dir|
+    "#{rails_root}/#{rails_dir}"
   end
-end
-listener.start
-
-# exit on ctrl-c
-Signal.trap("SIGINT") do
-  puts "\rStopping Firefly Server".green
-  exit 130
+  # server
+  config.start_server = "rails server -p 8080 -b 0.0.0.0"
+  config.stop_server  = "pkill -INT -f 'puma'"
+  config.pid_file     = "#{rails_root}/tmp/pids/server.pid"
 end
 
-# rails server loop
-attempt = 0
-loop do
-  # delete stale PID file
-  File.delete(server_pid_file) if File.file?(server_pid_file)
-  # start server
-  puts "Starting Server: #{start_server_command.green}"
-  # new fork will have nil initial pid
-  server_pid = fork
-  if server_pid == nil
-    exec(start_server_command)
-  else
-    Process.wait(server_pid)
-    server_pid_status = $? # wait sets $? to pid status
-  end
-  # sleep between failed restart attempts
-  if server_pid_status.success?
-    attempt = 0
-  else
-    attempt += 1
-    if attempt >= 3
-      puts "Waiting #{failed_restart_sleep} seconds between failed restarts".yellow
-      sleep failed_restart_sleep
-    end
-  end
-  puts
-  puts
-end
+server.start!

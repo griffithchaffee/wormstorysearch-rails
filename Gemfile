@@ -32,7 +32,7 @@ gem "http-cookie"
 
 group :development, :test do
   # firefly
-  gem "listen"
+  gem "firefly_server"
   # tests
   gem "factory_girl"
   gem "minitest-reporters"
