@@ -31,7 +31,7 @@ class StoryAuthorsController::Test < ApplicationController::TestCase
     assert_response_redirect(story_authors_path, flash: { notice: 1 })
     # update changes
     @new_attributes.each do |key, value|
-      assert_equal(value, @story_author.send(key))
+      assert_equal(value, @story_author.send(key), "#{key}")
     end
   end
 

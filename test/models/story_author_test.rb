@@ -79,7 +79,7 @@ class StoryAuthor::Test < ApplicationRecord::TestCase
     assert_equal(duplicate_fanfiction_story.author_name, primary_author.fanfiction_name)
     assert_equal(primary_author, duplicate_fanfiction_story.reload.story.author)
     # merge with destroy
-    duplicate_author.update!(spacebattles_name: nil, archiveofourown_name: nil)
+    duplicate_author.update!(spacebattles_name: nil, archiveofourown_name: nil, questionablequesting_name: nil)
     primary_author.update!(sufficientvelocity_name: nil)
     primary_author.reload.merge_with_author!(duplicate_author.reload)
     assert_equal(true, duplicate_author.destroyed?)

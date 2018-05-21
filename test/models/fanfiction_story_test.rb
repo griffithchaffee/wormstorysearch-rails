@@ -9,8 +9,8 @@ class FanfictionStory::Test < ApplicationRecord::TestCase
     # no chapters
     assert_equal(story.location_url, story.read_url)
     # add chapter
-    FactoryGirl.create("#{factory}_chapter", story: story)
-    assert_equal(story.location_url, story.reload.read_url)
+    new_chapter = FactoryGirl.create("#{factory}_chapter", story: story)
+    assert_equal(story.reload.read_url, new_chapter.location_url)
   end
 
   testing "update_rating!" do

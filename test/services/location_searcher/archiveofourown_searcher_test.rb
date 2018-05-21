@@ -21,10 +21,10 @@ class LocationSearcher::ArchiveofourownSearcher::Test < ApplicationTestCase
         "kudos_updated_at"=>archiveofourown_story.attributes["kudos_updated_at"].to_s.presence,
         "location_id"=>"11392257",
         "location_path"=>"/works/11392257",
-        "read_url"=>"http://archiveofourown.org/works/11392257",
+        "read_url"=>"https://archiveofourown.org/works/11392257",
         "status"=>"ongoing",
         "story_created_on"=>"2018-01-31",
-        "story_updated_at"=>"2018-01-30 23:00:00 -0800",
+        "story_updated_at"=>"2018-01-31 00:00:00 -0800",
         "title"=>"Ring-Maker",
         "word_count"=>"188295"
       }.sort.to_h,

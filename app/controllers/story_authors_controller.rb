@@ -43,7 +43,7 @@ private
   end
 
   def permit_story_author_params
-    %w[ name spacebattles_name sufficientvelocity_name fanfiction_name archiveofourown_name ]
+    %w[ name spacebattles_name sufficientvelocity_name fanfiction_name archiveofourown_name questionablequesting_name ]
   end
 
   def permit_index_search_params

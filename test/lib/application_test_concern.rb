@@ -48,8 +48,8 @@ module ApplicationTestConcern
       raise ArgumentError, "assert_mail must be provided an email or a queue position: #{mail_or_position.inspect}"
     end
     values = values.with_indifferent_access.reverse_merge!(
-      from:     "noreply@wormstorysearch.com",
-      reply_to: "noreply@wormstorysearch.com",
+      from:     "wormstorysearch@gmail.com",
+      reply_to: "wormstorysearch@gmail.com",
       to:       "wormstorysearch@gmail.com",
       cc:       nil,
       bcc:      nil,
