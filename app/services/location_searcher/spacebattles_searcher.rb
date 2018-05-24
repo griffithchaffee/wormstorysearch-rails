@@ -55,6 +55,9 @@ module LocationSearcher
       if crawler.response.status == 403 && is_authentication?(:authenticated)
         chapter.update!(likes_updated_at: Time.zone.now)
         return chapter
+      elsif crawler.response.status == 404
+        chapter.story.destroy!
+        return chapter
       end
       verify_response_status!(url: chapter.read_url)
       page_html = crawler.html

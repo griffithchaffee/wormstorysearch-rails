@@ -19,6 +19,10 @@ module LocationSearcher
 
     def update_story_kudos!(story)
       crawler.get(story.location_path, {}, log_level: Logger::INFO, follow_redirects: true)
+      if crawler.response.status == 404
+        story.destroy!
+        return story
+      end
       verify_response_status!(url: story.location_path)
       details_html = crawler.html.css("dl.stats").first
       # return if story not found
