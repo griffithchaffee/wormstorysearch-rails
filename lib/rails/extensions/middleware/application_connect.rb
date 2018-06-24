@@ -14,7 +14,11 @@ module Rails.application.class::Middleware
           ApplicationDatabase.connect!(:by_ip)
         end
       end
-      @app.call(env)
+      tags = []
+      tags << env["action_dispatch.request_id"] if !Rails.env.development?
+      Rails.logger.tagged(tags) do
+        @app.call(env)
+      end
     end
   end
 end

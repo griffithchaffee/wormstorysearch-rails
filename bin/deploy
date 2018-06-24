@@ -30,6 +30,7 @@ TEXT
 # migrate
 if [ "$migrate" == "true" ]; then
   printf "#\e[34m migrate \e[0m\n"
+  echo "RAILS_ENV=production bundle install"
   echo "RAILS_ENV=production rake database:migrate"
   echo
 fi
