@@ -1,7 +1,7 @@
 class StaticController::Test < ApplicationController::TestCase
 
   def contact_setup
-    @reply_to = FactoryGirl.generate(:email)
+    @reply_to = FactoryBot.generate(:email)
     @subject = "SUBJECT"
     @body = "BODY"
   end

@@ -3,13 +3,13 @@ module LocationStoryConcern::TestConcern
 
   included do
     testing "chapters inverse_of story" do
-      story = FactoryGirl.create(factory)
-      chapter = FactoryGirl.create("#{factory}_chapter", story: story)
+      story = FactoryBot.create(factory)
+      chapter = FactoryBot.create("#{factory}_chapter", story: story)
       assert_equal(true, story.reload.chapters.load.first.story.equal?(story))
     end
 
     testing "title description crossover normalization" do
-      story = FactoryGirl.create(factory)
+      story = FactoryBot.create(factory)
       %w[ title description crossover ].each do |attribute|
         next if !attribute.in?(story.class.column_names)
         story.update!(attribute => " \n\r MULTI  #{attribute}   VALUE \n\r ")
@@ -18,7 +18,7 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "word_count" do
-      story = FactoryGirl.create(factory)
+      story = FactoryBot.create(factory)
       {
         "123" => 123,
         "1.1k" => 1100, "1.25k" => 1250,
@@ -30,8 +30,8 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "story_updated_at autoset in chapter after_save" do
-      story = FactoryGirl.create(factory)
-      chapter = FactoryGirl.create("#{factory}_chapter", story: story, chapter_updated_at: 1.hour.ago)
+      story = FactoryBot.create(factory)
+      chapter = FactoryBot.create("#{factory}_chapter", story: story, chapter_updated_at: 1.hour.ago)
       # story should be updated when chapter created
       assert_equal(chapter.chapter_updated_at.to_i, story.reload.story_updated_at.to_i)
       # story can have updated_at changed
@@ -45,7 +45,7 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "story.story_updated_at autoset in after_save" do
-      location_story = FactoryGirl.create(factory, story: nil, story_updated_at: 10.hours.ago)
+      location_story = FactoryBot.create(factory, story: nil, story_updated_at: 10.hours.ago)
       story = location_story.story!
       story.update!(story_created_on: 12.hours.ago, story_updated_at: 12.hours.ago)
       # story_id change
@@ -57,7 +57,7 @@ module LocationStoryConcern::TestConcern
     end
 
     testing "story!" do
-      location_story = FactoryGirl.create(factory, story: nil, title: "Well Traveled [Worm](Planeswalker Taylor)")
+      location_story = FactoryBot.create(factory, story: nil, title: "Well Traveled [Worm](Planeswalker Taylor)")
       assert_nil(location_story.story)
       # creates story with attributes
       story = location_story.story!

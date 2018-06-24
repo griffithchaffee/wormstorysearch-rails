@@ -3,18 +3,18 @@ class ArchiveofourownStory::Test < ApplicationRecord::TestCase
   include LocationStoryConcern::TestConcern
 
   testing "read_url" do
-    story = FactoryGirl.create(factory)
+    story = FactoryBot.create(factory)
     assert_equal("Archive of Our Own", story.const.location_label)
     assert_equal("https://archiveofourown.org", story.const.location_host)
     # no chapters
     assert_equal(story.location_url, story.read_url)
     # add chapter
-    FactoryGirl.create("#{factory}_chapter", story: story)
+    FactoryBot.create("#{factory}_chapter", story: story)
     assert_equal(story.location_url, story.reload.read_url)
   end
 
   testing "update_rating!" do
-    location_story = FactoryGirl.create(factory)
+    location_story = FactoryBot.create(factory)
     story = location_story.story
     # after_save update story rating
     location_story.update!(kudos: 30)
@@ -41,7 +41,7 @@ class ArchiveofourownStory::Test < ApplicationRecord::TestCase
     }.each do |crossover, formatted_crossover|
       assert_same(
         formatted_crossover,
-        FactoryGirl.build(factory, crossover: crossover).crossover_for_story,
+        FactoryBot.build(factory, crossover: crossover).crossover_for_story,
         crossover
       )
     end

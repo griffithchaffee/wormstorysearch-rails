@@ -1,7 +1,7 @@
 class StoryAuthor::Test < ApplicationRecord::TestCase
 
   testing "before_validation name autoset" do
-    author = FactoryGirl.create(:story_author)
+    author = FactoryBot.create(:story_author)
     original_name = author.name
     location_names = []
     # changing location names with a custom name
@@ -18,7 +18,7 @@ class StoryAuthor::Test < ApplicationRecord::TestCase
 
   Story.const.location_models.each do |location_model|
     testing "#{location_model} story auto creates author" do
-      location_story = FactoryGirl.create("#{location_model.const.location_slug}_story", author_name: "SMITH")
+      location_story = FactoryBot.create("#{location_model.const.location_slug}_story", author_name: "SMITH")
       author = location_story.reload.author
       author.attributes.each do |attribute, value|
         next if attribute.in?(%w[ created_at updated_at id ])
@@ -32,11 +32,11 @@ class StoryAuthor::Test < ApplicationRecord::TestCase
   end
 
   testing "location_name change updates story authors" do
-    story = FactoryGirl.create(:story)
+    story = FactoryBot.create(:story)
     original_author = story.author
-    spacebattles_story = FactoryGirl.create(:spacebattles_story, story: story, author_name: original_author.spacebattles_name)
+    spacebattles_story = FactoryBot.create(:spacebattles_story, story: story, author_name: original_author.spacebattles_name)
     assert_equal([1, 1], [Story.count, StoryAuthor.count])
-    new_author = FactoryGirl.create(:story_author)
+    new_author = FactoryBot.create(:story_author)
     # remove duplicate author
     original_author.destroy!
     new_author.update!(spacebattles_name: original_author.spacebattles_name)
@@ -46,27 +46,27 @@ class StoryAuthor::Test < ApplicationRecord::TestCase
 
   testing "merge_with_author" do
     # setup primary
-    primary_author = FactoryGirl.create(:story_author)
-    primary_story  = FactoryGirl.create(:story, author: primary_author)
-    primary_spacebattles_story = FactoryGirl.create(
+    primary_author = FactoryBot.create(:story_author)
+    primary_story  = FactoryBot.create(:story, author: primary_author)
+    primary_spacebattles_story = FactoryBot.create(
       :spacebattles_story,
       story: primary_story,
       author_name: primary_author.spacebattles_name
     )
     # setup duplicates
-    duplicate_author = FactoryGirl.create(:story_author)
-    duplicate_story  = FactoryGirl.create(:story, author: duplicate_author)
-    duplicate_sufficientvelocity_story = FactoryGirl.create(
+    duplicate_author = FactoryBot.create(:story_author)
+    duplicate_story  = FactoryBot.create(:story, author: duplicate_author)
+    duplicate_sufficientvelocity_story = FactoryBot.create(
       :sufficientvelocity_story,
       story: duplicate_story,
       author_name: duplicate_author.sufficientvelocity_name
     )
-    duplicate_fanfiction_story = FactoryGirl.create(
+    duplicate_fanfiction_story = FactoryBot.create(
       :fanfiction_story,
       story: duplicate_story,
       author_name: duplicate_author.fanfiction_name
     )
-    duplicate_archiveofourown_story = FactoryGirl.create(
+    duplicate_archiveofourown_story = FactoryBot.create(
       :archiveofourown_story,
       story: duplicate_story,
       author_name: duplicate_author.archiveofourown_name

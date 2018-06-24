@@ -2,7 +2,11 @@ Rails.application.routes.draw do
 
   root to: "stories#index"
 
-  resources :stories, only: %w[ index show edit update ]
+  resources :stories, only: %w[ index show edit update ] do
+    member do
+      get :clicked
+    end
+  end
   resources :story_authors, only: %w[ index edit update destroy ]
 
   controller :static do

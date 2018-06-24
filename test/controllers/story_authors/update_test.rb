@@ -3,7 +3,7 @@ class StoryAuthorsController::Test < ApplicationController::TestCase
   action = "patch update"
 
   def update_setup
-    @story_author = FactoryGirl.create(:story_author)
+    @story_author = FactoryBot.create(:story_author)
     @original_attributes = { name: "ORIG_NAME" }
     @new_attributes = { name: "NEW_NAME" }
     Story.const.location_models.each do |location_model|

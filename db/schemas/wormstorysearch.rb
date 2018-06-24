@@ -13,6 +13,7 @@ def change
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_archiveofourown_stories_on_story_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "kudos", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author_name", null: false
@@ -50,6 +51,7 @@ def change
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_fanfiction_stories_on_story_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "favorites", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author_name", null: false
@@ -97,6 +99,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_questionablequesting_stories_on_story_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author_name", null: false
@@ -145,6 +148,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_spacebattles_stories_on_story_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author_name", null: false
@@ -183,6 +187,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "rating", default: 0.0, null: false
     t.index ["author_id"], name: "index_stories_on_author_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "category", default: "story", null: false
     t.string "crossover"
@@ -212,6 +217,7 @@ def change
     t.datetime "updated_at", null: false
     t.float "average_chapter_likes", default: 0.0, null: false
     t.index ["story_id"], name: "index_sufficientvelocity_stories_on_story_id"
+    t.integer "clicks", default: 0, null: false
     t.integer "highest_chapter_likes", default: 0, null: false
     t.integer "word_count", default: 0, null: false
     t.string "author_name", null: false

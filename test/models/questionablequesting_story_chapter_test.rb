@@ -3,8 +3,8 @@ class QuestionablequestingStoryChapter::Test < ApplicationRecord::TestCase
   include LocationStoryChapterConcern::TestConcern
 
   testing "updating likes" do
-    story = FactoryGirl.create(:questionablequesting_story, story_created_on: 2.months.ago, story_updated_at: 1.month.ago)
-    chapter = FactoryGirl.create(factory, story: story, chapter_created_on: 1.month.ago, chapter_updated_at: 1.week.ago)
+    story = FactoryBot.create(:questionablequesting_story, story_created_on: 2.months.ago, story_updated_at: 1.month.ago)
+    chapter = FactoryBot.create(factory, story: story, chapter_created_on: 1.month.ago, chapter_updated_at: 1.week.ago)
     # before_validation update likes_updated_at
     assert_nil(chapter.likes_updated_at)
     chapter.update!(likes: 10)

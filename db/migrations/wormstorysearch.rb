@@ -1,50 +1,53 @@
 def up
-  change_table :story_authors do |t|
-    t.string :questionablequesting_name
+  change_table :stories do |t|
+    t.integer :clicks, null: false, default: 0
   end
 
-  create_table "questionablequesting_stories", force: :cascade do |t|
-    t.bigint "story_id"
-    t.date "story_created_on", null: false
-    t.datetime "created_at", null: false
-    t.datetime "story_updated_at", null: false
-    t.datetime "updated_at", null: false
-    t.float "average_chapter_likes", default: 0.0, null: false
-    t.index ["story_id"], name: "index_questionablequesting_stories_on_story_id"
-    t.integer "highest_chapter_likes", default: 0, null: false
-    t.integer "word_count", default: 0, null: false
-    t.string "author_name", null: false
-    t.string "category", default: "story", null: false
-    t.string "location_id", null: false
-    t.string "location_path", null: false
-    t.string "read_url", null: false
-    t.string "title", null: false
-    t.boolean :is_nsfw, default: false, null: false
+  change_table :archiveofourown_stories do |t|
+    t.integer :clicks, null: false, default: 0
   end
 
-  create_table "questionablequesting_story_chapters", force: :cascade do |t|
-    t.bigint "story_id", null: false
-    t.date "chapter_created_on", null: false
-    t.datetime "chapter_updated_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "likes_updated_at"
-    t.datetime "updated_at", null: false
-    t.index ["story_id"], name: "index_questionablequesting_story_chapters_on_story_id"
-    t.integer "likes", default: 0, null: false
-    t.integer "position", null: false
-    t.integer "word_count", default: 0, null: false
-    t.string "category", default: "chapter", null: false
-    t.string "location_path", null: false
-    t.string "title", null: false
+  change_table :fanfiction_stories do |t|
+    t.integer :clicks, null: false, default: 0
+  end
+
+  change_table :questionablequesting_stories do |t|
+    t.integer :clicks, null: false, default: 0
+  end
+
+  change_table :spacebattles_stories do |t|
+    t.integer :clicks, null: false, default: 0
+  end
+
+  change_table :sufficientvelocity_stories do |t|
+    t.integer :clicks, null: false, default: 0
   end
 end
 
 def down
-  change_table :story_authors do |t|
-    t.remove :questionablequesting_name
+  change_table :stories do |t|
+    t.remove :clicks
   end
-  drop_table "questionablequesting_stories"
-  drop_table "questionablequesting_story_chapters"
+
+  change_table :archiveofourown_stories do |t|
+    t.remove :clicks
+  end
+
+  change_table :fanfiction_stories do |t|
+    t.remove :clicks
+  end
+
+  change_table :questionablequesting_stories do |t|
+    t.remove :clicks
+  end
+
+  change_table :spacebattles_stories do |t|
+    t.remove :clicks
+  end
+
+  change_table :sufficientvelocity_stories do |t|
+    t.remove :clicks
+  end
 end
 
 def migration_script

@@ -16,10 +16,10 @@ gem "colored"
 gem "action_presenter-base", "= 0.1"
 
 # assets
-gem "sass-rails",   "~> 5.0"
-gem "uglifier",     ">= 1.3.0"
-gem "coffee-rails", "~> 4.2"
-gem "turbolinks",   "~> 5"
+gem "sass-rails"#,   "~> 5.0"
+gem "uglifier"#,     ">= 1.3.0"
+gem "coffee-rails"#, "~> 4.2"
+gem "turbolinks"#,   "~> 5"
 gem "therubyracer", platforms: :ruby
 
 # scheduler
@@ -34,7 +34,7 @@ group :development, :test do
   # firefly
   gem "firefly_server"#, path: "/root/griffithchaffee/firefly_server"
   # tests
-  gem "factory_girl"
+  gem "factory_bot"
   gem "minitest-reporters"
   gem "byebug"
   gem "database_cleaner"

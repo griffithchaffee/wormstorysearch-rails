@@ -9,9 +9,9 @@ class StoriesController::Test < ApplicationController::TestCase
 
   testing "#{action} with stories" do
     stories = []
-    archived_story = FactoryGirl.create(:story)
+    archived_story = FactoryBot.create(:story)
     Story.const.location_models.each do |location_model|
-      location_story = FactoryGirl.create("#{location_model.const.location_slug}_story")
+      location_story = FactoryBot.create("#{location_model.const.location_slug}_story")
       stories << location_story.story
     end
     Story.reset_archived_state!

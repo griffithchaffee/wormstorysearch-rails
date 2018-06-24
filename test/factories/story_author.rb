@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory(:story_author) do
-    name { FactoryGirl.generate(:uniq_s) }
+    name { FactoryBot.generate(:uniq_s) }
     Story.const.location_models.each do |location_model|
-      send("#{location_model.const.location_slug}_name") { FactoryGirl.generate(:uniq_s) }
+      send("#{location_model.const.location_slug}_name") { FactoryBot.generate(:uniq_s) }
     end
   end
 end

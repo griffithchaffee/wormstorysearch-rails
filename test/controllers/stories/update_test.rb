@@ -3,7 +3,7 @@ class StoriesController::Test < ApplicationController::TestCase
   action = "patch update"
 
   def update_setup
-    @story = FactoryGirl.create(:story)
+    @story = FactoryBot.create(:story)
     @original_attributes = {
       title: "ORIG_TITLE",
       crossover: "ORIG_CROSS",

@@ -3,7 +3,7 @@ module LocationStoryChapterConcern::TestConcern
 
   included do
     testing "word_count" do
-      chapter = FactoryGirl.create(factory)
+      chapter = FactoryBot.create(factory)
       {
         "123" => 123,
         "1.1k" => 1100, "1.25k" => 1250,
@@ -15,13 +15,13 @@ module LocationStoryChapterConcern::TestConcern
     end
 
     testing "title strip" do
-      chapter = FactoryGirl.create(factory)
+      chapter = FactoryBot.create(factory)
       chapter.update!(title: " \n\r TITLE \n\r ")
       assert_equal("TITLE", chapter.title)
     end
 
     testing "automatic created_on slight adjustment due to timezone" do
-      chapter = FactoryGirl.create(factory)
+      chapter = FactoryBot.create(factory)
       chapter.story.update!(story_created_on: Date.today, story_updated_at: Date.today)
       chapter.update!(chapter_created_on: Date.yesterday, chapter_updated_at: Date.today)
       assert_equal(chapter.story.story_created_on, chapter.chapter_created_on)

@@ -1,15 +1,20 @@
 module Minitest
   module Reporters
-    class SuiteReporter < BaseReporter
+    class ApplicationReporter < BaseReporter
       include ANSI::Code
       include RelativePosition
 
-      attr_accessor :reporter_options, :recorder, :indent
+      attr_accessor(*%i[
+        recorder
+        indent
+        active_suite_name
+      ])
 
       def initialize(*params, &block)
         super
         self.recorder = Recorder.new(self)
         self.indent = "   "
+        self.active_suite_name = nil
       end
 
       def start
@@ -18,26 +23,34 @@ module Minitest
         puts
       end
 
-      def before_suite(suite)
-        if suite != NilClass
-          recorder.started_suite!
-          puts "#{suite} - #{suite.runnable_methods.size} tests".pluralize(suite.runnable_methods.size)
+      def before_suite(first_test)
+        suite = first_test.class
+        suite_test_count = suite.runnable_methods.size
+        puts "#{first_test.class} - #{suite_test_count} tests"
+      end
+
+      def after_suite(last_result)
+        puts
+      end
+
+      def before_test(first_test)
+        suite_name = first_test.class.name
+        if suite_name != active_suite_name
+          # call after_suite when we change suites
+          after_suite(active_suite_name) if !active_suite_name.nil?
+          before_suite(first_test)
+          self.active_suite_name = suite_name
         end
       end
 
-      def after_suite(suite)
-        if suite != NilClass
-          recorder.completed_suite!(suite)
-          puts "#{indent}Duration: #{time_shorthand_s(recorder.completed_suite_time)}"
-          puts
-        end
+      def after_test(result)
+        # noop
       end
 
-      def record(test)
+      def record(result)
         super
-        clear_recording_test_instance_variables(test)
-        print_recording_test_status(test)
-        print_recording_test_failures_if_any(test)
+        print_recording_test_status(result)
+        print_recording_test_failures_if_any(result)
       end
 
       def report
@@ -48,6 +61,7 @@ module Minitest
       end
 
     protected
+
       def time_shorthand_s(time)
         if time < Time.at(60.seconds).gmtime
           time.strftime("%S.%L")
@@ -60,7 +74,6 @@ module Minitest
 
       def print_reporting_results
         puts "Finished After: #{time_shorthand_s(recorder.elapsed_time)}"
-        puts "Time Per Suite: #{time_shorthand_s(recorder.average_suite_time)}"
         # tests breakdown
         print "#{count} tests"
         print ", ", "#{assertions} assertions".green
@@ -92,20 +105,12 @@ module Minitest
         puts
       end
 
-      def clear_recording_test_instance_variables(test)
-        # save memory
-        (test.instance_variables - %i[ @NAME @failures @assertions ]).each do |variable|
-          next if variable.to_s.starts_with?("@_")
-          test.instance_variable_set(variable, nil)
-        end
-      end
-
-      def print_recording_test_status(test)
+      def print_recording_test_status(result)
         print "  "
-        print_colored_status(test)
+        print_colored_status(result)
         print "  "
         print time_shorthand_s(recorder.elapsed_time)
-        print pad_test(test.name)
+        print "  #{result.name}"
         puts
       end
 
@@ -123,15 +128,9 @@ module Minitest
       end
 
       class Recorder
-        attr_accessor *%i[
-          start_time stop_time
-          started_suite_time completed_suite_time
-          completed_suite_count completed_test_count
-        ]
+        attr_accessor(*%i[ start_time stop_time ])
 
         def initialize(reporter)
-          self.completed_suite_count = 0
-          self.completed_test_count = 0
         end
 
         def time_at_now
@@ -146,16 +145,8 @@ module Minitest
           self.stop_time = time_at_now
         end
 
-        def started_suite!
-          self.started_suite_time = time_at_now
-        end
-
         def active_time
           stop_time || time_at_now
-        end
-
-        def active_suite_time
-          completed_suite_time || time_at_now
         end
 
         def elapsed_duration
@@ -164,22 +155,6 @@ module Minitest
 
         def elapsed_time
           Time.at(elapsed_duration).gmtime
-        end
-
-        def average_test_time
-          completed_test_count = 1 if completed_test_count.to_i < 1
-          Time.at(elapsed_time.to_f / completed_test_count).gmtime
-        end
-
-        def average_suite_time
-          self.completed_suite_count = 1 if completed_suite_count.to_i < 1
-          Time.at(elapsed_time.to_f / completed_suite_count).gmtime
-        end
-
-        def completed_suite!(suite)
-          self.completed_suite_time = Time.at(time_at_now - started_suite_time)
-          self.completed_suite_count += 1
-          self.completed_test_count += suite.runnable_methods.size
         end
       end
     end

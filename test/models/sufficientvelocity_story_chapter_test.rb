@@ -3,8 +3,8 @@ class SufficientvelocityStoryChapter::Test < ApplicationRecord::TestCase
   include LocationStoryChapterConcern::TestConcern
 
   testing "updating likes" do
-    story = FactoryGirl.create(:sufficientvelocity_story, story_created_on: 2.months.ago, story_updated_at: 1.month.ago)
-    chapter = FactoryGirl.create(factory, story: story, chapter_created_on: 1.month.ago, chapter_updated_at: 1.week.ago)
+    story = FactoryBot.create(:sufficientvelocity_story, story_created_on: 2.months.ago, story_updated_at: 1.month.ago)
+    chapter = FactoryBot.create(factory, story: story, chapter_created_on: 1.month.ago, chapter_updated_at: 1.week.ago)
     story = chapter.story
     # before_validation update likes_updated_at
     assert_nil(chapter.likes_updated_at)

@@ -3,13 +3,13 @@ class StoryAuthorsController::Test < ApplicationController::TestCase
   action = "get edit"
 
   testing "#{action}" do
-    story_author = FactoryGirl.create(:story_author)
+    story_author = FactoryBot.create(:story_author)
     get(:edit, params: { id: story_author.id })
     assert_response_admin_only
   end
 
   testing "#{action} as admin" do
-    story_author = FactoryGirl.create(:story_author)
+    story_author = FactoryBot.create(:story_author)
     become_admin
     assert_raises(ArgumentError) do
       get(:edit, params: { id: story_author.id })
@@ -17,7 +17,7 @@ class StoryAuthorsController::Test < ApplicationController::TestCase
   end
 
   testing "#{action} with view_layout=modal as admin" do
-    story_author = FactoryGirl.create(:story_author)
+    story_author = FactoryBot.create(:story_author)
     become_admin
     set_view_layout("modal")
     get(:edit, params: { id: story_author.id })

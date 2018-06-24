@@ -13,7 +13,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author_name"=>"Dyngari",
-        "highest_chapter_likes"=>"0",
+        "clicks"=>"0", "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"story",
         "location_id"=>"thread-536881",
@@ -61,7 +61,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author_name"=>"Crimson Square",
-        "highest_chapter_likes"=>"0",
+        "clicks"=>"0", "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"quest",
         "location_id"=>"thread-532675",

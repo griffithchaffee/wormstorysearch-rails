@@ -14,6 +14,7 @@ class LocationSearcher::ArchiveofourownSearcher::Test < ApplicationTestCase
       {
         "author_name"=>"Lithos_Maitreya",
         "category"=>"story",
+        "clicks"=>"0",
         "crossover"=>"The Lord of the Rings - J. R. R. Tolkien",
         "description"=>"Taylor Hebert had a bad day, and came out of it changed.Some parahumans can control bugs. Some can build advanced technology. Some can do unspeakable things to space and time.Taylor can make magic rings, wondrous metals, mysterious weapons, and may not be a parahuman--or, indeed, human--at all.",
         "is_nsfw"=>"false",

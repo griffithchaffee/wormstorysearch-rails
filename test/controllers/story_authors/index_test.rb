@@ -8,7 +8,7 @@ class StoryAuthorsController::Test < ApplicationController::TestCase
   end
 
   testing "#{action} with story_authors" do
-    story_author = FactoryGirl.create(:story_author)
+    story_author = FactoryBot.create(:story_author)
     get(:index)
     assert_response_ok
     assert_in_response_body([

@@ -14,6 +14,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
       {
         "author_name"=>"Racheakt",
         "category"=>"story",
+        "clicks"=>"0",
         "crossover"=>"",
         "description"=>"Part 1 of the Bird Series. Taylor triggers and is sent to an insane asylum.",
         "favorites"=>"154",
@@ -63,6 +64,7 @@ class LocationSearcher::FanfictionSearcher::Test < ApplicationTestCase
       {
         "author_name"=>"Rhydeble",
         "category"=>"story",
+        "clicks"=>"0",
         "crossover"=>"Dresden Files & Worm",
         "description"=>
          "Leviathan has destroyed Brockton Bay, and Taylor Hebert has lost everything she had. Now, as a teenage refugee in Chicago, she is trying to rebuild a life for herself as a vigilante. However, everything in Chicago is not as it seems, and parahuman supervillains fight side by side with vampires. And that hero guy, Myrddin? He claims he's actually a wizard called Harry Dresden.",
