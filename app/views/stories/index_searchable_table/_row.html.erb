@@ -6,10 +6,10 @@
   <% end %>
 
   <%= cp.td_tag(class: "title") do %>
-    <%= cp.tab_link(story.read_url, content: story.crossover_title) %>
+    <%= cp.tab_link(story.read_url, content: story.crossover_title, data: { track: cp.click_track_path(story) }) %>
     by <%= story.author_name %> on
     <% story.locations.each do |location| %>
-      <%= cp.tab_link(location.read_url, style: "text-decoration: none;") do %>
+      <%= cp.tab_link(location.read_url, style: "text-decoration: none;", data: { track: cp.click_track_path(story) }) do %>
         <%= cp.label_span("primary", content: location.const.location_abbreviation) %>
       <% end %>
     <% end %>

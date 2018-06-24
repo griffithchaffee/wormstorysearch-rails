@@ -81,9 +81,15 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:edit_link, :edit_link_btn, add_class: "btn btn-default")
 
   def read_link(*hashes, &content_block)
-    record = extract_record(*hashes)
+    story = extract_record(*hashes)
     default_content = icon_content(*hashes, icon: "external-link", content: "Read")
-    tab_link(record.read_url, *hashes, content: default_content, &content_block)
+    tab_link(
+      story.read_url,
+      *hashes,
+      content: default_content,
+      data: { track: click_track_path(story) },
+      &content_block
+    )
   end
   define_extension(:read_link, :read_link_btn, add_class: "btn btn-primary")
 
@@ -207,6 +213,14 @@ class StoriesPresenter < ApplicationPresenter
       add_class: "tooltip-text-left",
       merge_data: { toggle: "tooltip", trigger: "hover", html: true }
     )
+  end
+
+  def click_track_path(story)
+    if story.is_a?(Story)
+      view.clicked_story_path(story)
+    else
+      view.clicked_story_path(story.story_id, location_model: story.class.name, location_id: story.id)
+    end
   end
 
 end

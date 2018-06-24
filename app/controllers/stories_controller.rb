@@ -29,6 +29,19 @@ class StoriesController < ApplicationController
     redirect_to(stories_path)
   end
 
+  def clicked
+    story = Story.find_by(id: params[:id])
+    if story
+      story.increment!(:clicks)
+      if params[:location_model] && params[:location_id]
+        location_model = params[:location_model].to_s.classify.constantize
+        location_story = location_model.find_by(id: params[:location_id])
+        location_story.increment!(:clicks) if location_story
+      end
+    end
+    render(inline: "clicked")
+  end
+
 private
 
   generate_permitted_record_params

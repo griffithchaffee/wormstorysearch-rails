@@ -1,7 +1,7 @@
 <% story = record %>
 <%= cp.tr_tag(id: cp.record_to_namespace(story)) do %>
   <%= cp.td_tag(class: "location") do %>
-    <%= cp.tab_link(story.read_url, style: "text-decoration: none;") do %>
+    <%= cp.tab_link(story.read_url, style: "text-decoration: none;", data: { track: cp.click_track_path(story) }) do %>
       <%= cp.label_span("primary", content: story.const.location_label) %>
     <% end %>
   <% end %>
