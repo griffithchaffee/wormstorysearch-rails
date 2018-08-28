@@ -4,6 +4,7 @@ module LocationSearcher
     def crawler
       return @crawler if @crawler
       @crawler = SiteCrawler.new(config.location_host)
+      @crawler.throttle = 2.seconds
       @crawler.default_headers["User-Agent"] = "Worm Story Search (+http://wormstorysearch.com; wormstorysearch@gmail.com)"
       @crawler
     end
@@ -42,9 +43,9 @@ module LocationSearcher
       is_worm_story
     end
 
-    def verify_response_status!(url:, status: 200)
+    def verify_response_status!(debug_message:, status: 200)
       if !crawler.response.status.in?(Array(status))
-        raise InvalidResponse, "#{url} response status was #{crawler.response.status}"
+        raise InvalidResponse, "Invalid Response Status [#{crawler.response.status}]: #{debug_message}"
       end
     end
 

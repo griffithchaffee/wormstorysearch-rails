@@ -5,7 +5,6 @@ module LocationSearcher
     def initialize
       @story_model = SufficientvelocityStory
       @config = story_model.const
-      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def is_authentication?(check_authentication)
@@ -60,7 +59,7 @@ module LocationSearcher
         chapter.story.destroy!
         return chapter
       end
-      verify_response_status!(url: chapter.read_url)
+      verify_response_status!(debug_message: "#{self.class} update_chapter_likes #{chapter.inspect}")
       page_html = crawler.html
       # no messages
       if page_html.css("li.message").size != 0
@@ -90,6 +89,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/worm.94/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_stories")
         results = update_stories_from_html!(crawler.html, options.merge(is_worm_story: true))
         # stop on last page
         break if results[:more] != true
@@ -107,6 +107,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/quests.29/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest" }))
         # stop on last page
         break if results[:more] != true
@@ -142,6 +143,7 @@ module LocationSearcher
 
     def update_chapters_for_story!(story)
       crawler.get("#{story.location_path}/threadmarks", {}, { log_level: Logger::WARN })
+      verify_response_status!(debug_message: "#{self.class} update_chapters_for_story #{story.inspect}", status: [200, 404])
       update_chapters_for_story_from_html!(story, crawler.html)
     end
 

@@ -5,7 +5,6 @@ module LocationSearcher
     def initialize
       @story_model = ArchiveofourownStory
       @config = story_model.const
-      @crawler = SiteCrawler.new(config.location_host)
     end
 
     def search!(active_after, search_options = {})
@@ -23,7 +22,7 @@ module LocationSearcher
         story.destroy!
         return story
       end
-      verify_response_status!(url: story.location_path)
+      verify_response_status!(debug_message: "#{self.class} update_story_kudos #{story.inspect}")
       details_html = crawler.html.css("dl.stats").first
       # return if story not found
       if details_html.blank?
@@ -55,6 +54,7 @@ module LocationSearcher
           "work_search[sort_column]" => "revised_at",
         }
         crawler.get("/works", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_stories")
         results = update_stories_from_html!(crawler.html, options)
         # stop on last page
         break if results[:more] != true
@@ -85,6 +85,7 @@ module LocationSearcher
 
     def update_chapters_for_story!(story)
       crawler.get("#{story.location_path}/navigate", {}, log_level: Logger::WARN)
+      verify_response_status!(debug_message: "#{self.class} update_chapters_for_story")
       update_chapters_for_story_from_html!(story, crawler.html)
     end
 

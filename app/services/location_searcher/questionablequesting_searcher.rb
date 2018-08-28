@@ -59,7 +59,7 @@ module LocationSearcher
         chapter.story.destroy!
         return chapter
       end
-      verify_response_status!(url: chapter.read_url)
+      verify_response_status!(debug_message: "#{self.class} update_chapter_likes #{chapter.inspect}")
       page_html = crawler.html
       # no messages
       if page_html.css("li.message").size != 0
@@ -95,6 +95,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/creative-writing.19/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_sfw_stories")
         results = update_stories_from_html!(crawler.html, options)
         # stop on last page
         break if results[:more] != true
@@ -112,6 +113,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/nsfw-creative-writing.29/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_nsfw_stories")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { is_nsfw: true }))
         # stop on last page
         break if results[:more] != true
@@ -134,6 +136,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/questing-and-roleplay.20/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_sfw_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest" }))
         # stop on last page
         break if results[:more] != true
@@ -151,6 +154,7 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/nsfw-questing-and-roleplay.12/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_nsfw_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest", is_nsfw: true }))
         # stop on last page
         break if results[:more] != true
@@ -186,6 +190,7 @@ module LocationSearcher
 
     def update_chapters_for_story!(story)
       crawler.get("#{story.location_path}/threadmarks", {}, { log_level: Logger::WARN })
+      verify_response_status!(debug_message: "#{self.class} update_chapters_for_story", status: [200, 404])
       update_chapters_for_story_from_html!(story, crawler.html)
     end
 

@@ -1,6 +1,7 @@
 class SiteCrawler
   attr_reader :responses, :site_url, :cookie_jar, :default_headers
   attr_writer :logger
+  attr_accessor :throttle
 
   def initialize(site_url, options = {})
     options = options.with_indifferent_access
@@ -60,6 +61,7 @@ class SiteCrawler
       raise RedirectLimit, "redirect limit reached" if options[:redirect_limit] == 0
       get response.headers["Location"], {}, follow_redirects: true, redirect_limit: options[:redirect_limit] - 1
     end
+    sleep(throttle) if throttle
     response.status
   end
 
@@ -82,6 +84,7 @@ class SiteCrawler
         get response.headers["Location"], {}, follow_redirects: true
       end
     end
+    sleep(throttle) if throttle
     response.status
   end
 
