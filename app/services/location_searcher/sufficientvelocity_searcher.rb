@@ -199,7 +199,7 @@ module LocationSearcher
     end
 
     def parse_chapters_html(chapters_html)
-      chapters_html.css("div.threadmarkList li.primaryContent")
+      chapters_html.css("div.threadmarkList li.primaryContent").reject { |li| li.text.strip == "..." }
     end
 
     def parse_chapter_html(chapter_html)
