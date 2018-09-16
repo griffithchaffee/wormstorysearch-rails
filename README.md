@@ -1,4 +1,4 @@
-# README
+# Getting Started
 
 ### Install Ruby v2.4.1
 
