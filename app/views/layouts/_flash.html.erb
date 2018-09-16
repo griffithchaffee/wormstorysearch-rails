@@ -1,0 +1,20 @@
+<%
+  alerts = {
+    notice: :success,
+    info: :info,
+    warn: :warning,
+    alert: :danger,
+  }.with_indifferent_access
+%>
+
+<%= cp.div_tag(id: "flash-messages") do %>
+  <% flash.each do |key, messages| %>
+    <% messages = Array(messages).select(&:present?) %>
+    <%= cp.alert_div(alerts.fetch(key), add_class: "flash-message") do %>
+      <%= cp.dismiss_action(:alert) %>
+      <% messages.each do |message| %>
+        <%= message %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

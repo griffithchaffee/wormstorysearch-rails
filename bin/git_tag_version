@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd "`dirname $0`/.."
+rails_root="`pwd`"
+version=`grep "^version: [0-9.]*$" "$rails_root/config/settings.yml.erb" | cut -d" " -f2`
+
+echo "
+git add -A
+git commit -m \"v$version\"
+git push
+git tag -a -m \"v$version\" v$version
+git push origin \"v$version\"
+"

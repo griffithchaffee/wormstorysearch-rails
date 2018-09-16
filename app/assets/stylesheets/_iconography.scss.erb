@@ -1,0 +1,71 @@
+.icon {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome Icons;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-spin {
+  -webkit-animation: icon-spin 2s infinite linear;
+  animation: icon-spin 2s infinite linear;
+}
+
+.icon-pulse {
+  -webkit-animation: icon-spin 1s infinite steps(8);
+  animation: icon-spin 1s infinite steps(8);
+}
+
+.icon-sm { font-size: 12px; }
+.icon-lg { font-size: 18px; }
+
+@-webkit-keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+// https://fontawesome.com/v4.7.0/icons/
+<% {
+  "ban"               => "f05e",
+  "eye"               => "f06e",
+  "list"              => "f03a",
+  "edit"              => "f044", # pencil-square-o
+  "trash"             => "f014", # trash-o
+  "info"              => "f05a",
+  "filter"            => "f0b0",
+  "refresh"           => "f021",
+  "clock"             => "f017",
+  "chevron-up"        => "f077",
+  "chevron-down"      => "f078",
+  "angle-up"          => "f106",
+  "angle-down"        => "f107",
+  "calendar"          => "f073",
+  "calendar-plus"     => "f271", # calendar-plus-o
+  "external-link"     => "f08e",
+  "question-circle-o" => "f29c",
+  "question-circle"   => "f059",
+  "exclamation-triangle" => "f071",
+}.each do |name, unicode| %>
+  .icon-<%= name %> {
+    &:before { content: "\<%= unicode %>"; }
+    font-family: "FontAwesome Icons"; top: 0 !important;
+  }
+<% end %>

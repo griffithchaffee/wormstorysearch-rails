@@ -1,0 +1,16 @@
+<%= cp.page_title(
+  content:  "Development",
+  sub_text: "Short summary about upcoming changes",
+) %>
+
+<%= cp.h2_tag(content: "Planned Features:") %>
+
+<%= cp.ul_tag do %>
+  <%= cp.li_tag { "Make github repository public" } %>
+  <%= cp.li_tag { "Pull stories from QQ (questionablequesting.com)" } %>
+  <%= cp.li_tag { "Ability to login using email authentication (no passwords)" } %>
+  <%= cp.ul_tag do %>
+    <%= cp.li_tag { "Authenticated users can have favorite story lists" } %>
+    <%= cp.li_tag { "Authenticated users can be notified if a story is updated" } %>
+  <% end %>
+<% end %>

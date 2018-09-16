@@ -1,0 +1,54 @@
+<% id_namespace    ||= cp.namespace_dasherized(controller_name) %>
+<% class_namespace ||= cp.namespace_dasherized([controller_name, action_name]) %>
+<% table_id          = cp.namespace_dasherized([id_namespace, "unsearchable-table"]) %>
+<% table_classes     = "#{locals[:table_class]} #{cp.namespace_dasherized([class_namespace, "unsearchable-table"])}".strip %>
+<% directory         = "#{locals[:directory] || action_name}_unsearchable_table" %>
+<% container_id      = cp.namespace_dasherized([table_id, "container"]) %>
+<% empty_search      = collection.size == 0 %>
+<% empty_message   ||= "No results..." %>
+
+<%= cp.div_tag(add_class: "table-responsive", id: container_id) do %>
+  <%= cp.table_tag(id: table_id, class: "table table-bordered table-hover unsearchable #{table_classes}".strip) do %>
+    <% {
+      headers: locals[:headers] != false,
+      filters: locals[:filters] == true,
+      sorters: locals[:sorters] == true,
+    }.each do |partial, default_enabled| %>
+      <% enabled = default_enabled ? locals[partial] != false : locals[partial] == true %>
+      <% if enabled %>
+        <%= cp.tbody_tag(class: partial.to_s) do %>
+          <%= render_partial("#{directory}/#{partial}", locals) %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if locals[:tbodies] == true %>
+      <%= render_partial("#{directory}/tbodies", locals) %>
+    <% else %>
+      <%= cp.tbody_tag(class: "rows") do %>
+        <% if locals[:rows] == true %>
+          <%= render_partial("#{directory}/rows", locals) %>
+        <% else %>
+          <% collection.each do |record| %>
+            <% cp.record = record %>
+            <%= render_partial("#{directory}/row", locals.merge(record: record)) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if empty_search && empty_message.present? %>
+      <%= cp.tr_tag do %>
+        <%= cp.td_tag(colspan: "1000") do %>
+          <%= cp.em_tag(class: "text-muted", content: empty_message) %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if locals[:footer] == true && empty_search %>
+      <%= cp.tbody_tag(class: "footer") do %>
+        <%= render_partial("#{directory}/footer", locals) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

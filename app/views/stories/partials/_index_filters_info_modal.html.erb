@@ -1,0 +1,44 @@
+<%= cp.div_tag(id: "filters-info-modal", class: "modal fade", role: "dialog", tabindex: "-1") do %>
+  <%= cp.div_tag(class: "modal-dialog", role: "document") do %>
+    <%= cp.div_tag(class: "modal-content") do %>
+      <%= cp.div_tag(class: "modal-header") do %>
+        <%= cp.dismiss_action(:modal) %>
+        <%= cp.h4_tag(class: "modal-title", content: "Advanced Filtering Information") %>
+      <% end %>
+
+      <%= cp.div_tag(class: "modal-body") do %>
+        <% sub_li_style = "margin-left: 10px;" %>
+        <% sub_sub_li_style = "margin-left: 20px;" %>
+        <% example_span = -> (content) { cp.span_tag { "(Ex: #{content})" } } %>
+
+        <%= cp.h4_tag { "Keywords Filter" } %>
+        <%= cp.ul_tag do %>
+          <%= cp.li_tag(style: sub_li_style) { "Default search is exact match" } %>
+          <%= cp.li_tag(style: sub_li_style) { "Fuzzy Match: ~ ".html_safe + example_span.call("~fire pyro") } %>
+          <%= cp.li_tag(style: sub_li_style) { "Starts With: ^ ".html_safe + example_span.call("^ship") } %>
+          <%= cp.li_tag(style: sub_li_style) { "OR Match: | ".html_safe + example_span.call("fire|pyro") } %>
+        <% end %>
+
+        <%= cp.h4_tag { "Rating Filter" } %>
+        <%= cp.ul_tag do %>
+          <%= cp.li_tag(style: sub_li_style) { "Filter: >500 or <500 (default is >)" } %>
+          <%= cp.li_tag(style: sub_li_style) { "Normalized (hover for details)" } %>
+          <% Story.const.location_models.each do |location_model| %>
+            <%= cp.li_tag(style: sub_sub_li_style) do %>
+              <%= location_model.const.location_label %> Multiplier: <%= location_model.const.location_rating_multiplier %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= cp.h4_tag { "Words Filter" } %>
+        <%= cp.ul_tag do %>
+          <%= cp.li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] } %>
+        <% end %>
+      <% end %>
+
+      <%= cp.div_tag(class: "modal-footer") do %>
+        <%= cp.modal_close_btn %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

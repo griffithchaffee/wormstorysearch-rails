@@ -1,0 +1,15 @@
+# root
+.byebug_history
+*.swp
+*.swo
+/.bundle
+/.gem
+/script.rb
+/todo.rb
+/config/env.rb
+# directories
+/public/assets
+/vendor/bundle
+/log/*
+/tmp/*/*
+!/tmp/*/.keep

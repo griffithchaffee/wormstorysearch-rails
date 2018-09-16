@@ -1,0 +1,45 @@
+<%= cp.tr_tag do %>
+  <%= cp.td_tag(colspan: "1000") do %>
+
+      <% page = params[:page].presence || collection.page %>
+      <% limit = params[:limit].presence || collection.limit %>
+      <% border, spacing = 2, 3 %>
+
+      <%= cp.hidden_field_tag(:page, class: "filter", value: page, data: { search_default: 1 }) %>
+      <%= cp.hidden_field_tag(:limit, class: "filter", value: limit, data: { search_default: collection.limit }) %>
+
+      <%= cp.ul_tag(class: "pagination") do %>
+        <%= cp.li_tag(class: ("disabled" if !collection.has_previous_page?)) do %>
+          <%= cp.link_to(cp.current_query_path(page: collection.previous_page), content: "Prev") %>
+        <% end %>
+
+        <% collection.each_page do |page| %>
+          <% page_link = capture do %>
+            <%= cp.li_tag(class: ("active" if page == collection.page)) do %>
+              <%= cp.link_to(cp.current_query_path(page: page), content: page) %>
+            <% end %>
+          <% end %>
+          <% gap_link = capture do %>
+            <%= cp.li_tag(class: "disabled") do %>
+              <%= cp.void_link(content: "...") %>
+            <% end %>
+          <% end %>
+
+          <% if collection.pages <= (1 + border + spacing) * 2 %>
+            <%= page_link %>
+          <% elsif page <= border || page > collection.pages - border %>
+            <%= page_link %>
+          <% elsif page.between?(collection.page - spacing, collection.page + spacing) %>
+            <%= page_link %>
+          <% elsif page == collection.page - spacing - 1 || page == collection.page + spacing + 1 %>
+            <%= gap_link %>
+          <% end %>
+        <% end %>
+
+        <%= cp.li_tag(class: ("disabled" if !collection.has_next_page?)) do %>
+          <%= cp.link_to(cp.current_query_path(page: collection.next_page), content: "Next") %>
+        <% end %>
+      <% end %>
+
+  <% end %>
+<% end %>

@@ -1,0 +1,50 @@
+.page-title {
+  padding-bottom: (($line-height-computed / 2) - 1);
+  margin: ($line-height-computed / 2) 0 $line-height-computed;
+  border-bottom: 1px solid $page-header-border-color;
+
+  @media (max-width: $screen-sm-max) {
+    padding-bottom: 0px;
+    margin: ($line-height-computed / 2) 0 ($line-height-computed / 2);
+  }
+
+  strong {
+    color: lighten($gray-base, 55%);
+    margin: ($line-height-computed / 4) 0 0;
+    font-size: 35%;
+    display: block;
+  }
+}
+
+.secondary-link {
+  margin-left: 10px
+}
+
+a span {
+  display: inline;
+}
+
+.text-default {
+  color: #333;
+}
+
+pre {
+  &.break {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  &.pretty {
+    font-family: inherit;
+  }
+}
+
+.popover {
+  max-width: 100%;
+  ul {
+    padding-left: 15px;
+  }
+}
+
+.tooltip-text-left + .tooltip > .tooltip-inner {
+  text-align: left;
+}

@@ -1,0 +1,19 @@
+#stories-searchable-table-container {
+  min-height: 550px;
+}
+
+#story-authors-searchable-table {
+  tbody.filters {
+    td.actions {
+      width: 1px; max-width: 1px; min-width: 1px;
+    }
+  }
+  tbody.rows {
+    td.actions {
+      text-align: center;
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}
