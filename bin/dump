@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+# load gems
+rails_root = File.expand_path("../..",  __FILE__)
+require "#{rails_root}/config/env.rb"
+
+puts %Q[
+PGPASSWORD='#{ENV["DEVELOPMENT_DATABASE_PASSWORD"]}' ssh -i ~/.ssh/wormstorysearch.key -o 'IdentitiesOnly yes' root@wormstorysearch.com "PGPASSWORD='#{ENV["PRODUCTION_DATABASE_PASSWORD"]}' /usr/pgsql-9.6/bin/pg_dump -vcCOx -U #{ENV["PRODUCTION_DATABASE_USERNAME"]} -h #{ENV["PRODUCTION_DATABASE_HOST"]} wormstorysearch" | sed 's/DATABASE wormstorysearch/DATABASE wormstorysearch_development/' | sed 's/connect wormstorysearch/connect wormstorysearch_development/' | psql -U #{ENV["DEVELOPMENT_DATABASE_USERNAME"]} -h #{ENV["DEVELOPMENT_DATABASE_HOST"]} postgres
+
+]
