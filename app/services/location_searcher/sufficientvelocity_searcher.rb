@@ -142,7 +142,7 @@ module LocationSearcher
     end
 
     def update_chapters_for_story!(story)
-      crawler.get("#{story.location_path}/threadmarks", {}, { log_level: Logger::WARN })
+      crawler.get("#{story.location_path}/threadmarks")
       verify_response_status!(debug_message: "#{self.class} update_chapters_for_story #{story.inspect}", status: [200, 404])
       update_chapters_for_story_from_html!(story, crawler.html)
     end
@@ -199,22 +199,43 @@ module LocationSearcher
     end
 
     def parse_chapters_html(chapters_html)
-      chapters_html.css("div.threadmarkList li.primaryContent:not(.ThreadmarkFetcher)")
+      chapters_html = chapters_html.css("div.threadmarkList")
+      # fetch excluded chapters - "..." placeholder in threadmark list
+      threadmark_fetcher = chapters_html.at_css("li.primaryContent.ThreadmarkFetcher")
+      if threadmark_fetcher
+        csrf_token = crawler.response.body.lines.find { |line| line =~ /_csrfToken:/ }.split('"').second
+        crawler.post(
+          "/index.php?threads/threadmarks/load-range",
+          {
+            _xfToken: csrf_token,
+            category_id: threadmark_fetcher["data-category-id"],
+            thread_id: threadmark_fetcher["data-thread-id"],
+            min: threadmark_fetcher["data-range-min"],
+            max: threadmark_fetcher["data-range-max"],
+          }
+        )
+        verify_response_status!(debug_message: "#{self.class} update_chapters_html threadmark fetcher")
+        fetched_chapters_html = crawler.html.css("li.primaryContent")
+        threadmark_fetcher.add_next_sibling(fetched_chapters_html)
+        threadmark_fetcher.remove
+      end
+      chapters_html.css("li.primaryContent")
     end
 
     def parse_chapter_html(chapter_html)
       # html selections
-      updated_html = chapter_html.css(".DateTime").first
       preview_html = chapter_html.css("a.PreviewTooltip").first
       # parse attributes
       title         = preview_html.text
       location_path = "/#{preview_html[:href]}"
-      word_count    = chapter_html.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")")
-      updated_at    = abbr_html_to_time(updated_html)
+      likes         = chapter_html["data-likes"]
+      word_count    = chapter_html["data-words"]
+      updated_at    = Time.at(chapter_html["data-content-date"].to_i.nonzero?)
       # attributes
       {
         title: title,
         location_path: location_path,
+        likes: likes,
         word_count: word_count,
         chapter_created_on: updated_at,
         chapter_updated_at: updated_at,

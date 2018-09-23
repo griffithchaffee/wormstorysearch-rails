@@ -30,21 +30,20 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
     chapters_html = File.read(File.expand_path("../pages/sufficientvelocity_story_chapters.html", __FILE__))
     chapters_html = SiteCrawler::HtmlParser.parse(chapters_html)
     searcher.update_chapters_for_story_from_html!(sufficientvelocity_story, chapters_html)
-    assert_equal(44, sufficientvelocity_story.chapters.count)
+    assert_equal(47, sufficientvelocity_story.chapters.count)
     chapter = sufficientvelocity_story.chapters.first
     assert_equal(
       {
         "category"=>"chapter",
         "chapter_created_on"=>"2016-08-11",
-        "chapter_updated_at"=>"2016-08-11 00:00:00 -0700",
-        "likes_updated_at"=>"",
-        "likes"=>"0",
+        "chapter_updated_at"=>"2016-08-11 10:58:14 -0700",
+        "likes"=>"300",
         "location_path"=>"/threads/constellations-worm-okami.31091/",
         "position"=>"1",
         "title"=>"Chapter 1",
-        "word_count"=>"1700"
+        "word_count"=>"1705"
       }.sort.to_h,
-      chapter.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
+      chapter.attributes.except(*%w[ id story_id created_at updated_at likes_updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
     )
   end
 
@@ -78,21 +77,20 @@ class LocationSearcher::SufficientvelocitySearcher::Test < ApplicationTestCase
     chapters_html = File.read(File.expand_path("../pages/sufficientvelocity_quest_chapters.html", __FILE__))
     chapters_html = SiteCrawler::HtmlParser.parse(chapters_html)
     searcher.update_chapters_for_story_from_html!(sufficientvelocity_story, chapters_html)
-    assert_equal(3, sufficientvelocity_story.chapters.count)
+    assert_equal(4, sufficientvelocity_story.chapters.count)
     chapter = sufficientvelocity_story.chapters.first
     assert_equal(
       {
         "category"=>"chapter",
         "chapter_created_on"=>"2017-06-28",
         "chapter_updated_at"=>"2017-06-28 06:00:17 -0700",
-        "likes_updated_at"=>"",
-        "likes"=>"0",
+        "likes"=>"6",
         "location_path"=>"/threads/life-and-times-of-a-teenage-vampire-worm-v-tr-quest.39656/",
         "position"=>"1",
         "title"=>"1.1",
-        "word_count"=>"860"
+        "word_count"=>"858"
       }.sort.to_h,
-      chapter.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
+      chapter.attributes.except(*%w[ id story_id created_at updated_at likes_updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
     )
   end
 

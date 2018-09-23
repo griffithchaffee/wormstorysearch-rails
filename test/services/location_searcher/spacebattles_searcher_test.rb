@@ -35,16 +35,15 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "chapter_created_on"=>"2017-06-17",
-        "chapter_updated_at"=>"2017-06-17 00:00:00 -0700",
-        "likes_updated_at"=>"",
-        "likes"=>"0",
+        "chapter_updated_at"=>"2017-06-17 10:14:05 -0700",
+        "likes"=>"46",
         "position"=>"1",
-        "word_count"=>"390",
+        "word_count"=>"388",
         "category"=>"chapter",
         "location_path"=>"/threads/aggregation-worm-factorio-oc.536881/",
         "title"=>"Prologue"
       }.sort.to_h,
-      chapter.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
+      chapter.attributes.except(*%w[ id story_id created_at updated_at likes_updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
     )
   end
 
@@ -61,7 +60,8 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     assert_equal(
       {
         "author_name"=>"Crimson Square",
-        "clicks"=>"0", "highest_chapter_likes"=>"0",
+        "clicks"=>"0",
+        "highest_chapter_likes"=>"0",
         "average_chapter_likes"=>"0.0",
         "category"=>"quest",
         "location_id"=>"thread-532675",
@@ -78,21 +78,20 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
     chapters_html = File.read(File.expand_path("../pages/spacebattles_quest_chapters.html", __FILE__))
     chapters_html = SiteCrawler::HtmlParser.parse(chapters_html)
     searcher.update_chapters_for_story_from_html!(spacebattles_story, chapters_html)
-    assert_equal(12, spacebattles_story.chapters.count)
+    assert_equal(21, spacebattles_story.chapters.count)
     chapter = spacebattles_story.chapters.first
     assert_equal(
       {
         "category"=>"chapter",
         "chapter_created_on"=>"2017-06-05",
-        "chapter_updated_at"=>"2017-06-05 00:00:00 -0700",
-        "likes_updated_at"=>"",
-        "likes"=>"0",
+        "chapter_updated_at"=>"2017-06-05 05:58:04 -0700",
+        "likes"=>"165",
         "location_path"=>"/threads/reincarnation-of-an-angel-worm-quest.532675/",
         "position"=>"1",
         "title"=>"Character Creation - 1.1",
-        "word_count"=>"1000"
+        "word_count"=>"1047"
       }.sort.to_h,
-      chapter.attributes.except(*%w[ id story_id created_at updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
+      chapter.attributes.except(*%w[ id story_id created_at updated_at likes_updated_at ]).map { |k,v| [k, v.to_s] }.to_h.sort.to_h
     )
   end
 
