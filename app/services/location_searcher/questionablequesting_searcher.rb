@@ -248,17 +248,18 @@ module LocationSearcher
 
     def parse_chapter_html(chapter_html)
       # html selections
-      updated_html = chapter_html.css(".DateTime").first
       preview_html = chapter_html.css("a.PreviewTooltip").first
       # parse attributes
       title         = preview_html.text
       location_path = "/#{preview_html[:href]}"
-      word_count    = chapter_html.text[/\([0-9.km]+\)/].to_s.remove("(").remove(")")
-      updated_at    = abbr_html_to_time(updated_html)
+      likes         = chapter_html["data-likes"]
+      word_count    = chapter_html["data-words"]
+      updated_at    = Time.at(chapter_html["data-content-date"].to_i.nonzero?)
       # attributes
       {
         title: title,
         location_path: location_path,
+        likes: likes,
         word_count: word_count,
         chapter_created_on: updated_at,
         chapter_updated_at: updated_at,
