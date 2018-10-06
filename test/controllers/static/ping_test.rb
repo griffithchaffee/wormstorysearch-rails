@@ -1,9 +1,9 @@
 class StaticController::Test < ApplicationController::TestCase
 
-  action = "get version"
+  action = "get ping"
 
   testing "#{action}" do
-    get(:version)
+    get(:ping)
     assert_response_ok
   end
 
