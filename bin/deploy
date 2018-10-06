@@ -11,7 +11,7 @@ deploy_path_symlink="/srv/rails"
 echo
 printf "#\e[34m setup \e[0m\n"
 cat <<TEXT
-ssh -i ~/.ssh/wormstorysearch.key -o 'IdentitiesOnly yes' root@wormstorysearch.com
+ssh -i ~/.ssh/wormstorysearch.key -o 'IdentitiesOnly yes' root@ssh.wormstorysearch.com
 rm -rf $deploy_path
 git clone -b $version git@github.com:griffithchaffee/wormstorysearch-rails $deploy_path
 cd $deploy_path
