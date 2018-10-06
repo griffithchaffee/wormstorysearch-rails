@@ -5,7 +5,6 @@
 #= require select2-v4.0.4
 #= require_self
 #= require toolbox
-#= require identity
 #= require_tree ./lib
 
 # initialize
@@ -20,4 +19,4 @@ $ ->
   $(document).on "inserted.bs.popover", ->
     $(document).trigger("page:partial:change")
   # reset identity cookie
-  Identity.resetCookie()
+  Toolbox.deleteCookie("browser.identity")

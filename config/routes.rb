@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     get  "/contact", action: "contact", as: "contact"
     post "/contact", action: "contact"
     get  "/version", action: "version", as: "version"
+    get  "/ping",    action: "ping", as: "ping"
   end
 
   # errors

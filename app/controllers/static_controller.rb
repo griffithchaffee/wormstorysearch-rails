@@ -20,4 +20,9 @@ class StaticController < ApplicationController
     end
   end
 
+  # used for health check
+  def ping
+    render(inline: "pong")
+  end
+
 end
