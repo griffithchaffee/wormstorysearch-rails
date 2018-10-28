@@ -26,6 +26,7 @@ class Story < ApplicationRecord
   scope :search_story_keywords, -> (keywords) do
     queries = []
     searcher = -> (value) do
+      next if value.blank?
       # special starts with search
       if value.starts_with?("^") || value.ends_with?("$")
         queries << unscoped.seek(title_matches: value)
