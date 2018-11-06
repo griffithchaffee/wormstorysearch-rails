@@ -199,6 +199,8 @@ module LocationSearcher
       parse_chapters_html(html).each do |chapter_html|
         position += 1
         chapter_attributes = parse_chapter_html(chapter_html)
+        # skip invalid chapters
+        next if !chapter_attributes
         # update chapter
         chapter = story.chapters.get(position: position) || story.chapters.build(position: position)
         chapter.assign_attributes(chapter_attributes)
@@ -247,6 +249,8 @@ module LocationSearcher
     end
 
     def parse_chapter_html(chapter_html)
+      # skip ThreadmarkFetcher links
+      return false if "ThreadmarkFetcher".in?(chapter_html["class"])
       # html selections
       preview_html = chapter_html.css("a.PreviewTooltip").first
       # parse attributes
