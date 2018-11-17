@@ -256,14 +256,12 @@ module LocationSearcher
       # parse attributes
       title         = preview_html.text
       location_path = "/#{preview_html[:href]}"
-      likes         = chapter_html["data-likes"]
       word_count    = chapter_html["data-words"]
       updated_at    = Time.at(chapter_html["data-content-date"].to_i.nonzero?)
       # attributes
       {
         title: title,
         location_path: location_path,
-        likes: likes,
         word_count: word_count,
         chapter_created_on: updated_at,
         chapter_updated_at: updated_at,
