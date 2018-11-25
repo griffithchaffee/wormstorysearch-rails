@@ -1,7 +1,7 @@
 class SiteCrawler
-  attr_reader :responses, :site_url, :cookie_jar, :default_headers
+  attr_reader :responses, :cookie_jar, :default_headers
   attr_writer :logger
-  attr_accessor :throttle
+  attr_accessor :throttle, :site_url
 
   def initialize(site_url, options = {})
     options = options.with_indifferent_access

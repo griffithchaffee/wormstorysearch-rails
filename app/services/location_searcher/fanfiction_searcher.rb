@@ -5,6 +5,7 @@ module LocationSearcher
     def initialize
       @story_model = FanfictionStory
       @config = story_model.const
+      crawler.site_url = crawler.site_url.gsub("fanfiction.net", "fanfictionproxy.net")
     end
 
     def search!(active_after, search_options = {})

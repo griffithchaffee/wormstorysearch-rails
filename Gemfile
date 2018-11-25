@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.3.1"
+ruby "2.5.3"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -8,18 +8,18 @@ git_source(:github) do |repo_name|
 end
 
 # core
-gem "rails", "~> 5.1.1"
-gem "pg",    "~> 0.21", platforms: :ruby
-gem "puma",  "~> 3.7"
+gem "rails", "~> 5.2.1"
+gem "pg", platforms: :ruby
+gem "puma"
 gem "unicorn"
 gem "colored"
 gem "action_presenter-base", "= 0.1"
 
 # assets
-gem "sass-rails"#,   "~> 5.0"
-gem "uglifier"#,     ">= 1.3.0"
-gem "coffee-rails"#, "~> 4.2"
-gem "turbolinks"#,   "~> 5"
+gem "sassc-rails"
+gem "uglifier"
+gem "coffee-rails"
+gem "turbolinks"
 gem "therubyracer", platforms: :ruby
 
 # scheduler

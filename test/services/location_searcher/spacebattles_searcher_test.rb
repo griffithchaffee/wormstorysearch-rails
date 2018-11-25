@@ -36,7 +36,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
       {
         "chapter_created_on"=>"2017-06-17",
         "chapter_updated_at"=>"2017-06-17 10:14:05 -0700",
-        "likes"=>"46",
+        "likes"=>"0",
         "position"=>"1",
         "word_count"=>"388",
         "category"=>"chapter",
@@ -85,7 +85,7 @@ class LocationSearcher::SpacebattlesSearcher::Test < ApplicationTestCase
         "category"=>"chapter",
         "chapter_created_on"=>"2017-06-05",
         "chapter_updated_at"=>"2017-06-05 05:58:04 -0700",
-        "likes"=>"165",
+        "likes"=>"0",
         "location_path"=>"/threads/reincarnation-of-an-angel-worm-quest.532675/",
         "position"=>"1",
         "title"=>"Character Creation - 1.1",

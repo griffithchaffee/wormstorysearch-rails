@@ -12,11 +12,11 @@ module SeekConcern
     end
 
     def generate_universal_scopes
-      scope :order_random, -> { order("RANDOM()") }
+      scope :order_random, -> { order(Arel.sql("RANDOM()")) }
       scope :order_as_integer, -> (column, direction = :asc, null_order = nil) do
         direction = direction.to_s =~ /desc/i ? "DESC" : "ASC"
         null_order = null_order.to_s =~ /first/i ? "FIRST" : "LAST"
-        order %Q[NULLIF(regexp_replace("#{table_name}"."#{column}", E'\\\\D', '', 'g'), '')::int #{direction} NULLS #{null_order}]
+        order(Arel.sql(%Q[NULLIF(regexp_replace("#{table_name}"."#{column}", E'\\\\D', '', 'g'), '')::bigint #{direction} NULLS #{null_order}]))
       end
     end
 
@@ -101,13 +101,13 @@ module SeekConcern
       scope "order_#{column}", -> (direction = "asc", null_order = nil) do
         direction = direction.to_s =~ /desc/i ? :desc : :asc
         null_order = null_order.blank? || null_order.to_s !~ /first/i ? "LAST" : "FIRST"
-        order(arel_table[column].send(direction).to_sql + " NULLS #{null_order}")
+        order(Arel.sql(arel_table[column].send(direction).to_sql + " NULLS #{null_order}"))
       end
       # override all previous orders
       scope "reorder_#{column}", -> (direction = "asc", null_order = nil) do
         direction = direction.to_s =~ /desc/i ? :desc : :asc
         null_order = null_order.blank? || null_order.to_s !~ /first/i ? "LAST" : "FIRST"
-        reorder(arel_table[column].send(direction).to_sql + " NULLS #{null_order}")
+        reorder(Arel.sql(arel_table[column].send(direction).to_sql + " NULLS #{null_order}"))
       end
     end
 
