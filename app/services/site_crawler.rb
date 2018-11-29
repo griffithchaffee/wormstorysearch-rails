@@ -16,6 +16,13 @@ class SiteCrawler
     @logger ||= Rails.logger
   end
 
+  # only save last 5 responses to prevent memory bloat
+  def process_response(new_response)
+    responses.push(new_response)
+    responses.shift if responses.size > 5
+    responses
+  end
+
   def site(options = {}, &block)
     options = options.with_indifferent_access
     builder = -> (&rack_block) do
@@ -52,7 +59,7 @@ class SiteCrawler
     options = options.with_indifferent_access.reverse_merge redirect_limit: 5
     headers = options.delete(:headers).to_h.with_indifferent_access.reverse_merge(default_headers)
     logger.silence(options[:log_level] || logger.level) do
-      responses.push site.get(path, params, headers, &block)
+      process_response(site.get(path, params, headers, &block))
     end
     if options[:json] == true
       headers["Accept"] ||= "application/json"
@@ -74,11 +81,11 @@ class SiteCrawler
         headers["Content-Type"] ||= "application/json"
         headers["Accept"] ||= "application/json"
         json = params.is_a?(Hash) ? params.to_json : params
-        responses.push site.post(path, json, headers, &block)
+        process_response(site.post(path, json, headers, &block))
       elsif options[:multipart] == true
-        responses.push site(multipart: true).post(path, params, headers, &block)
+        process_response(site(multipart: true).post(path, params, headers, &block))
       else
-        responses.push site.post(path, params, headers, &block)
+        process_response(site.post(path, params, headers, &block))
       end
       if options[:follow_redirects] == true && response.status.in?([301, 302, 303])
         get response.headers["Location"], {}, follow_redirects: true
