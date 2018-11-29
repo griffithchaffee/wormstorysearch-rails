@@ -39,6 +39,7 @@ fi
 printf "#\e[34m deploy \e[0m\n"
 cat <<TEXT
 RAILS_ENV=production bundle install
+RAILS_ENV=production bundle clean --force
 RAILS_ENV=production rake assets:precompile
 RAILS_ENV=production rake schedule:install
 ln -fsT $deploy_path $deploy_path_symlink
