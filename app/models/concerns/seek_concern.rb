@@ -403,21 +403,8 @@ module SeekConcern
       if sort_column
         if query.respond_to?("reorder_#{sort_column}")
           query = query.send("reorder_#{sort_column}", sort_direction)
-        else
-          begin
-            raise ArgumentError, "unknown search sorting - sort=#{sort_column} direction=#{sort_direction}"
-          rescue ArgumentError => error
-            subject = "SearchError [#{error.message}]: #{error.message}"
-            body = "
-              Search Params: #{search_params}
-              Search Defaults: #{search_defaults}
-              Error: #{error.message}
-              Backtrace:
-              #{error.backtrace.join("\n")}
-            ".lalign
-            DynamicMailer.email(subject: subject, body: body).deliver_now
-            raise error if !Rails.env.production?
-          end
+        elsif !Rails.env.production?
+          raise ArgumentError, "unknown search sorting - sort=#{sort_column} direction=#{sort_direction}"
         end
       end
       query
