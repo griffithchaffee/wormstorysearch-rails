@@ -3,7 +3,7 @@ class PostgresqlDatabase
     class_attribute :host_to_ip
     self.host_to_ip = { localhost: "127.0.0.1" }.with_indifferent_access
 
-    %w[ database host username password abstract_table namespace ].each do |key|
+    %w[ database host username password abstract_table_name namespace ].each do |key|
       define_method(key) { fetch(key) }
     end
 

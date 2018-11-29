@@ -8,7 +8,8 @@ class PostgresqlDatabase
         define_singleton_method(:database_configuration) do
           database_configurations = File::Configuration.load_rails_config_file(rails_config_file)
           database_configuration = PostgresqlDatabase::Configuration.new(database_configurations.fetch(Rails.env))
-          database_configuration[:abstract_table] = self
+          # add class name reference
+          database_configuration[:abstract_table_name] = name
           database_configuration
         end
         # manage
@@ -40,21 +41,6 @@ class PostgresqlDatabase
         end
         const_set(:PGActivityDatabase, pg_stat_database)
         self
-      end
-
-      def create_abstract_table!(abstract_table_name)
-        # add table predicate helpers
-        abstract_tables = subclasses.select(&:abstract_class?)
-        abstract_tables.each do |outer_abstract_table|
-          predicate_method = "#{outer_abstract_table.name.underscore}?"
-          abstract_tables.each do |inner_abstract_table|
-            # instance method
-            inner_abstract_table.send(:define_method, predicate_method) { self.class.send(predicate_method) }
-            # class method
-            inner_abstract_table.send(:define_singleton_method, predicate_method) { inner_abstract_table == outer_abstract_table }
-          end
-        end
-        abstract_table
       end
     end
   end

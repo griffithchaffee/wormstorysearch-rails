@@ -12,7 +12,7 @@ module Rails.application.class::Middleware
       if env["#{Rails.application.settings.namespace}.database.connect"]
         ApplicationDatabase.disconnect
         response = @app.call(env)
-        ApplicationDatabase.disconnect #if !Rails.env.test?
+        ApplicationDatabase.disconnect
         response
       else
         response = @app.call(env)

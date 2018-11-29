@@ -1,6 +1,5 @@
 require_relative "postgresql_database/configuration"
 require_relative "postgresql_database/abstract_table"
-require_relative "postgresql_database/model_connect_concern"
 
 class PostgresqlDatabase
 
@@ -9,16 +8,20 @@ class PostgresqlDatabase
   self.connections = {}
 
   # macros
-  attr_accessor :database_configuration
-  delegate *%w[ database abstract_table namespace ], to: :database_configuration
-  delegate *%w[ connection ], to: :abstract_table
+  attr_accessor(:database_configuration)
+  delegate *%w[ database namespace abstract_table_name ], to: :database_configuration
+  delegate *%w[ connection ], to: :abstract_table_class
 
   def initialize(database_configuration)
     self.database_configuration = database_configuration
   end
 
+  def abstract_table_class
+    abstract_table_name.constantize
+  end
+
   def exists?
-    unobtrusive_connect(:postgres) { abstract_table::PGDatabase.where(datname: database).exists? }
+    unobtrusive_connect(:postgres) { abstract_table_class::PGDatabase.where(datname: database).exists? }
   end
 
   def create!
@@ -50,7 +53,6 @@ class PostgresqlDatabase
       logger.info(database) { "creating database" }
       create!
       ActiveRecord::Migration[migration_version].suppress_messages { migrate_to_latest_schema! }
-      #ApplicationDatabase.reset_column_information
     end
   end
 
@@ -109,19 +111,20 @@ class PostgresqlDatabase
   end
 
   def unobtrusive_connect(*params, &block)
-    was_connected = connected?
+    disconnect
     result = connect(*params, &block)
-    was_connected ? connect : disconnect
+    connect
     result
   end
 
   def connect(method = :by_host)
-    new_connection = abstract_table.establish_connection(database_configuration.send(method))
-    connections[abstract_table] = new_connection
+    new_connection = abstract_table_class.establish_connection(database_configuration.send(method))
     if block_given?
       result = yield
       disconnect
       result
+    else
+      true
     end
   end
 
@@ -132,16 +135,7 @@ class PostgresqlDatabase
   end
 
   def disconnect
-    active_connection = connections[abstract_table]
-    if active_connection
-      abstract_table.remove_connection(active_connection)
-    end
-  ensure
-    connections.delete(abstract_table)
-  end
-
-  def connected?
-    connections.key?(abstract_table)
+    abstract_table_class.connection_pool.disconnect!
   end
 
   def build_migrations(methods)
@@ -149,13 +143,8 @@ class PostgresqlDatabase
   end
 
   def migration_version
-    5.1
-  end
-
-  class << self
-    def disconnect_all
-      connections.each(&:disconnect)
-    end
+    # e.g. returns 5.1, 5.2, etc.
+    Rails.version.split(".")[0..1].join(".").to_f
   end
 
   class ConnectionNotEstablished < StandardError; end

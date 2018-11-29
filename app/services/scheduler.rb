@@ -84,31 +84,31 @@ class Scheduler
     # update ratings
     50.times do |i|
       # spacebattles
-      spacebattles_chapter = SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
+      spacebattles_chapter = SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 60.hours.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc).first
       attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
         spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
       end
       # sufficientvelocity
-      sufficientvelocity_chapter = SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
+      sufficientvelocity_chapter = SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 60.hours.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc).first
       attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
         sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
       end
       # fanfiction
-      fanfiction_chapter = FanfictionStory.seek(story_created_on_lteq: 3.days.ago)
+      fanfiction_chapter = FanfictionStory.seek(story_created_on_lteq: 60.hours.ago)
         .order_favorites_updated_at(:asc, :first).order_story_updated_at(:desc).first
       attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
         fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
       end
       # archiveofourown
-      archiveofourown_chapter = ArchiveofourownStory.seek(story_created_on_lteq: 3.days.ago)
+      archiveofourown_chapter = ArchiveofourownStory.seek(story_created_on_lteq: 60.hours.ago)
         .order_kudos_updated_at(:asc, :first).order_story_updated_at(:desc).first
       attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
         archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
       end
       # questionablequesting
-      questionablequesting_chapter = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 3.days.ago)
+      questionablequesting_chapter = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 60.hours.ago)
         .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc).first
       attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
         questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)

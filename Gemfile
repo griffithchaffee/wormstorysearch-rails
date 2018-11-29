@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 # core
-gem "rails", "~> 5.2.1"
+gem "rails", "~> 5.1.6"
 gem "pg", platforms: :ruby
 gem "puma"
 gem "unicorn"
