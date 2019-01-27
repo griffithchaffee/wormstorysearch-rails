@@ -92,7 +92,7 @@ class Scheduler
     questionablequesting_chapters = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 1.day.ago)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
     # update ratings for chapters
-    20.times do |i|
+    30.times do |i|
       # spacebattles
       spacebattles_chapter = spacebattles_chapters.first
       attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
@@ -122,7 +122,7 @@ class Scheduler
       sleep 3
     end
     # update ratings for recent chapters since they will change more often
-    40.times do |i|
+    30.times do |i|
       # spacebattles
       spacebattles_chapter = spacebattles_chapters.seek(chapter_created_on_gteq: 3.months.ago).first
       attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
