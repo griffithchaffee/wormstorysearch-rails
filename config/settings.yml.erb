@@ -1,7 +1,6 @@
 ---
-version: 1.12.17
+version: 1.12.18
 domain: wormstorysearch.com
-admin_ip: <%= ENV["ADMIN_IP"] %>
 <%= "request_count: 0" if Rails.env.development? %>
 stories:
   # used in Story.location_rating_multipliers which is not currently in use
