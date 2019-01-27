@@ -50,7 +50,7 @@ class ApplicationController::TestCase < ActionController::TestCase
   end
 
   def become_admin
-    @controller.request.env["REMOTE_ADDR"] = Rails.application.settings.admin_ip
+    session[:is_admin] = true
   end
 
 end

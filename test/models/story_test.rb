@@ -59,16 +59,17 @@ class Story::Test < ApplicationRecord::TestCase
     spacebattles_story = FactoryBot.create(:spacebattles_story, story: story, story_updated_at: Date.today - 3.days, story_created_on: Date.today - 3.days)
     sufficientvelocity_story = FactoryBot.create(:sufficientvelocity_story, story: story, story_updated_at: Date.today - 2.days, story_created_on: Date.today - 3.days)
     fanfiction_story = FactoryBot.create(:fanfiction_story, story: story, story_updated_at: Date.today - 1.day, story_created_on: Date.today - 3.days)
+    max_word_count = [spacebattles_story, sufficientvelocity_story, fanfiction_story].map(&:word_count).max
     # syncs with active location
     assert_equal(fanfiction_story, story.reload.active_location)
     story.sync_with_active_location!
-    assert_equal([fanfiction_story.word_count, fanfiction_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
+    assert_equal([max_word_count, fanfiction_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
     # syncs after story_upated_at
     sufficientvelocity_story.reload.update!(story_updated_at: Date.today)
-    assert_equal([sufficientvelocity_story.word_count, sufficientvelocity_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
+    assert_equal([max_word_count, sufficientvelocity_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
     # syncs after word_count change if active
-    sufficientvelocity_story.reload.update!(word_count: 1_000_000_000)
-    assert_equal([sufficientvelocity_story.word_count, sufficientvelocity_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
+    fanfiction_story.reload.update!(word_count: 1_000_000_000)
+    assert_equal([1_000_000_000, sufficientvelocity_story.story_updated_at], [story.reload.word_count, story.story_updated_at])
   end
 
   testing "achive_management!" do

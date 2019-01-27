@@ -1,11 +1,9 @@
 class ApplicationController < ActionController::Base
 
   def is_admin?
-    if Rails.env.development?
-      true
-    else
-      request.remote_ip == Rails.application.settings.admin_ip
-    end
+    return true if Rails.env.development?
+    session[:is_admin] = "true" if params[:passphrase] == ENV["ADMIN_PASSPHRASE"]
+    session[:is_admin].to_s == "true"
   end
   helper_method :is_admin?
 

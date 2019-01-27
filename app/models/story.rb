@@ -172,7 +172,7 @@ class Story < ApplicationRecord
 
   def sync_with_active_location!
     if active_location
-      self.word_count = active_location.word_count
+      self.word_count = locations.map(&:word_count).max
       self.story_updated_at = active_location.story_updated_at
       self.is_archived = false
     else
