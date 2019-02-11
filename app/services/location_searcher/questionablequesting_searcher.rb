@@ -135,7 +135,7 @@ module LocationSearcher
         raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
-        crawler.get("/forums/questing-and-roleplay.20/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        crawler.get("/forums/questing.20/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
         verify_response_status!(debug_message: "#{self.class} update_sfw_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest" }))
         # stop on last page
@@ -153,7 +153,7 @@ module LocationSearcher
         raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
-        crawler.get("/forums/nsfw-questing-and-roleplay.12/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        crawler.get("/forums/nsfw-questing.12/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
         verify_response_status!(debug_message: "#{self.class} update_nsfw_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest", is_nsfw: true }))
         # stop on last page
