@@ -26,7 +26,8 @@ module LocationStoryConcern
     validates_in_list(:category, const.categories.map(&:category))
     validates :location_id, uniqueness: true
     validate do
-      if story_created_on? && story_updated_at? && story_created_on > story_updated_at
+      # time zone differences on AOE can cause the updated time to be on the day before the created at date
+      if story_created_on? && story_updated_at? && (story_created_on - 1.day) > story_updated_at.to_date
         errors.add(:story_updated_at, "[#{story_updated_at}] must come after story creation date [#{story_created_on}]")
       end
     end
