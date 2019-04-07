@@ -15,6 +15,10 @@ Rails.application.configure do
     env["action_dispatch.exception.real_action"]   = real_action
     begin
       skip_email = false
+      # generic /etc/passwd scanning
+      if exception.class.to_s == "ActionController::UnknownFormat"
+        skip_email ||= "/etc/passwd".in?(exception.message)
+      end
       # build skips
       case real_action
       when "not_found"
