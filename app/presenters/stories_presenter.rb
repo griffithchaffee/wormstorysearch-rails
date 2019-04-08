@@ -139,38 +139,6 @@ class StoriesPresenter < ApplicationPresenter
     )
   end
 
-  def filters_info_icon
-    div_tag(add_class: "text-center search-hide filters-info") do
-      popover_title = b_tag(content: "Advanced Filtering")
-      popover_content = ul_tag do
-        content = "".html_safe
-        sub_li_style = "margin-left: 10px;"
-        example_span = -> (content) { span_tag(style: "", content: "(Ex: #{content})") }
-        content += li_tag { b_tag(content: "Keywords Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Default search is exact match ] }
-        content += li_tag(style: sub_li_style) { %Q[Fuzzy Match: ~ ] + example_span.call("~fire pyro") }
-        content += li_tag(style: sub_li_style) { %Q[Starts With: ^ ] + example_span.call("^ship") }
-        content += li_tag(style: sub_li_style) { %Q[OR Match: | ] + example_span.call(%Q[fire|pyro]) }
-        content += li_tag { b_tag(content: "Rating Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Normalized (hover for details)] }
-        content += li_tag(style: sub_li_style) { %Q[Filter: >500 or <500 (default is >)] }
-        content += li_tag { b_tag(content: "Words Filter") }
-        content += li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] }
-      end
-      icon(
-        "info",
-        title: popover_title,
-        data: {
-          toggle: "popover",
-          placement: "top auto",
-          trigger: "hover",
-          content: popover_content,
-          html: "true"
-        }
-      )
-    end
-  end
-
   def location_rating(location)
     location_rating = location.rating.to_i
     alternate_ratings =

@@ -51,10 +51,19 @@ class Story < ApplicationRecord
   end
   scope :seek_word_count_filter, -> (word_count_filters) do
     query = all
-    word_count_filters.split(/\s|,/).each do |word_count_filter|
+    word_count_filters.split(/\s|,/).map do |word_count_filter|
+      if "-".in?(word_count_filter)
+        gteq, lteq = word_count_filter.split("-", 2)
+        gteq = ">#{gteq}"
+        lteq = "<#{lteq}"
+        [gteq, lteq]
+      else
+        word_count_filter
+      end
+    end.flatten.select(&:present?).each do |word_count_filter|
       filter = word_count_filter.starts_with?("<") ? :lteq : :gteq
       word_count = word_count_filter.remove(/[^0-9km]/).human_size_to_i
-      query = query.where_word_count(filter => word_count) if word_count > 0
+      query = query.where_word_count(filter => word_count) if word_count > 0 && word_count < 100_000_000
     end
     query
   end
