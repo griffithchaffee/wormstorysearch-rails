@@ -47,8 +47,11 @@ class Scheduler
     attempt_block(namespace: :archiveofourown) do
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
     end
-    attempt_block(namespace: :questionablequesting) do
-      LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+    # Any login attempt around 2AM PST (9AM UTC) will fail on QuestionableQuesting
+    if Time.zone.now.hour != 2
+      attempt_block(namespace: :questionablequesting) do
+        LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+      end
     end
   end
 
