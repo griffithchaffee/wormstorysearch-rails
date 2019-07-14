@@ -3,7 +3,7 @@ module Rails.application.class::Middleware
   class LoggerSilencer
     def initialize(app)
       @app = app
-      @silence_request_paths = /\A\/(assets|favicon)/
+      @silence_request_paths = /\A\/(assets|favicon|ping)/
     end
 
     def call(env)
