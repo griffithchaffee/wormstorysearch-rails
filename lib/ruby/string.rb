@@ -33,7 +33,7 @@ class String
   end
 
   def human_size_to_i
-    value = slugify_for_comparison
+    value = downcase.remove(/[^a-z0-9.]/)
     case value
     # 123, 123.5
     when /\A\d+(\.\d+)?\z/   then value
