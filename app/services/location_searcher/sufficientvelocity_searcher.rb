@@ -177,13 +177,14 @@ module LocationSearcher
       title_html      = main_html.css(".structItem-title a").last
       details_html    = main_html.css(".structItem-minor").first
       activity_html   = story_html.css(".structItem-cell--latest").first
+      word_count_html = details_html.css("li").to_a.third
       # parse attributes
       title         = title_html.text
       location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
       location_id   = location_path.split(".").last
       author        = details_html.css("a.username").text
-      word_count    = details_html.css("li").to_a.third.text.strip.remove("Word Count: ")
-      created_at    = abbr_html_to_time(details_html.css("li").to_a.second.css("time").first)
+      word_count    = word_count_html ? word_count_html.text.strip.remove("Word Count: ") : 0
+      created_at    = abbr_html_to_time(details_html.css("time").first)
       active_at     = abbr_html_to_time(activity_html.css("time").first)
       # attributes
       {
