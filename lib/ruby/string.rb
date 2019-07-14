@@ -33,13 +33,14 @@ class String
   end
 
   def human_size_to_i
-    case self
+    value = slugify_for_comparison
+    case value
     # 123, 123.5
-    when /\A\d+(\.\d+)?\z/   then self
+    when /\A\d+(\.\d+)?\z/   then value
     # 1.1K, 1.25k
-    when /\A\d+(\.\d+)?k\z/i then self.remove(/[^\d.]/).to_f * 1_000
+    when /\A\d+(\.\d+)?k\z/i then value.remove(/[^\d.]/).to_f * 1_000
     # 1.1M, 1.25m
-    when /\A\d+(\.\d+)?m\z/i then self.remove(/[^\d.]/).to_f * 1_000_000
+    when /\A\d+(\.\d+)?m\z/i then value.remove(/[^\d.]/).to_f * 1_000_000
     end.to_i
   end
 
@@ -54,7 +55,7 @@ class String
       raise ArgumentError, "#{inspect} is not in the list #{list} #{options[:message]}".strip
     end
   end
-  alias_method :verify_is!, :verify_in!
+  alias_method(:verify_is!, :verify_in!)
 
   def escape_html
     CGI.escape_html(to_str)
