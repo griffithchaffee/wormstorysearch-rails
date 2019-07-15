@@ -1,6 +1,6 @@
 <%= cp.tr_tag(class: "filters") do %>
   <%= cp.td_tag(class: "story", colspan: "2") do %>
-    <%= render_partial(:story_filter) %>
+    <%= render_partial(:story_filter, filter_params: { style: "min-width: 110px;" }) %>
   <% end %>
 
   <%= cp.td_tag(class: "rating") do %>

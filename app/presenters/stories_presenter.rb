@@ -25,7 +25,6 @@ class StoriesPresenter < ApplicationPresenter
   # link_to
   define_extension(:span_tag, :edit_link, content: "")
   # filters
-  define_extension(:text_field_tag, :story_filter, :story_keywords, placeholder: "Title, Crossover, Author, or Description", "aria-label" => "Search")
   define_extension(:text_field_tag, :rating_filter, :rating_filter, placeholder: "Rating", "aria-label" => "Rating")
   define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words", "aria-label" => "Word Count")
   define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated After")
@@ -37,6 +36,10 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:sorter_link, :word_count_sorter,"stories.word_count", content: "Words", default_direction: "desc")
 
   # custom fields
+  def story_filter(*params)
+    text_field_tag(:story_keywords, *params, placeholder: "Title, Crossover, Author, or Description", "aria-label" => "Search")
+  end
+
   def story_updated_at_sorter
     sorter_link("stories.story_updated_at", default_direction: "desc") do
       span_tag(add_class: "hidden-sm hidden-xs") { "Updated" } +

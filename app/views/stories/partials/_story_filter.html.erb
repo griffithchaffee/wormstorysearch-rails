@@ -205,5 +205,6 @@
 
     <% end %>
   <% end %>
-  <%= cp.story_filter %>
+
+  <%= cp.story_filter(local_assigns[:filter_params].to_h) %>
 <% end %>
