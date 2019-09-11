@@ -11,6 +11,6 @@ class StaticPresenter < ApplicationPresenter
   define_extension(:text_field_tag, :reply_to_field, :reply_to, placeholder: "john.smith@example.com")
   define_extension(:text_field_tag, :subject_field,  :subject,  placeholder: "Topic of contact...")
   define_extension(:text_area_tag,  :body_field,     :body,     placeholder: "Describe your reason for contact...", rows: 5)
-  define_extension(:text_field_tag, :captcha_field,  :captcha,  placeholder: "1 + 1 = ?")
+  define_extension(:text_field_tag, :captcha_field,  :captcha)
 
 end
