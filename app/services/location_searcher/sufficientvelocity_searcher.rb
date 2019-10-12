@@ -183,7 +183,7 @@ module LocationSearcher
       location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
       location_id   = location_path.split(".").last
       author        = details_html.css("a.username").text
-      word_count    = word_count_html ? word_count_html.text.strip.remove("Word Count: ") : 0
+      word_count    = word_count_html ? word_count_html.text.strip.remove("Words: ") : 0
       created_at    = abbr_html_to_time(details_html.css("time").first)
       active_at     = abbr_html_to_time(activity_html.css("time").first)
       # attributes

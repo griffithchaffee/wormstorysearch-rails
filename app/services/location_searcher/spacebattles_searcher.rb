@@ -5,7 +5,6 @@ module LocationSearcher
     def initialize
       @story_model = SpacebattlesStory
       @config = story_model.const
-      @search_options = {}
     end
 
     def is_authentication?(check_authentication)
@@ -69,11 +68,10 @@ module LocationSearcher
         location_id = chapter.location_path.split("#").last if chapter.location_path.include?("#post-")
         location_id ||= page_html.css("li.message").first[:id]
         # parse likes
-        likes_html       = page_html.css("#likes-#{location_id}")
-        individual_likes = likes_html.css("a.username").size
-        combined_likes   = likes_html.css("a.OverlayTrigger").text.to_s.remove(/\D/).to_i
+        likes_html = page_html.css("##{location_id} .likesSummary")
+        likes = likes_html.css("li").map { |li| li.text.remove(/\D/).to_i }.sum # sum of all like types
         # set likes
-        chapter.likes = individual_likes + combined_likes
+        chapter.likes = likes
       end
       chapter.likes_updated_at = Time.zone.now
       chapter.save! if chapter.has_changes_to_save?
@@ -185,9 +183,11 @@ module LocationSearcher
       location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
       location_id   = location_path.split(".").last
       author        = details_html.css("a.username").text
-      word_count    = word_count_html ? word_count_html.text.strip.remove("Word Count: ") : 0
+      word_count    = word_count_html ? word_count_html.text.strip.remove("Words: ") : 0
       created_at    = abbr_html_to_time(details_html.css("time").first)
       active_at     = abbr_html_to_time(activity_html.css("time").first)
+      byebug
+      a = 1
       # attributes
       {
         title:            title,
