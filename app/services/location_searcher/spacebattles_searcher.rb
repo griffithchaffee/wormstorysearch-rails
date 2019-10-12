@@ -186,8 +186,6 @@ module LocationSearcher
       word_count    = word_count_html ? word_count_html.text.strip.remove("Words: ") : 0
       created_at    = abbr_html_to_time(details_html.css("time").first)
       active_at     = abbr_html_to_time(activity_html.css("time").first)
-      byebug
-      a = 1
       # attributes
       {
         title:            title,
