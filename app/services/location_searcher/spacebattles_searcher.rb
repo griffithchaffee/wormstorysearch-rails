@@ -168,27 +168,26 @@ module LocationSearcher
   private
 
     def parse_stories_html(stories_html)
-      stories_html.css("ol.discussionListItems li.discussionListItem:not(.sticky)")
+      stories_html.css("div.js-threadList div.js-inlineModContainer")
     end
 
     def parse_story_html(story_html)
       # skip unavailable stories
       return false if story_html.css(".lastPostInfo").text.strip == "N/A"
       # html selections
-      main_html       = story_html.css(".main")
-      title_html      = main_html.css("h3.title a.PreviewTooltip").first
-      author_html     = main_html.css(".username")
-      word_count_html = main_html.css(".OverlayTrigger")
-      created_html    = main_html.css(".DateTime").first
-      active_html     = story_html.css(".lastPostInfo .DateTime").first
+      main_html       = story_html.css(".structItem-cell--main")
+      title_html      = main_html.css(".structItem-title a").last
+      details_html    = main_html.css(".structItem-minor").first
+      activity_html   = story_html.css(".structItem-cell--latest").first
+      word_count_html = details_html.css("li").to_a.third
       # parse attributes
       title         = title_html.text
-      location_path = "/#{title_html[:href].remove(/\/(unread)?\z/)}"
-      location_id   = story_html[:id]
-      author        = author_html.text
-      word_count    = word_count_html.text.remove("Word Count: ")
-      created_at    = abbr_html_to_time(created_html)
-      active_at     = abbr_html_to_time(active_html)
+      location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
+      location_id   = location_path.split(".").last
+      author        = details_html.css("a.username").text
+      word_count    = word_count_html ? word_count_html.text.strip.remove("Word Count: ") : 0
+      created_at    = abbr_html_to_time(details_html.css("time").first)
+      active_at     = abbr_html_to_time(activity_html.css("time").first)
       # attributes
       {
         title:            title,
@@ -202,40 +201,44 @@ module LocationSearcher
       }.with_indifferent_access
     end
 
-    def parse_chapters_html(chapters_html)
-      chapters_html = chapters_html.css("div.threadmarkList")
+    def parse_chapters_html(original_chapters_html)
+      chapters_html = original_chapters_html.css(".block-body--threadmarkBody")
       # fetch excluded chapters - "..." placeholder in threadmark list
-      threadmark_fetcher = chapters_html.at_css("li.primaryContent.ThreadmarkFetcher")
-      if threadmark_fetcher
-        csrf_token = crawler.response.body.lines.find { |line| line =~ /_csrfToken:/ }.split('"').second
+      csrf_token = crawler.html.css("[name=_xfToken]").first[:value]
+      5.times do |i|
+        i += 1
+        # should never have to fetch threads more than 1 or 2 times
+        raise(ArgumentError, "parse_chapters_html threadmark_fetcher looped #{i} times") if i == 5
+        threadmark_fetcher = chapters_html.at_css(".structItem--threadmark-filler")
+        break if !threadmark_fetcher
+        fetch_url = threadmark_fetcher.css(".structItem-cell--main").first["data-fetchurl"]
+        #_xfRequestUri=/threads/amelia-worm-au.13577/threadmarks&_xfWithData=1&_xfToken=1563072243,8b000fdbae57099276185327a149e058&_xfResponseType=json
         crawler.post(
-          "/index.php?threads/threadmarks/load-range",
+          fetch_url,
           {
+            _xfResponseType: "json",
             _xfToken: csrf_token,
-            category_id: threadmark_fetcher["data-category-id"],
-            thread_id: threadmark_fetcher["data-thread-id"],
-            min: threadmark_fetcher["data-range-min"],
-            max: threadmark_fetcher["data-range-max"],
+            _xfWithData: 1,
           }
         )
         verify_response_status!(debug_message: "#{self.class} update_chapters_html threadmark fetcher")
-        fetched_chapters_html = crawler.html.css("li.primaryContent")
+        fetched_chapters_html = JSON.parse(crawler.response.body).dig("html", "content")
         threadmark_fetcher.add_next_sibling(fetched_chapters_html)
         threadmark_fetcher.remove
       end
-      chapters_html.css("li.primaryContent")
+      chapters_html.css(".structItem--threadmark")
     end
 
     def parse_chapter_html(chapter_html)
       # skip ThreadmarkFetcher links
-      return false if "ThreadmarkFetcher".in?(chapter_html["class"])
+      return false if "structItem--threadmark-filler".in?(chapter_html["class"])
       # html selections
-      preview_html = chapter_html.css("a.PreviewTooltip").first
+      preview_html = chapter_html.css(".structItem-title a").first
       # parse attributes
       title         = preview_html.text
-      location_path = "/#{preview_html[:href]}"
-      word_count    = chapter_html["data-words"]
-      updated_at    = Time.at(chapter_html["data-content-date"].to_i.nonzero?)
+      location_path = preview_html[:href]
+      word_count    = chapter_html.css(".structItem-cell--meta").text.remove("Word Count")
+      updated_at    = abbr_html_to_time(chapter_html.css(".structItem-cell--latest time").first)
       # attributes
       {
         title: title,
