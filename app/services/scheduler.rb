@@ -167,13 +167,13 @@ class Scheduler
 
   scheduled_task :update_stories do
     # destroy archived stories without locations
-    Story.where(is_archived: true).each do |archived_story|
+    Story.where(is_archived: true).find_each do |archived_story|
       if archived_story.locations.blank?
         archived_story.destroy!
       end
     end
     # update authors
-    Story.preload(:author).each do |story|
+    Story.preload(:author).find_each do |story|
       if !story.author
         active_location = story.active_location
         if active_location && active_location.author!
