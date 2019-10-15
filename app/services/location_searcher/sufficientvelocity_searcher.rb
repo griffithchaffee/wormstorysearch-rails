@@ -185,7 +185,9 @@ module LocationSearcher
       author        = details_html.css("a.username").text
       word_count    = word_count_html ? word_count_html.text.strip.remove("Words: ") : 0
       created_at    = abbr_html_to_time(details_html.css("time").first)
-      active_at     = abbr_html_to_time(activity_html.css("time").first)
+      # it is possible to have N/A for activity html
+      active_at_html = activity_html.css("time").first
+      active_at      = active_at_html.present? ? abbr_html_to_time(active_at_html) : Time.zone.now
       # attributes
       {
         title:            title,

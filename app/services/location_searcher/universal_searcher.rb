@@ -4,7 +4,7 @@ module LocationSearcher
     def crawler
       return @crawler if @crawler
       @crawler = SiteCrawler.new(config.location_host)
-      @crawler.throttle = 2.seconds
+      @crawler.throttle = 3.seconds
       @crawler.default_headers["User-Agent"] = "Worm Story Search (+http://wormstorysearch.com; wormstorysearch@gmail.com)"
       @crawler
     end
