@@ -195,7 +195,7 @@ class Story < ApplicationRecord
       self.title       = active_location.title
       self.author      = active_location.author
       self.description = locations.find { |location| location.const.location_slug == "fanfiction" }.try(:description)
-      self.crossover   = active_location.parse_crossover_from_title
+      self.crossover   = active_location.crossover_for_story
     end
     sync_with_active_location!
   end
