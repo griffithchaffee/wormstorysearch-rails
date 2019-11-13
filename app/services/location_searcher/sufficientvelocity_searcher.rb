@@ -63,7 +63,7 @@ module LocationSearcher
       page_html = crawler.html
       # find chapter id (by url or first post)
       # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
-      location_id = chapter.location_path.split("#").last
+      location_id = chapter.location_path.split("#")[1]
       # article
       chapter_html = location_id ? page_html.at_css("#js-#{location_id}") : page_html.at_css("article")
       # no messages
