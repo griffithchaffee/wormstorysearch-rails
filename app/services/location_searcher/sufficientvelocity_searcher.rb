@@ -65,9 +65,9 @@ module LocationSearcher
       # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
       location_id = chapter.location_path.split("#").last
       # article
-      chapter_html = page_html.css("#js-#{location_id}")
+      chapter_html = location_id ? page_html.at_css("#js-#{location_id}") : page_html.at_css("article")
       # no messages
-      if chapter_html.size == 1
+      if chapter_html
         # sum of all like types
         likes = chapter_html.css(".sv-rating__count").map { |span| span.text.remove(/\D/).to_i }.sum
         # set likes
