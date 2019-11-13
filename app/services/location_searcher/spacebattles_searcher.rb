@@ -61,17 +61,19 @@ module LocationSearcher
       end
       verify_response_status!(debug_message: "#{self.class} update_chapter_likes #{chapter.inspect}")
       page_html = crawler.html
+      # find chapter id (by url or first post)
+      # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
+      location_id = chapter.location_path.split("#").last
+      # article
+      chapter_html = page_html.css("#js-#{location_id}")
       # no messages
-      if page_html.css("li.message").size != 0
-        # find chapter id (by url or first post)
-        # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
-        location_id = chapter.location_path.split("#").last if chapter.location_path.include?("#post-")
-        location_id ||= page_html.css("li.message").first[:id]
-        # parse likes
-        likes_html = page_html.css("##{location_id} .likesSummary")
-        likes = likes_html.css("li").map { |li| li.text.remove(/\D/).to_i }.sum # sum of all like types
+      if chapter_html.size == 1
+        # sum of all like types
+        likes = chapter_html.css(".sv-rating__count").map { |span| span.text.remove(/\D/).to_i }.sum
         # set likes
         chapter.likes = likes
+      else
+        Rails.logger.warn { "No chapter_html for #{chapter.class}-#{chapter.id} at #{chapter.location_path}" }
       end
       chapter.likes_updated_at = Time.zone.now
       chapter.save! if chapter.has_changes_to_save?
