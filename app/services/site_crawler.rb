@@ -33,6 +33,7 @@ class SiteCrawler
         rack.use CookieManager, self
         rack.use RequestLogger, self
         rack.adapter Faraday.default_adapter
+        rack.ssl.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
     end
     if block
