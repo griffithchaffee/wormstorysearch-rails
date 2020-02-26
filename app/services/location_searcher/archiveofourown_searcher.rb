@@ -74,6 +74,7 @@ module LocationSearcher
         story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
         # skip this weird story - http://archiveofourown.org/works/12857685/chapters/29363547
         next if story.title == "[-]"
+        next if !story.author_name?
         # stop if story too old
         return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
         story = save_story(story)

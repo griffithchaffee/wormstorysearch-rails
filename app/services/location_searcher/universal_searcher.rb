@@ -6,6 +6,7 @@ module LocationSearcher
       @crawler = SiteCrawler.new(config.location_host)
       @crawler.throttle = 3.seconds
       @crawler.default_headers["User-Agent"] = "Worm Story Search (+http://wormstorysearch.com; wormstorysearch@gmail.com)"
+      @crawler.default_headers["Accept-Encoding"] = "identity"
       @crawler
     end
 
