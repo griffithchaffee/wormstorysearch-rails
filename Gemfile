@@ -28,6 +28,7 @@ gem "whenever"
 # crawler
 gem "loofah"
 gem "faraday"
+gem "faraday_middleware"
 gem "http-cookie"
 
 group :development, :test do

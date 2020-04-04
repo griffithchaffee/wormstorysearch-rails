@@ -30,6 +30,7 @@ class SiteCrawler
         # url encode post data
         rack_block.call(rack) if rack_block
         rack.request :url_encoded
+        rack.use :gzip
         rack.use CookieManager, self
         rack.use RequestLogger, self
         rack.adapter Faraday.default_adapter
