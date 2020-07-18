@@ -100,7 +100,8 @@ module LocationSearcher
 
     def update_quests!(options = {})
       options = options.with_indifferent_access
-      page = options.delete(:page) || 0
+      start_page = options.delete(:page) || 0
+      page = start_page.dup
       # crawl "Roleplaying & Quests" forum
       loop do
         page += 1
@@ -109,6 +110,19 @@ module LocationSearcher
         # crawl latest threads
         search_params = { order: "last_post_date", direction: "desc" }
         crawler.get("/forums/roleplaying-ic.60/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
+        verify_response_status!(debug_message: "#{self.class} update_quests")
+        results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest" }))
+        # stop on last page
+        break if results[:more] != true
+      end
+      page = start_page.dup
+      loop do
+        page += 1
+        # prevent infinite loop
+        raise ArgumentError, "crawled too many pages on" if page > config.location_max_quest_pages
+        # crawl latest threads
+        search_params = { order: "last_post_date", direction: "desc" }
+        crawler.get("/forums/quests.240/#{"page-#{page}" if page > 1}", search_params, log_level: Logger::INFO)
         verify_response_status!(debug_message: "#{self.class} update_quests")
         results = update_stories_from_html!(crawler.html, options.merge(attributes: { category: "quest" }))
         # stop on last page
