@@ -239,7 +239,7 @@ module LocationSearcher
       # parse attributes
       title         = preview_html.text
       location_path = preview_html[:href]
-      word_count    = chapter_html.css(".structItem-cell--meta").text.remove("Word Count")
+      word_count    = chapter_html.css(".structItem-cell--meta").text.remove(/Words|Word Count/)
       updated_at    = abbr_html_to_time(chapter_html.css(".structItem-cell--latest time").first)
       # attributes
       {

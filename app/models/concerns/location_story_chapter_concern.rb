@@ -43,6 +43,7 @@ module LocationStoryChapterConcern
           story.reload
           story.read_url = story.read_url!
           story.story_updated_at = chapter_updated_at if story.story_updated_at < chapter_updated_at
+          story.word_count = story.chapters.sum(&:word_count)
           story.save! if story.has_changes_to_save?
         end
       end
