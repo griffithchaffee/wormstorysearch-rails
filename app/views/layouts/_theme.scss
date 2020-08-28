@@ -1,0 +1,43 @@
+/*
+@gray-base: rgb(0, 0, 0);
+@gray-darker: rgb(39, 43, 48);     // #222
+@gray-dark: rgb(58, 63, 68);       // #333
+@gray: rgb(82, 87, 92);            // #555
+@gray-light: rgb(122, 130, 136);   // #777
+@gray-lighter: rgb(153, 153, 153); // #eee
+*/
+
+body {
+  background-color: #222;
+  color: #c8c8c8;
+}
+.modal-content {
+  background-color: #222;
+  color: #c8c8c8;
+}
+
+tr:hover td {
+  background-color: #333;
+}
+tr:hover th {
+  background-color: #333;
+}
+
+.btn-default {
+  background-color: #999;
+}
+::placeholder {
+  color: #555 !important;
+}
+
+input {
+  background-color: #999 !important;
+}
+ul.pagination li a {
+  background-color: #999 !important;
+  color: #222 !important;
+}
+ul.dropdown-menu {
+  background-color: #999 !important;
+  color: #222 !important;
+}

@@ -1,5 +1,11 @@
 class ApplicationPresenter < ActionPresenter::Base
 
+  %w[ style ].each do |tag|
+    define_method("#{tag}_tag") do |*hashes, &content_block|
+      html_tag(tag, *hashes, &content_block)
+    end
+  end
+
   # col
   define_extension(:col_div,          :full_div,            col_sm: 12, col_md: 12)
   #define_extension(:col_class,        :label_for_class,     col_sm: 3, col_md: 2, add_class: :core_label_class)

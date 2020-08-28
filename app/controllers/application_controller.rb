@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   def autocreate_session
     session[:remote_ip] = request.remote_ip
+    session[:theme] = params[:theme]
     session
   end
 
