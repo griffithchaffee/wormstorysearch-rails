@@ -16,6 +16,9 @@ body {
   color: #c8c8c8;
 }
 
+tr.info td {
+  background-color: #1d2d4d !important;
+}
 tr:hover td {
   background-color: #333;
 }
