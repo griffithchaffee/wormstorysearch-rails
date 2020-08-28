@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   helper_method :permitted_action_data_params
   helper_method :permitted_action_search_params
   helper_method :permitted_action_pagination_params
+  helper_method :session_action_data
 
   class << self
     def generate_permitted_record_params(namespace = controller_name.singularize)

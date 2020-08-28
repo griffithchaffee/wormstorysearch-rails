@@ -26,8 +26,8 @@
     <!-- stylesheet -->
     <%= stylesheet_link_tag("application", media: "all") %>
     <%= cp.style_tag(type: "text/css") do %>
-      <% if session[:theme] == "dark" %>
-        <%= render(partial: "layouts/theme", formats: :scss) %>
+      <% if get_theme == "dark" %>
+        <%= render(partial: "layouts/dark_theme", formats: :scss) %>
       <% end %>
     <% end %>
 
@@ -47,13 +47,13 @@
               <%= cp.span_tag(class: "visible-xs visible-sm", content: "Stories") %>
             <% end %>
 
-            <% if session[:theme] != "dark" %>
-              <%= cp.link_to(root_url(theme: "dark"), class: "navbar-brand pull-right") do %>
-                <%= cp.span_tag(content: "Dark") %>
-              <% end %>
-            <% else %>
+            <% if get_theme == "dark" %>
               <%= cp.link_to(root_url(theme: "light"), class: "navbar-brand pull-right") do %>
                 <%= cp.span_tag(content: "Light") %>
+              <% end %>
+            <% else %>
+              <%= cp.link_to(root_url(theme: "dark"), class: "navbar-brand pull-right") do %>
+                <%= cp.span_tag(content: "Dark") %>
               <% end %>
             <% end %>
 
