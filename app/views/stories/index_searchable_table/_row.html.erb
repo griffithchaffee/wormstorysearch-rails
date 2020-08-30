@@ -19,6 +19,10 @@
     <%= cp.rating_details %>
   <% end %>
 
+  <%= cp.td_tag(class: "hype") do %>
+    <%= cp.hype_rating_details %>
+  <% end %>
+
   <%= cp.td_tag(class: "word_count") do %>
     <%= story.word_count.to_human_size(pretty: true) %>
   <% end %>

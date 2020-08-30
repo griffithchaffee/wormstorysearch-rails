@@ -185,6 +185,7 @@ def change
     t.datetime "created_at", null: false
     t.datetime "story_updated_at", null: false
     t.datetime "updated_at", null: false
+    t.float "hype_rating", default: 0.0, null: false
     t.float "rating", default: 0.0, null: false
     t.index ["author_id"], name: "index_stories_on_author_id"
     t.integer "clicks", default: 0, null: false
