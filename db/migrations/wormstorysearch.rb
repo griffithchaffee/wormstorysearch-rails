@@ -1,56 +1,17 @@
 def up
   change_table :stories do |t|
-    t.integer :clicks, null: false, default: 0
-  end
-
-  change_table :archiveofourown_stories do |t|
-    t.integer :clicks, null: false, default: 0
-  end
-
-  change_table :fanfiction_stories do |t|
-    t.integer :clicks, null: false, default: 0
-  end
-
-  change_table :questionablequesting_stories do |t|
-    t.integer :clicks, null: false, default: 0
-  end
-
-  change_table :spacebattles_stories do |t|
-    t.integer :clicks, null: false, default: 0
-  end
-
-  change_table :sufficientvelocity_stories do |t|
-    t.integer :clicks, null: false, default: 0
+    t.float :hype_rating, null: false, default: 0
   end
 end
 
 def down
   change_table :stories do |t|
-    t.remove :clicks
-  end
-
-  change_table :archiveofourown_stories do |t|
-    t.remove :clicks
-  end
-
-  change_table :fanfiction_stories do |t|
-    t.remove :clicks
-  end
-
-  change_table :questionablequesting_stories do |t|
-    t.remove :clicks
-  end
-
-  change_table :spacebattles_stories do |t|
-    t.remove :clicks
-  end
-
-  change_table :sufficientvelocity_stories do |t|
-    t.remove :clicks
+    t.remove :hype_rating
   end
 end
 
 def migration_script
+  Story.find_each(&:update_rating!)
 end
 
 

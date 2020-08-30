@@ -63,7 +63,7 @@ private
   def permit_index_search_params
     %w[
       category_eq status_eq is_nsfw_eq is_archived_eq
-      story_keywords word_count_filter rating_filter
+      story_keywords word_count_filter rating_filter hype_rating_filter
       updated_after_filter updated_before_filter location_slug_in
       sort direction
     ]

@@ -76,6 +76,15 @@ class Story < ApplicationRecord
     end
     query
   end
+  scope :seek_hype_rating_filter, -> (hype_rating_filters) do
+    query = all
+    hype_rating_filters.split(/\s|,/).each do |hype_rating_filter|
+      filter = hype_rating_filter.starts_with?("<") ? :lteq : :gteq
+      rating = hype_rating_filter.remove(/[^0-9.]/).to_f
+      query = query.where_hype_rating(filter => rating) if rating > 0
+    end
+    query
+  end
   scope :seek_updated_after_filter, -> (updated_after) do
     updated_after_date = Date.smart_parse(updated_after)
     if updated_after_date
@@ -155,6 +164,10 @@ class Story < ApplicationRecord
     locations.any?(&:highly_rated?)
   end
 
+  def highly_hyped?
+    hype_rating > Story.const.highly_hyped_threshold
+  end
+
   def category_label
     const.categories.fetch(category).label
   end
@@ -206,6 +219,18 @@ class Story < ApplicationRecord
       location.rating
     end.max || 0
     self.rating = new_rating.round(2)
+    update_hype_rating
+    save! if has_changes_to_save?
+    self
+  end
+
+  def update_hype_rating
+    self.hype_rating = (rating * 20) / (Date.today - story_created_on).to_i.min(1)
+    self
+  end
+
+  def update_hype_rating!
+    update_hype_rating
     save! if has_changes_to_save?
     self
   end

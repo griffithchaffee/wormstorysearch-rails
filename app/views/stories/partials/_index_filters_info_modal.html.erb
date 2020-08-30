@@ -30,6 +30,12 @@
           <% end %>
         <% end %>
 
+        <%= cp.h4_tag { "Hype Filter" } %>
+        <%= cp.ul_tag do %>
+          <%= cp.li_tag(style: sub_li_style) { "Filter: >500 or <500 (default is >)" } %>
+          <%= cp.li_tag(style: sub_li_style) { "Formula: rating * 20 / age (days)" } %>
+        <% end %>
+
         <%= cp.h4_tag { "Words Filter" } %>
         <%= cp.ul_tag do %>
           <%= cp.li_tag(style: sub_li_style) { %Q[Filter: >10k or <10k (default is >)] } %>

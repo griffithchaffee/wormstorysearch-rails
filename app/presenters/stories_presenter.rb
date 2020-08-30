@@ -26,6 +26,7 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:span_tag, :edit_link, content: "")
   # filters
   define_extension(:text_field_tag, :rating_filter, :rating_filter, placeholder: "Rating", "aria-label" => "Rating")
+  define_extension(:text_field_tag, :hype_rating_filter, :hype_rating_filter, placeholder: "Hype", "aria-label" => "Hype")
   define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words", "aria-label" => "Word Count")
   define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated After")
   define_extension(:text_field_tag, :updated_before_filter, :updated_before_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated Before")
@@ -33,6 +34,7 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:sorter_link, :story_created_on_sorter, "stories.story_created_on", content: "Created", default_direction: "desc")
   define_extension(:sorter_link, :title_sorter, "stories.title", content: "Title")
   define_extension(:sorter_link, :rating_sorter, "stories.rating", content: "Rating", default_direction: "desc")
+  define_extension(:sorter_link, :hype_rating_sorter, "stories.hype_rating", content: "Hype", default_direction: "desc")
   define_extension(:sorter_link, :word_count_sorter,"stories.word_count", content: "Words", default_direction: "desc")
 
   # custom fields
@@ -183,6 +185,23 @@ class StoriesPresenter < ApplicationPresenter
       title: location_ratings_content,
       add_class: "tooltip-text-left",
       merge_data: { toggle: "tooltip", trigger: "hover", html: true }
+    )
+  end
+
+  def hype_rating_details(*hashes)
+    story = extract_record(*hashes)
+    popover_content = []
+    popover_content.unshift("Highly Hyped!") if story.highly_hyped?
+    popover_content.push("Hype decays quickly over time")
+    popover_content.push("Formula: rating * 20 / age (days)")
+    popover_content = popover_content.map { |content| span_tag(content: content.strip, style: "white-space: nowrap;") }.join(br_tag)
+    send(
+      story.highly_hyped? ? :strong_tag : :span_tag,
+      *hashes,
+      title: popover_content,
+      add_class: "tooltip-text-left",
+      merge_data: { toggle: "tooltip", trigger: "hover", html: true },
+      content: story.hype_rating.to_i,
     )
   end
 
