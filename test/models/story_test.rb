@@ -106,4 +106,13 @@ class Story::Test < ApplicationRecord::TestCase
     assert_equal("ongoing", story.reload.status)
   end
 
+  testing "update_hype_rating" do
+    story = FactoryBot.create(:story, rating: 100, story_created_on: 36.hours.ago, hype_rating: 0)
+    assert_same(0, story.reload.hype_rating)
+    story.update_hype_rating!
+    assert_same(2000, story.reload.hype_rating)
+    story.update_rating!
+    assert_same(0, story.reload.hype_rating)
+  end
+
 end
