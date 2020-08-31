@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
     if params[:theme].present?
       change_session_action_data(session_action_data, data_params: { theme: params[:theme] })
     end
-    Rails.logger.fatal session_action_data.inspect
   end
 
   def get_theme
