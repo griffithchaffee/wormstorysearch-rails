@@ -34,7 +34,7 @@ class Story < ApplicationRecord
         queries << unscoped.seek_or(
           title_matches: value,
           crossover_matches: value,
-          description_matches: value,
+          #description_matches: value,
           "author.any_name_matches" => value,
         )
       end
