@@ -27,6 +27,10 @@ module LocationSearcher
     end
 
     def login!
+      ##### SB account banned so cancel authentication attempts
+      set_authentication(:authenticated)
+      return
+      #####
       if config.location_username && config.location_password
         # authenticate
         crawler.post(

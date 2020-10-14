@@ -45,7 +45,7 @@ class Scheduler
       LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :sufficientvelocity) do
-      #LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
+      LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :fanfiction) do
       LocationSearcher::FanfictionSearcher.search!(duration, task_options)
@@ -88,7 +88,7 @@ class Scheduler
     questionablequesting_searcher = LocationSearcher::QuestionablequestingSearcher.new
     # setup searchers
     attempt_block(namespace: :spacebattles) { spacebattles_searcher.login! }
-    #attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
+    attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
     attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
     spacebattles_chapters = SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 1.day.ago)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
@@ -110,7 +110,7 @@ class Scheduler
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.first
       attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-        #sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+        sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
       end
       # fanfiction
       fanfiction_chapter = fanfiction_chapters.first
@@ -140,7 +140,7 @@ class Scheduler
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.seek(chapter_created_on_gteq: 3.months.ago).first
       attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-        #sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+        sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
       end
       # fanfiction
       fanfiction_chapter = fanfiction_chapters.seek(story_created_on_gteq: 3.months.ago).first
