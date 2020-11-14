@@ -189,7 +189,7 @@ module LocationSearcher
     end
 
     def update_chapters_for_story!(story)
-      crawler.get("#{story.location_path}/threadmarks", {}, { log_level: Logger::WARN })
+      crawler.get("#{story.location_path}/threadmarks", { category_id: 1 }, { log_level: Logger::WARN })
       verify_response_status!(debug_message: "#{self.class} update_chapters_for_story", status: [200, 404])
       update_chapters_for_story_from_html!(story, crawler.html)
     end
