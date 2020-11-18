@@ -1,7 +1,7 @@
 class SiteCrawler
   attr_reader :responses, :cookie_jar, :default_headers
   attr_writer :logger
-  attr_accessor :throttle, :site_url
+  attr_accessor :throttle, :site_url, :proxy
 
   def initialize(site_url, options = {})
     options = options.with_indifferent_access
@@ -35,6 +35,7 @@ class SiteCrawler
         rack.use RequestLogger, self
         rack.adapter Faraday.default_adapter
         rack.ssl.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        rack.proxy = proxy if proxy
       end
     end
     if block
