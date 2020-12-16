@@ -90,42 +90,52 @@ class Scheduler
     attempt_block(namespace: :spacebattles) { spacebattles_searcher.login! }
     attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
     attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
-    spacebattles_chapters = SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 1.day.ago)
+    spacebattles_chapters = SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
-    sufficientvelocity_chapters = SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 1.day.ago)
+    sufficientvelocity_chapters = SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
-    fanfiction_chapters = FanfictionStory.seek(story_created_on_lteq: 1.day.ago)
+    fanfiction_chapters = FanfictionStory.seek(story_created_on_lteq: 1.day.ago, favorites_updated_at_lteq: 2.hours.ago)
       .order_favorites_updated_at(:asc, :first).order_story_updated_at(:desc)
-    archiveofourown_chapters = ArchiveofourownStory.seek(story_created_on_lteq: 1.day.ago)
+    archiveofourown_chapters = ArchiveofourownStory.seek(story_created_on_lteq: 1.day.ago, kudos_updated_at_lteq: 2.hours.ago)
       .order_kudos_updated_at(:asc, :first).order_story_updated_at(:desc)
-    questionablequesting_chapters = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 1.day.ago)
+    questionablequesting_chapters = QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc)
     # update ratings for chapters
     30.times do |i|
       # spacebattles
       spacebattles_chapter = spacebattles_chapters.first
-      attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
-        spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+      if spacebattles_chapter
+        attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
+          spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+        end
       end
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.first
-      attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-        sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+      if sufficientvelocity_chapter
+        attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
+          sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+        end
       end
       # fanfiction
       fanfiction_chapter = fanfiction_chapters.first
-      attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
-        fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+      if fanfiction_chapter
+        attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
+          fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+        end
       end
       # archiveofourown
       archiveofourown_chapter = archiveofourown_chapters.first
-      attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
-        archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
+      if archiveofourown_chapter
+        attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
+          archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
+        end
       end
       # questionablequesting
       questionablequesting_chapter = questionablequesting_chapters.first
-      attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
-        questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+      if questionablequesting_chapter
+        attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
+          questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+        end
       end
       # throttle
       sleep 3
@@ -134,28 +144,38 @@ class Scheduler
     30.times do |i|
       # spacebattles
       spacebattles_chapter = spacebattles_chapters.seek(chapter_created_on_gteq: 3.months.ago).first
-      attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
-        spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+      if spacebattles_chapter
+        attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
+          spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+        end
       end
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.seek(chapter_created_on_gteq: 3.months.ago).first
-      attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-        sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+      if sufficientvelocity_chapter
+        attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
+          sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+        end
       end
       # fanfiction
       fanfiction_chapter = fanfiction_chapters.seek(story_created_on_gteq: 3.months.ago).first
-      attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
-        fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+      if fanfiction_chapter
+        attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
+          fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+        end
       end
       # archiveofourown
       archiveofourown_chapter = archiveofourown_chapters.seek(story_created_on_gteq: 3.months.ago).first
-      attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
-        archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
+      if archiveofourown_chapter
+        attempt_block(namespace: :archiveofourown, context: archiveofourown_chapter) do
+          archiveofourown_chapter.update_rating!(searcher: archiveofourown_searcher)
+        end
       end
       # questionablequesting
       questionablequesting_chapter = questionablequesting_chapters.seek(chapter_created_on_gteq: 3.months.ago).first
-      attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
-        questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+      if questionablequesting_chapter
+        attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
+          questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+        end
       end
       # throttle
       sleep 3
