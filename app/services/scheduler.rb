@@ -48,7 +48,7 @@ class Scheduler
       LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :fanfiction) do
-      LocationSearcher::FanfictionSearcher.search!(duration, task_options)
+      #LocationSearcher::FanfictionSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :archiveofourown) do
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
@@ -70,7 +70,7 @@ class Scheduler
       LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :fanfiction) do
-      LocationSearcher::FanfictionSearcher.search!(duration, task_options)
+      #LocationSearcher::FanfictionSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :archiveofourown) do
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
@@ -120,7 +120,7 @@ class Scheduler
       fanfiction_chapter = fanfiction_chapters.call.first
       if fanfiction_chapter
         attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
-          fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+          #fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
         end
       end
       # archiveofourown
@@ -160,7 +160,7 @@ class Scheduler
       fanfiction_chapter = fanfiction_chapters.call.seek(story_created_on_gteq: 3.months.ago).first
       if fanfiction_chapter
         attempt_block(namespace: :fanfiction, context: fanfiction_chapter) do
-          fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
+          #fanfiction_chapter.update_rating!(searcher: fanfiction_searcher)
         end
       end
       # archiveofourown
@@ -228,7 +228,10 @@ private
       namespace = namespace.to_s
       @attempts[namespace] ||= 0
       # cancel if namespace has had to many errors
-      return false if @attempts[namespace] > 3
+      if @attempts[namespace] > 3
+        Rails.logger.warn { "Maximum #{namespace} attempts reached" }
+        return false
+      end
       if rescue_block(context || namespace, &block) == :rescued
         @attempts[namespace] += 1
         false
