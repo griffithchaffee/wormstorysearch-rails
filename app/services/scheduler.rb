@@ -90,15 +90,15 @@ class Scheduler
     attempt_block(namespace: :spacebattles) { spacebattles_searcher.login! }
     attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
     attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
-    spacebattles_chapters = -> { SpacebattlesStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
+    spacebattles_chapters = -> { SpacebattlesStoryChapter.seek_or(likes_updated_at_lteq: 2.hours.ago, likes_updated_at_eq: nil)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc) }
-    sufficientvelocity_chapters = -> { SufficientvelocityStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
+    sufficientvelocity_chapters = -> { SufficientvelocityStoryChapter.seek_or(likes_updated_at_lteq: 2.hours.ago, likes_updated_at_eq: nil)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc) }
-    fanfiction_chapters = -> { FanfictionStory.seek(story_created_on_lteq: 1.day.ago, favorites_updated_at_lteq: 2.hours.ago)
+    fanfiction_chapters = -> { FanfictionStory.seek_or(favorites_updated_at_lteq: 2.hours.ago, favorites_updated_at_eq: nil)
       .order_favorites_updated_at(:asc, :first).order_story_updated_at(:desc) }
-    archiveofourown_chapters = -> { ArchiveofourownStory.seek(story_created_on_lteq: 1.day.ago, kudos_updated_at_lteq: 2.hours.ago)
+    archiveofourown_chapters = -> { ArchiveofourownStory.seek_or(kudos_updated_at_lteq: 2.hours.ago, kudos_updated_at_eq: nil)
       .order_kudos_updated_at(:asc, :first).order_story_updated_at(:desc) }
-    questionablequesting_chapters = -> { QuestionablequestingStoryChapter.seek(chapter_created_on_lteq: 1.day.ago, likes_updated_at_lteq: 2.hours.ago)
+    questionablequesting_chapters = -> { QuestionablequestingStoryChapter.seek_or(likes_updated_at_lteq: 2.hours.ago, likes_updated_at_eq: nil)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc) }
     # update ratings for recent chapters since they will change more often
     30.times do |i|
