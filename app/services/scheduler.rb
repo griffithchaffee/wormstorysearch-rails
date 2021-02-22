@@ -138,13 +138,9 @@ class Scheduler
           questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
         end
       end
-      end
-      # throttle
+      # thottle
       sleep 3
-    end
-    # update ratings for all chapters
-    30.times do |i|
-      Rails.logger.tagged("index-#{i+1}") do
+      # update ratings for all chapters
       # spacebattles
       spacebattles_chapter = spacebattles_chapters.call.first
       if spacebattles_chapter
