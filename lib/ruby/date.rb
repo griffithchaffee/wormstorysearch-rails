@@ -52,7 +52,7 @@ class Date
       # m/d
       elsif date =~ /\A\d{1,2}\/\d{1,2}\z/
         result = attempt_parse.call("#{date}/#{Date.today.year}", "%m/%d/%Y")
-        result = result - 1.year if result > Date.today
+        result = result - 1.year if result && result > Date.today
         result
       end
     end
