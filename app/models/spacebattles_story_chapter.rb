@@ -25,6 +25,10 @@ class SpacebattlesStoryChapter < ApplicationRecord
     searcher.login! if !searcher.is_authentication?(:authenticated)
     searcher.update_chapter_likes!(self)
     self
+  rescue StandardError => error
+    update_columns(likes_updated_at: Time.zone.now)
+    raise(error)
+    self
   end
 
 end

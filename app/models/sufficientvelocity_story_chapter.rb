@@ -24,6 +24,9 @@ class SufficientvelocityStoryChapter < ApplicationRecord
   def update_rating!(searcher: LocationSearcher::SufficientvelocitySearcher.new)
     searcher.login! if !searcher.is_authentication?(:authenticated)
     searcher.update_chapter_likes!(self)
+  rescue StandardError => error
+    update_columns(likes_updated_at: Time.zone.now)
+    raise(error)
     self
   end
 

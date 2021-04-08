@@ -42,6 +42,10 @@ class ArchiveofourownStory < ApplicationRecord
   def update_rating!(searcher: LocationSearcher::ArchiveofourownSearcher.new)
     searcher.update_story_kudos!(self)
     self
+  rescue StandardError => error
+    update_columns(kudos_updated_at: Time.zone.now)
+    raise(error)
+    self
   end
 
   def crossover_for_story

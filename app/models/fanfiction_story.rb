@@ -39,6 +39,10 @@ class FanfictionStory < ApplicationRecord
   def update_rating!(searcher: LocationSearcher::FanfictionSearcher.new)
     searcher.update_story_favorites!(self)
     self
+  rescue StandardError => error
+    update_columns(favorites_updated_at: Time.zone.now)
+    raise(error)
+    self
   end
 
   def crossover_for_story
