@@ -52,7 +52,7 @@ Rails.application.configure do
           USER AGENT: #{env["HTTP_USER_AGENT"]}
           REFERER: #{env["HTTP_REFERER"]}
           REMOTE IP: #{env["HTTP_X_FORWARDED_FOR"] || env["REMOTE_ADDR"]}
-          #{"PARAMS:\n" + env["rack.input"].gets.to_s.unescape_html if env["REQUEST_METHOD"] != "GET"}
+          #{"PARAMS:\n" + env["rack.input"].gets.to_s if env["REQUEST_METHOD"] != "GET"}
 
           STATUS: #{status_code}
           RESCUE: #{rescue_action}

@@ -34,6 +34,12 @@ module LocationStoryChapterConcern
       if will_save_change_to_title? && !category?
         self.category = category!
       end
+      if chapter_created_on? && chapter_created_on < story.story_created_on
+        self.chapter_created_on = story.story_created_on
+      end
+      if chapter_created_on? && chapter_updated_at? && (chapter_created_on - 1.day) > chapter_updated_at
+        self.chapter_updated_at = chapter_created_on
+      end
     end
 
     after_save do
