@@ -5,7 +5,7 @@ class StaticPresenter < ApplicationPresenter
   define_extension(:label_for, :reply_to_label, :reply_to, content: "Reply To")
   define_extension(:label_for, :subject_label,  :subject,  content: "Subject")
   define_extension(:label_for, :body_label,     :body,     content: "Body")
-  define_extension(:label_for, :captcha_label,  :captcha,  content: "Prove your not a bot")
+  define_extension(:label_for, :captcha_label,  :captcha,  content: "Prove you're not a bot")
   # fields
   define_extension(:text_field_tag, :name_field,     :name,     placeholder: "John Smith")
   define_extension(:text_field_tag, :reply_to_field, :reply_to, placeholder: "john.smith@example.com")

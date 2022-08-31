@@ -225,10 +225,10 @@ module LocationSearcher
       chapters_html = original_chapters_html.css(".block-body--threadmarkBody")
       # fetch excluded chapters - "..." placeholder in threadmark list
       csrf_token = crawler.html.css("[name=_xfToken]").first[:value]
-      5.times do |i|
+      8.times do |i|
         i += 1
         # should never have to fetch threads more than 1 or 2 times
-        raise(ArgumentError, "parse_chapters_html threadmark_fetcher looped #{i} times") if i == 5
+        raise(ArgumentError, "parse_chapters_html threadmark_fetcher looped #{i} times") if i == 8
         threadmark_fetcher = chapters_html.at_css(".structItem--threadmark-filler")
         break if !threadmark_fetcher
         fetch_url = threadmark_fetcher.css(".structItem-cell--main").first["data-fetchurl"]
