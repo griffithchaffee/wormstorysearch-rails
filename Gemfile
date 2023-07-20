@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.5.3"
+ruby "2.6.4"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -14,6 +14,7 @@ gem "puma"
 gem "unicorn"
 gem "colored"
 gem "action_presenter-base", "= 0.1"
+gem "sprockets", "= 3.7.2"
 
 # assets
 gem "sassc-rails"

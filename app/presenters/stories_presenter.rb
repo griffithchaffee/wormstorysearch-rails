@@ -30,6 +30,8 @@ class StoriesPresenter < ApplicationPresenter
   define_extension(:text_field_tag, :word_count_filter, :word_count_filter, placeholder: "Words", "aria-label" => "Word Count")
   define_extension(:text_field_tag, :updated_after_filter, :updated_after_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated After")
   define_extension(:text_field_tag, :updated_before_filter, :updated_before_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Updated Before")
+  define_extension(:text_field_tag, :created_after_filter, :created_after_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Created After")
+  define_extension(:text_field_tag, :created_before_filter, :created_before_filter, placeholder: "MM/DD(/YY)", "aria-label" => "Created Before")
   # sorters
   define_extension(:sorter_link, :story_created_on_sorter, "stories.story_created_on", content: "Created", default_direction: "desc")
   define_extension(:sorter_link, :title_sorter, "stories.title", content: "Title")

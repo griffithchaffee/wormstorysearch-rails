@@ -13,3 +13,5 @@
 /log/*
 /tmp/*/*
 !/tmp/*/.keep
+yarn.lock
+node_modules

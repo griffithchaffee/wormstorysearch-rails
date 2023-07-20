@@ -118,6 +118,22 @@
         <% end %>
       <% end %>
 
+      <!-- created_after_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Created After") %>
+      <%= cp.li_tag(style: "display: inline-block;") do %>
+        <%= cp.div_tag(add_class: "input") do %>
+          <%= cp.created_after_filter %>
+        <% end %>
+      <% end %>
+
+      <!-- created_before_filter -->
+      <%= cp.li_tag(class: "dropdown-header", content: "Created Before") %>
+      <%= cp.li_tag(style: "display: inline-block;") do %>
+        <%= cp.div_tag(add_class: "input") do %>
+          <%= cp.created_before_filter %>
+        <% end %>
+      <% end %>
+
       <!-- status_filter -->
       <%= cp.li_tag(class: "dropdown-header", content: "Status") %>
       <%= cp.hidden_field_tag(status_filter_key) %>

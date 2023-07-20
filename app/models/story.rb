@@ -101,6 +101,22 @@ class Story < ApplicationRecord
       all
     end
   end
+  scope :seek_created_after_filter, -> (created_after) do
+    created_after_date = Date.smart_parse(created_after)
+    if created_after_date
+      where_story_created_on(gteq: created_after_date)
+    else
+      all
+    end
+  end
+  scope :seek_created_before_filter, -> (created_before) do
+    created_before_date = Date.smart_parse(created_before)
+    if created_before_date
+      where_story_created_on(lteq: created_before_date)
+    else
+      all
+    end
+  end
   scope :seek_is_nsfw_eq, -> (value) do
     case value
     when "any" then all
