@@ -68,4 +68,17 @@ class ApplicationPresenter < ActionPresenter::Base
   def event_coffee_script_compile(coffee_script)
     coffee_script_compile("$this = $(this)\n$event = $.Event(event)\n#{coffee_script.unindent}\nreturn true")
   end
+
+  def event_js(js_script)
+    %Q{
+      (function() {
+        var $event, $this;
+        $this = $(this);
+        $event = $.Event(event);
+        #{js_script.indent(2)}
+        return true;
+      }).call(this);
+    }.unindent
+  end
+
 end

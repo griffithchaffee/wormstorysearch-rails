@@ -45,27 +45,32 @@
   # helpers
   get_filter_id = -> (status) { "#{status.slugify}_status_filter" }
   check_box_onchange_js = -> (filter_key) do
-    cp.event_coffee_script_compile(%Q[
-      value = if $this.prop('checked') then $this.val() else ''
-      $('##{filter_key.slugify}').val(value).change()
-    ])
+    cp.event_js(%Q{
+      var value;
+      value = $this.prop('checked') ? $this.val() : '';
+      $('##{filter_key.slugify}').val(value).change();
+    })
   end
 
   # onchange js
-  location_slug_onchange_js = cp.event_coffee_script_compile(%Q[
+  location_slug_onchange_js = cp.event_js(%Q{
+    var filter_ids, filter_values;
     filter_ids = #{location_slug_filters.keys.map(&get_filter_id)}
-    filter_values = []
-    $.each filter_ids, (i, filter_id) ->
-      $filter = $('#' + filter_id)
-      filter_values.push($filter.val()) if $filter.prop('checked')
-    $('##{location_slug_filter_key.slugify}').val(filter_values.join()).change()
-  ])
+    filter_values = [];
+    $.each(filter_ids, function(i, filter_id) {
+      var $filter;
+      $filter = $('#' + filter_id);
+      if ($filter.prop('checked')) {
+        return filter_values.push($filter.val());
+      }
+    });
+    $('##{location_slug_filter_key.slugify}').val(filter_values.join()).change();
+  })
 
 %>
 
 
 <%= render_partial(:index_filters_info_modal) %>
-
 <%= cp.div_tag(class: "input-group story_filter") do %>
   <%= cp.div_tag(class: "input-group-btn") do %>
     <%= cp.button_tag(add_class: "btn btn-default search-reset", "aria-label" => "Reset Filters") do %>

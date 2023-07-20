@@ -23,6 +23,7 @@
   end
   # custom formatters
   klass.send(:define_method, "to_timestamp") { strftime "%Y-%m-%d %T" }
+  klass.send(:define_method, "to_ms_timestamp") { strftime "%Y-%m-%d %T.%L" }
 end
 
 class Date
