@@ -142,7 +142,7 @@ module LocationStoryConcern
     new_story.crossover = crossover_for_story
     new_story.author = author!
     new_story.title = parse_title
-    new_story.save! if create_new_story
+    new_story.save! if create_new_story && new_story.title?
     new_story
   end
 
