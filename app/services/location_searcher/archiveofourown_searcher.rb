@@ -78,6 +78,7 @@ module LocationSearcher
         # stop if story too old
         return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
         story = save_story(story)
+        next if !(story && story.saved?)
         update_chapters_for_story!(story) if options[:chapters] != false
         stories << story
       end

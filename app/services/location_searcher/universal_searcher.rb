@@ -27,6 +27,7 @@ module LocationSearcher
     def save_story(story)
       story.author = story.author!
       story.story = story.story!
+      return if !(story.story && story.story.saved?)
       Rails.logger.info do
         log = "Save: #{story.title.green} [#{story.id || "New"}]".ljust(70)
         log += " => #{story.story.title.green}"
