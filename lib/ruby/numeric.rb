@@ -9,7 +9,7 @@ class Numeric
 
   def to_i_or_round(precision: 2, pretty: false)
     rounded = round(precision)
-    return to_i if rounded.to_s.ends_with?(".0")
+    return rounded.to_s.remove(".0").to_i if rounded.to_s.ends_with?(".0")
     if pretty
       number, decimal = rounded.to_s.split(".")
       if number.length >= precision
