@@ -31,6 +31,7 @@ gem "loofah"
 gem "faraday"
 gem "faraday_middleware"
 gem "http-cookie"
+gem "byebug"
 
 group :development, :test do
   # firefly
