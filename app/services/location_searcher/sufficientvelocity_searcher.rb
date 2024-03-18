@@ -151,8 +151,8 @@ module LocationSearcher
       crawler.get("#{story.location_path}/threadmarks", category_id: 1)
       verify_response_status!(debug_message: "#{self.class} update_chapters_for_story #{story.inspect}", status: [200, 404])
       threadmarks_html = crawler.html
-      threadmarks_size = threadmarks_container.css("structItem").size
       threadmarks_container = threadmarks_html.css(".block-body--threadmarkBody .structItemContainer")
+      threadmarks_size = threadmarks_container.css(".structItem").size
       if threadmarks_size == 50
         2.times do |i|
           last_threadmark = threadmarks_container.children.last
