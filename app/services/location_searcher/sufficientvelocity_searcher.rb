@@ -149,8 +149,17 @@ module LocationSearcher
 
     def update_chapters_for_story!(story)
       crawler.get("#{story.location_path}/threadmarks", category_id: 1)
+      crawler.get("#{story.location_path}/threadmarks", category_id: 1)
       verify_response_status!(debug_message: "#{self.class} update_chapters_for_story #{story.inspect}", status: [200, 404])
-      update_chapters_for_story_from_html!(story, crawler.html)
+      threadmarks_html = crawler.html
+      threadmarks_container = threadmarks_html.css(".block-body--threadmarkBody .structItemContainer")
+      if threadmarks_container.children.size == 101
+        last_threadmark = threadmarks_html.css(".block-body--threadmarkBody .structItemContainer").children.last
+        crawler.get("#{story.location_path}/threadmarks-load-range", threadmark_category_id: 1, min: 101, max: 1000)
+        newer_threadmarks = crawler.html.css(".structItemContainer").children
+        last_threadmark.after(newer_threadmarks)
+      end
+      update_chapters_for_story_from_html!(story, threadmarks_html)
     end
 
     def update_chapters_for_story_from_html!(story, html)
