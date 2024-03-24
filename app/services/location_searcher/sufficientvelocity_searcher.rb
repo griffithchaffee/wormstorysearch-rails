@@ -67,9 +67,10 @@ module LocationSearcher
       page_html = crawler.html
       # find chapter id (by url or first post)
       # "threads/expand-your-world-worm-the-world-ends-with-you.450360/page-10#post-35820316" => post-35820316
-      location_id = chapter.location_path.split("#")[1]
+      # 2024-03-24 - https://forums.sufficientvelocity.com/threads/my-life-as-a-teenage-juggernaut-worm-au-x-marvel.126136/post-30211933
+      location_id = chapter.location_path.split("-").last
       # article
-      chapter_html = location_id ? page_html.at_css("#js-#{location_id}") : page_html.at_css("article")
+      chapter_html = location_id ? page_html.at_css("#js-post-#{location_id}") : page_html.at_css("article")
       # no messages
       if chapter_html
         # sum of all like types
