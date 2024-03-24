@@ -70,7 +70,7 @@ module LocationSearcher
       # 2024-03-24 - https://forums.spacebattles.com/threads/a-womans-touch.1150850/post-99768377
       location_id = chapter.location_path.split("-").last
       # article
-      chapter_html = location_id ? page_html.at_css("#js-post-#{location_id}") : page_html.at_css("article")
+      chapter_html = location_id =~ /\A\d+\z/ ? page_html.at_css("#js-post-#{location_id}") : page_html.css("article")[1]
       # no messages
       if chapter_html
         # sum of all like types

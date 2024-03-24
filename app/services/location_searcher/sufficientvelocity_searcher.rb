@@ -70,7 +70,7 @@ module LocationSearcher
       # 2024-03-24 - https://forums.sufficientvelocity.com/threads/my-life-as-a-teenage-juggernaut-worm-au-x-marvel.126136/post-30211933
       location_id = chapter.location_path.split("-").last
       # article
-      chapter_html = location_id ? page_html.at_css("#js-post-#{location_id}") : page_html.at_css("article")
+      chapter_html = location_id =~ /\A\d+\z/ ? page_html.at_css("#js-post-#{location_id}") : page_html.css("article")[1]
       # no messages
       if chapter_html
         # sum of all like types
