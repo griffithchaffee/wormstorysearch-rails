@@ -167,7 +167,7 @@ module LocationSearcher
       threadmarks_html = crawler.html
       threadmarks_container = threadmarks_html.css(".block-body--threadmarkBody .structItemContainer")
       threadmarks_size = threadmarks_container.css(".structItem").size
-      if threadmarks_size == 50
+      if threadmarks_size == 25
         2.times do |i|
           last_threadmark = threadmarks_container.children.last
           crawler.get("#{story.location_path}/threadmarks-load-range", threadmark_category_id: 1, min: threadmarks_container.css(".structItem").size, max: 1000)
