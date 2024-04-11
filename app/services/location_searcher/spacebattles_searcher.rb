@@ -139,9 +139,8 @@ module LocationSearcher
       options = options.with_indifferent_access.assert_valid_keys(*%w[ active_after is_worm_story attributes chapters ])
       stories_html = parse_stories_html(html)
       stories = []
-      results = -> (more) { { stories: stories, more: more } }
       # stop on last page
-      return results.call(false) if stories_html.size == 0
+      results = { stories: stories, more: stories_html.size != 0 }
       # parse threads
       stories_html.each do |story_html|
         story_attributes = parse_story_html(story_html)
@@ -149,7 +148,7 @@ module LocationSearcher
         story_attributes.merge!(options[:attributes].to_h)
         story = build_story(story_attributes, on_create_only: %w[ story_created_on story_updated_at ])
         # stop if story too old
-        return results.call(false) if options[:active_after] && story.story_active_at < options[:active_after]
+        results[:more] = false if options[:active_after] && story.story_active_at < options[:active_after]
         # skip if not worm story
         if !options.fetch(:is_worm_story) { is_worm_story?(story) }
           Rails.logger.info { "Skip: #{story.title.yellow}" }
@@ -159,7 +158,7 @@ module LocationSearcher
         update_chapters_for_story!(story) if options[:chapters] != false
         stories << story
       end
-      results.call(true)
+      results
     end
 
     def update_chapters_for_story!(story)

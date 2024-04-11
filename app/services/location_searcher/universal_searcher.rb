@@ -18,7 +18,7 @@ module LocationSearcher
       story_finder = { location_id: story_attributes[:location_id] }
       story = story_model.find_by(story_finder) || story_model.new
       story.assign_attributes(story_attributes.except(*on_create_only_attributes))
-      if story.unsaved? || search_options[:reset]
+      if story.unsaved? || (search_options && search_options[:reset])
         story.assign_attributes(story_attributes.slice(*on_create_only_attributes))
       end
       story
