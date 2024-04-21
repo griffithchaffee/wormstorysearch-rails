@@ -199,7 +199,7 @@ module LocationSearcher
       word_count_html = details_html.css("li").to_a[3]
       # parse attributes
       title         = title_html.text
-      location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
+      location_path = "#{title_html[:href].remove(/\/(unread|threadmarks)?\z/)}"
       location_id   = location_path.split(".").last
       author        = details_html.css("a.username").text
       word_count    = word_count_html ? word_count_html.text.strip.remove("Words: ") : 0
