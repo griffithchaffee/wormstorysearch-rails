@@ -193,10 +193,10 @@ module LocationSearcher
       return false if story_html.css(".lastPostInfo").text.strip == "N/A"
       # html selections
       main_html       = story_html.css(".structItem-cell--main")
-      title_html      = main_html.css(".structItem-title a").last
+      title_html      = main_html.css(".structItem-title a").first
       details_html    = main_html.css(".structItem-minor").first
       activity_html   = story_html.css(".structItem-cell--latest").first
-      word_count_html = details_html.css("li").to_a.third
+      word_count_html = details_html.css("li").to_a[3]
       # parse attributes
       title         = title_html.text
       location_path = "#{title_html[:href].remove(/\/(unread)?\z/)}"
