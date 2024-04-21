@@ -185,7 +185,7 @@ module LocationSearcher
   private
 
     def parse_stories_html(stories_html)
-      stories_html.css("div.js-threadList div.js-inlineModContainer")
+      stories_html.css("div.js-threadList div.js-inlineModContainer.structItem--story")
     end
 
     def parse_story_html(story_html)
