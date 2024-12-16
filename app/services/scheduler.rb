@@ -56,7 +56,7 @@ class Scheduler
     # Any login attempt around 2AM PST (9AM UTC) will fail on QuestionableQuesting
     if Time.zone.now.hour != 2
       attempt_block(namespace: :questionablequesting) do
-        LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+        #LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
       end
     end
   end
@@ -76,7 +76,7 @@ class Scheduler
       LocationSearcher::ArchiveofourownSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :questionablequesting) do
-      LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
+      #LocationSearcher::QuestionablequestingSearcher.search!(duration, task_options)
     end
   end
 
@@ -89,7 +89,7 @@ class Scheduler
     # setup searchers
     attempt_block(namespace: :spacebattles) { spacebattles_searcher.login! }
     attempt_block(namespace: :sufficientvelocity) { sufficientvelocity_searcher.login! }
-    attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
+    #attempt_block(namespace: :questionablequesting) { questionablequesting_searcher.login! }
     spacebattles_chapters = -> { SpacebattlesStoryChapter.seek_or(likes_updated_at_lteq: 2.hours.ago, likes_updated_at_eq: nil)
       .order_likes_updated_at(:asc, :first).order_chapter_updated_at(:desc) }
     sufficientvelocity_chapters = -> { SufficientvelocityStoryChapter.seek_or(likes_updated_at_lteq: 2.hours.ago, likes_updated_at_eq: nil)
@@ -132,12 +132,12 @@ class Scheduler
         end
       end
       # questionablequesting
-      questionablequesting_chapter = questionablequesting_chapters.call.seek(chapter_created_on_gteq: 3.months.ago).first
-      if questionablequesting_chapter
-        attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
-          questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
-        end
-      end
+      #questionablequesting_chapter = questionablequesting_chapters.call.seek(chapter_created_on_gteq: 3.months.ago).first
+      #if questionablequesting_chapter
+      #  attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
+      #    questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+      #  end
+      #end
       # thottle
       sleep 3
       # update ratings for all chapters
@@ -171,11 +171,11 @@ class Scheduler
       end
       # questionablequesting
       questionablequesting_chapter = questionablequesting_chapters.call.first
-      if questionablequesting_chapter
-        attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
-          questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
-        end
-      end
+      #if questionablequesting_chapter
+      #  attempt_block(namespace: :questionablequesting, context: questionablequesting_chapter) do
+      #    questionablequesting_chapter.update_rating!(searcher: questionablequesting_searcher)
+      #  end
+      #end
       end
       # throttle
       sleep 3
