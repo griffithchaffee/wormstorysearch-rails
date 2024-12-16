@@ -27,20 +27,22 @@ tr:hover th {
 }
 
 .btn-default {
-  background-color: #999;
+  background-color: #1c1c1c !important;
+  color: #c8c8c8 !important;
 }
 ::placeholder {
-  color: #555 !important;
+  color: #c8c8c8 !important;
 }
 
 input {
-  background-color: #999 !important;
+  background-color: #1c1c1c !important;
+  color: #c8c8c8 !important;
 }
 ul.pagination li a {
-  background-color: #999 !important;
-  color: #222 !important;
+  background-color: #1c1c1c !important;
+  color: #c8c8c8 !important;
 }
 ul.dropdown-menu {
-  background-color: #999 !important;
-  color: #222 !important;
+  background-color: #1c1c1c !important;
+  color: #c8c8c8 !important;
 }
