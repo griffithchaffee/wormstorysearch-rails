@@ -1,48 +1,71 @@
-/*
-@gray-base: rgb(0, 0, 0);
-@gray-darker: rgb(39, 43, 48);     // #222
-@gray-dark: rgb(58, 63, 68);       // #333
-@gray: rgb(82, 87, 92);            // #555
-@gray-light: rgb(122, 130, 136);   // #777
-@gray-lighter: rgb(153, 153, 153); // #eee
-*/
-
 body {
-  background-color: #222;
-  color: #c8c8c8;
+  background-color: #0d1117;
+  color: #f0f6fc;
 }
 .modal-content {
-  background-color: #222;
-  color: #c8c8c8;
+  background-color: #090c10;
+  color: #f0f6fc;
 }
 
+td {
+  border: 1px solid #30363d;
+}
+tr {
+  border: 1px solid #30363d;
+}
+th {
+  border: 1px solid #30363d;
+}
 tr.info td {
-  background-color: #1d2d4d !important;
+  background-color: #122540 !important;
 }
 tr:hover td {
-  background-color: #333;
+  background-color: #161b22;
 }
 tr:hover th {
-  background-color: #333;
+  background-color: #161b22;
+}
+tr.info:hover td {
+  background-color: #152b4a !important;
+}
+.table>tbody+tbody {
+  border-top: 2px solid #30363d;
 }
 
 .btn-default {
-  background-color: #1c1c1c !important;
-  color: #c8c8c8 !important;
+  background-color: #161b22 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d;
 }
 ::placeholder {
-  color: #c8c8c8 !important;
+  color: #f0f6fc !important;
 }
 
 input {
-  background-color: #1c1c1c !important;
-  color: #c8c8c8 !important;
+  background-color: #161b22 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d;
 }
 ul.pagination li a {
-  background-color: #1c1c1c !important;
-  color: #c8c8c8 !important;
+  background-color: #161b22 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d;
 }
 ul.dropdown-menu {
-  background-color: #1c1c1c !important;
-  color: #c8c8c8 !important;
+  background-color: #161b22 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d;
+}
+
+nav.navbar.navbar-inverse.navbar-static-top {
+  background-color: #090c10;
+  color: #f0f6fc;
+}
+
+.page-title {
+  border-bottom: 1px solid #30363d;
+}
+
+hr {
+  border-top: 1px solid #30363d;
 }
