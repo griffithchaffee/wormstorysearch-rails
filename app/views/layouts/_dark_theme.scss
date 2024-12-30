@@ -1,41 +1,41 @@
 body {
-  background-color: #0d1117;
-  color: #f0f6fc;
+  background-color: #0d1117 !important;
+  color: #f0f6fc !important;
 }
 .modal-content {
-  background-color: #090c10;
-  color: #f0f6fc;
+  background-color: #090c10 !important;
+  color: #f0f6fc !important;
 }
 
 td {
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 tr {
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 th {
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 tr.info td {
   background-color: #122540 !important;
 }
 tr:hover td {
-  background-color: #161b22;
+  background-color: #161b22 !important;
 }
 tr:hover th {
-  background-color: #161b22;
+  background-color: #161b22 !important;
 }
 tr.info:hover td {
   background-color: #152b4a !important;
 }
 .table>tbody+tbody {
-  border-top: 2px solid #30363d;
+  border-top: 2px solid #30363d !important;
 }
 
 .btn-default {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 ::placeholder {
   color: #f0f6fc !important;
@@ -44,28 +44,33 @@ tr.info:hover td {
 input {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 ul.pagination li a {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 ul.dropdown-menu {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
-  border: 1px solid #30363d;
+  border: 1px solid #30363d !important;
 }
 
 nav.navbar.navbar-inverse.navbar-static-top {
-  background-color: #090c10;
-  color: #f0f6fc;
+  background-color: #090c10 !important;
+  color: #f0f6fc !important;
 }
 
 .page-title {
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid #30363d !important;
 }
 
 hr {
-  border-top: 1px solid #30363d;
+  border-top: 1px solid #30363d !important;
 }
+
+.icon {
+  color: #F0F6FC !important;
+}
+
