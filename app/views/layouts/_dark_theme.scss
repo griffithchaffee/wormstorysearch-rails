@@ -51,10 +51,19 @@ ul.pagination li a {
   color: #f0f6fc !important;
   border: 1px solid #30363d !important;
 }
+ul.pagination li.active a {
+  background-color: #122540 !important;
+}
 ul.dropdown-menu {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
   border: 1px solid #30363d !important;
+}
+.dropdown-menu > li > a {
+  color: #f0f6fc !important;
+}
+.dropdown-menu > li > a:hover {
+  background-color: #1d242e !important;
 }
 
 nav.navbar.navbar-inverse.navbar-static-top {
