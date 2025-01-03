@@ -59,6 +59,12 @@ ul.dropdown-menu {
   color: #f0f6fc !important;
   border: 1px solid #30363d;
 }
+.dropdown-menu > li > a {
+  color: #f0f6fc !important;
+}
+.dropdown-menu > li > a:hover {
+  background-color: #1d242e !important;
+}
 
 nav.navbar.navbar-inverse.navbar-static-top {
   background-color: #090c10;
