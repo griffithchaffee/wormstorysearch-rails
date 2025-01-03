@@ -51,6 +51,9 @@ ul.pagination li a {
   color: #f0f6fc !important;
   border: 1px solid #30363d;
 }
+ul.pagination li.active a {
+  background-color: #122540 !important;
+}
 ul.dropdown-menu {
   background-color: #161b22 !important;
   color: #f0f6fc !important;
