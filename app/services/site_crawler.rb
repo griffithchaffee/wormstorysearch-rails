@@ -121,7 +121,7 @@ class SiteCrawler
     attr_reader :window
 
     def initialize
-      @window = V8::Context.new
+      @window = MiniRacer::Context.new
     end
 
     def eval(js)

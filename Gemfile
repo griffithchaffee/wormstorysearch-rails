@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.6.4"
+ruby "2.6.8"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -21,7 +21,8 @@ gem "sassc-rails"
 gem "uglifier"
 gem "coffee-rails"
 gem "turbolinks"
-gem "therubyracer", platforms: :ruby
+#gem "therubyracer", platforms: :ruby
+gem "mini_racer"
 
 # scheduler
 gem "whenever"
@@ -37,7 +38,7 @@ group :development, :test do
   # firefly
   gem "firefly_server"#, path: "/root/griffithchaffee/firefly_server"
   # tests
-  gem "factory_bot"
+  gem "factory_bot", "= 6.2.1"
   gem "minitest-reporters"
   gem "byebug"
   gem "database_cleaner"
