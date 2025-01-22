@@ -8,17 +8,19 @@ services:
     ports: 
       - "8080:8080"
     volumes:
-      - ./config:./config:ro
+      - ./config:/wormstorysearch/config:ro
       - gem_cache:/usr/local/bundle/gems
-    #env_file: .env
+    env_file: .env
     environment:
       RAILS_ENV: development
 
   database:
     image: postgres:17.2
+    env_file: .env
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./config/:/docker-entrypoint-initdb.d/
 
 volumes:
   gem_cache:
