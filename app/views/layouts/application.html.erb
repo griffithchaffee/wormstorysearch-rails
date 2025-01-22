@@ -28,9 +28,10 @@
     <%= cp.style_tag(type: "text/css") do %>
       <% if get_theme == "dark" %>
         <%= render(partial: "layouts/dark_theme", formats: :scss) %>
-      <% end %>
-    <% elsif get_theme == "auto" %>
-      <%= cp.style_tag(type: "text/css", media: "prefers-color-scheme: dark") do %>
+      <% end %>      
+    <% end %>
+    <%= cp.style_tag(type: "text/css", media: "prefers-color-scheme: dark") do %>
+      <% if get_theme == "auto" %>
         <%= render(partial: "layouts/dark_theme", formats: :scss) %>
       <% end %>
     <% end %>
