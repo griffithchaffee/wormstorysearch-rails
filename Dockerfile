@@ -16,3 +16,4 @@ COPY . .
 EXPOSE 8080
 #CMD bundle exec rails s -b 0.0.0.0
 CMD bundle exec ./bin/firefly_server
+# docker-compose exec app bundle exec rake db:setup db:migrate # todo update this
