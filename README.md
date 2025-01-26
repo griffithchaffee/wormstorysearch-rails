@@ -1,6 +1,6 @@
 # Getting Started
 
-### Install Ruby v2.4.1
+### Install Ruby v2.6.8
 
 ### Install gems
 
