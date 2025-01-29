@@ -30,7 +30,7 @@
         <%= render(partial: "layouts/dark_theme", formats: :scss) %>
       <% end %>      
     <% end %>
-    <%= cp.style_tag(type: "text/css", media: "prefers-color-scheme: dark") do %>
+    <%= cp.style_tag(type: "text/css", media: "(prefers-color-scheme: dark)") do %>
       <% if get_theme == "auto" %>
         <%= render(partial: "layouts/dark_theme", formats: :scss) %>
       <% end %>
