@@ -28,6 +28,11 @@
     <%= cp.style_tag(type: "text/css") do %>
       <% if get_theme == "dark" %>
         <%= render(partial: "layouts/dark_theme", formats: :scss) %>
+      <% end %>      
+    <% end %>
+    <%= cp.style_tag(type: "text/css", media: "prefers-color-scheme: dark") do %>
+      <% if get_theme == "auto" %>
+        <%= render(partial: "layouts/dark_theme", formats: :scss) %>
       <% end %>
     <% end %>
 
@@ -47,13 +52,17 @@
               <%= cp.span_tag(class: "visible-xs visible-sm", content: "Stories") %>
             <% end %>
 
-            <% if get_theme == "dark" %>
-              <%= cp.link_to(root_url(theme: "light"), class: "navbar-brand pull-right") do %>
-                <%= cp.span_tag(content: "Light") %>
-              <% end %>
-            <% else %>
+            <% if get_theme == "light" %>
               <%= cp.link_to(root_url(theme: "dark"), class: "navbar-brand pull-right") do %>
                 <%= cp.span_tag(content: "Dark") %>
+              <% end %>
+            <% elsif get_theme == "dark" %>
+              <%= cp.link_to(root_url(theme: "auto"), class: "navbar-brand pull-right") do %>
+                <%= cp.span_tag(content: "Auto") %>
+              <% end %>
+            <% else %>
+              <%= cp.link_to(root_url(theme: "light"), class: "navbar-brand pull-right") do %>
+                <%= cp.span_tag(content: "Light") %>
               <% end %>
             <% end %>
 
