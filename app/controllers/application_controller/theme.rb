@@ -12,7 +12,8 @@ class ApplicationController < ActionController::Base
   def get_theme
     case session_action_data.data_params[:theme]
     when "dark" then "dark"
-    else "light"
+    when "light" then "light"
+    else "auto"
     end
   end
 
