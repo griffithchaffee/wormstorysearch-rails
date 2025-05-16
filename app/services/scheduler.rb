@@ -42,10 +42,10 @@ class Scheduler
   scheduled_task :update_location_stories_hourly do
     duration = task_options.fetch(:duration) { 3.hours }
     attempt_block(namespace: :spacebattles) do
-      LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
+      #LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :sufficientvelocity) do
-      LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
+      #LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :fanfiction) do
       #LocationSearcher::FanfictionSearcher.search!(duration, task_options)
@@ -64,10 +64,10 @@ class Scheduler
   scheduled_task :update_location_stories_daily do
     duration = task_options.fetch(:duration) { 2.days }
     attempt_block(namespace: :spacebattles) do
-      LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
+      #LocationSearcher::SpacebattlesSearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :sufficientvelocity) do
-      LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
+      #LocationSearcher::SufficientvelocitySearcher.search!(duration, task_options)
     end
     attempt_block(namespace: :fanfiction) do
       #LocationSearcher::FanfictionSearcher.search!(duration, task_options)
@@ -107,14 +107,14 @@ class Scheduler
       spacebattles_chapter = spacebattles_chapters.call.seek(chapter_created_on_gteq: 3.months.ago).first
       if spacebattles_chapter
         attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
-          spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+          #spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
         end
       end
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.call.seek(chapter_created_on_gteq: 3.months.ago).first
       if sufficientvelocity_chapter
         attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-          sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+          #sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
         end
       end
       # fanfiction
@@ -145,14 +145,14 @@ class Scheduler
       spacebattles_chapter = spacebattles_chapters.call.first
       if spacebattles_chapter
         attempt_block(namespace: :spacebattles, context: spacebattles_chapter) do
-          spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
+          #spacebattles_chapter.update_rating!(searcher: spacebattles_searcher)
         end
       end
       # sufficientvelocity
       sufficientvelocity_chapter = sufficientvelocity_chapters.call.first
       if sufficientvelocity_chapter
         attempt_block(namespace: :sufficientvelocity, context: sufficientvelocity_chapter) do
-          sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
+          #sufficientvelocity_chapter.update_rating!(searcher: sufficientvelocity_searcher)
         end
       end
       # fanfiction
@@ -188,7 +188,7 @@ class Scheduler
   end
 
   scheduled_task :update_story_statuses do
-    Story.update_statuses!
+    #Story.update_statuses!
   end
 
   scheduled_task :update_stories do

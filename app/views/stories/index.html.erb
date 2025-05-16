@@ -6,6 +6,13 @@
   end
 ) %>
 
+<%= cp.div_tag(id: "flash-messages") do %>
+  <%= cp.alert_div("info", add_class: "flash-message") do %>
+    <%= cp.dismiss_action(:alert) %>
+    All site scraping is disabled except for AO3 until a reliable way to bypass cloudflare or an API becomes available.
+  <% end %>
+<% end %>
+
 <% if is_admin_ip_address? && !is_admin? %>
   <%= cp.alert_div(:info) do %>
     You have been deemed worthy to access restricted parts of this website (IP address <%= request.remote_ip %>).<%= cp.br_tag %>
